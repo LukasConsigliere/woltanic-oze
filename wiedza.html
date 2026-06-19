@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Woltanic — Baza Wiedzy</title>
+<style>
+:root{
+  --blue:#1a2f5a;--blue2:#223a70;--gold:#f0a500;--gold2:#ffc133;
+  --green:#1e6b3c;--green2:#e8f5e9;--red:#c0392b;
+  --gray:#6b7280;--border:#dde3ee;--light:#f5f7fa;--text:#1a1a2e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--light);color:var(--text)}
+header{background:var(--blue);padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.logo{width:34px;height:34px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:var(--blue);flex-shrink:0}
+header h1{color:#fff;font-size:14px;font-weight:700}
+header p{color:#99aacc;font-size:11px}
+.search-wrap{padding:12px 16px;background:#fff;border-bottom:1px solid var(--border)}
+.search-wrap input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;background:var(--light)}
+.search-wrap input:focus{outline:none;border-color:var(--blue);background:#fff}
+
+/* NAV TABS */
+.tabs{display:flex;overflow-x:auto;background:#fff;border-bottom:2px solid var(--border);padding:0 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:11px 14px;font-size:12px;font-weight:700;color:var(--gray);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;margin-bottom:-2px;transition:all .15s}
+.tab.active{color:var(--blue);border-color:var(--gold)}
+.tab .t-icon{margin-right:4px}
+
+/* SECTIONS */
+.section{display:none;padding:14px 14px 80px}
+.section.active{display:block}
+.page-title{font-size:18px;font-weight:900;color:var(--blue);margin-bottom:4px}
+.page-sub{font-size:12px;color:var(--gray);margin-bottom:16px}
+
+/* CARD */
+.card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:14px;margin-bottom:12px}
+.card-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gray);padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px}
+.card-title.gold{color:#b37800;border-color:#f0e0a0}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.stat-box{background:var(--light);border-radius:10px;padding:10px}
+.stat-box .sv{font-size:17px;font-weight:800;color:var(--blue)}
+.stat-box .sl{font-size:10px;color:var(--gray);margin-top:2px}
+.stat-box.gold{background:#fff8e1}.stat-box.gold .sv{color:#b37800}
+.stat-box.green{background:var(--green2)}.stat-box.green .sv{color:var(--green)}
+.stat-box.red{background:#fdecea}.stat-box.red .sv{color:var(--red)}
+
+/* LIST */
+ul.kv{list-style:none}
+ul.kv li{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.4}
+ul.kv li:last-child{border:none}
+ul.kv li .k{font-weight:600;color:var(--blue);flex-shrink:0;width:38%;max-width:150px;overflow-wrap:anywhere}
+ul.kv li .v{color:var(--text)}
+
+/* OBJECTION CARDS */
+.obj{background:#fff;border-radius:10px;border:1.5px solid var(--border);margin-bottom:8px;overflow:hidden}
+.obj-q{padding:12px 14px;font-size:13px;font-weight:700;color:var(--blue);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.obj-q .arrow{color:var(--gold);font-size:16px;flex-shrink:0;transition:transform .2s}
+.obj.open .obj-q .arrow{transform:rotate(180deg)}
+.obj-a{display:none;padding:0 14px 12px;font-size:12px;color:#333;line-height:1.6;border-top:1px solid var(--border)}
+.obj.open .obj-a{display:block}
+.obj-a strong{color:var(--blue)}
+
+/* DOTACJA TABLE */
+.dot-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.dot-table th{background:var(--blue);color:#fff;padding:6px 8px;text-align:left;font-size:11px;vertical-align:top}
+.dot-table td{padding:6px 8px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;overflow-wrap:anywhere}
+.dot-table td:first-child,.dot-table th:first-child{white-space:nowrap;padding-right:10px}
+.dot-table tr:last-child td{border:none}
+.dot-table .big{font-weight:800;font-size:14px;color:var(--blue)}
+.dot-table tr:nth-child(even) td{background:var(--light)}
+
+/* ZAMKNIĘCIE - 2 pytania kluczowe */
+.close-q{border-radius:12px;padding:16px;margin-bottom:10px;border:2px solid}
+.close-q.q1{background:#fff8e1;border-color:var(--gold)}
+.close-q.q2{background:var(--green2);border-color:var(--green)}
+.close-q .cq-num{font-size:28px;font-weight:900;opacity:.25;float:right;line-height:1}
+.close-q .cq-title{font-size:15px;font-weight:900;margin-bottom:8px}
+.close-q.q1 .cq-title{color:#b37800}
+.close-q.q2 .cq-title{color:var(--green)}
+.close-q ul{list-style:none;padding:0}
+.close-q li{font-size:12px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06);line-height:1.5}
+.close-q li:last-child{border:none}
+.close-q li::before{content:"→ ";font-weight:700;opacity:.5}
+
+/* RACHUNEK */
+.bill-row{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;font-size:12px}
+.bill-row:last-child{border:none}
+.bill-label{flex:0 0 42%;font-weight:700;color:var(--blue);font-size:11px;text-transform:uppercase;letter-spacing:.03em;padding-right:6px}
+.bill-val{flex:1;color:#333;line-height:1.5}
+.bill-hot{color:var(--red);font-weight:700}
+.bill-calc{background:var(--blue);color:#fff;border-radius:10px;padding:14px;margin:10px 0}
+.bill-calc .bc-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;opacity:.7;margin-bottom:8px}
+.bill-calc .bc-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid rgba(255,255,255,.1)}
+.bill-calc .bc-row:last-child{border:none;padding-top:8px;font-weight:800;font-size:14px}
+
+/* GLOBAL FIXES */
+.card{overflow:hidden}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.chip-blue{background:#e8ecf8;color:var(--blue)}
+.chip-green{background:var(--green2);color:var(--green)}
+.chip-gold{background:#fff8e1;color:#b37800}
+.chip-red{background:#fdecea;color:var(--red)}
+.chip-gray{background:var(--light);color:var(--gray)}
+
+/* ALERT */
+.alert{border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.5;margin-bottom:10px}
+.alert.info{background:#e3f2fd;border:1.5px solid #90caf9;color:#1565c0}
+.alert.warn{background:#fff8e1;border:1.5px solid var(--gold);color:#7c5800}
+.alert.good{background:var(--green2);border:1.5px solid #81c784;color:var(--green)}
+
+/* HIGHLIGHT */
+.hl{background:yellow;border-radius:2px}
+
+/* SEARCH RESULT */
+.search-result{background:#fff;border-radius:10px;border:1.5px solid var(--border);padding:12px;margin-bottom:8px}
+.search-result .sr-src{font-size:10px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:4px}
+.search-result .sr-q{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:4px}
+.search-result .sr-a{font-size:12px;color:#444;line-height:1.5}
+#searchResults{padding:14px}
+#searchResults.empty{display:none}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">W</div>
+  <div style="flex:1">
+    <h1>Woltanic — Baza Wiedzy</h1>
+    <p>Masterclass · Technika · Sprzedaż · Dotacje</p>
+  </div>
+  <a href="asystent.html" style="color:var(--gold);font-size:13px;font-weight:700;padding:7px 12px;background:rgba(255,255,255,.1);border-radius:8px;text-decoration:none;white-space:nowrap">🔍 Asystent →</a>
+</header>
+
+<div class="search-wrap">
+  <input type="search" id="searchInput" placeholder="🔍  Szukaj... (pompa, dotacja, obiekcja...)" oninput="szukaj(this.value)">
+</div>
+
+<div class="tabs" id="tabBar">
+  <div class="tab active" onclick="showTab('dotacje')" id="tab-dotacje"><span class="t-icon">💰</span>Dotacje</div>
+  <div class="tab" onclick="showTab('sprzedaz')" id="tab-sprzedaz"><span class="t-icon">💬</span>Sprzedaż</div>
+  <div class="tab" onclick="showTab('pompa')" id="tab-pompa"><span class="t-icon">🌡️</span>Pompa</div>
+  <div class="tab" onclick="showTab('pv')" id="tab-pv"><span class="t-icon">☀️</span>PV</div>
+  <div class="tab" onclick="showTab('pellet')" id="tab-pellet"><span class="t-icon">🌿</span>Pellet</div>
+  <div class="tab" onclick="showTab('magazyn')" id="tab-magazyn"><span class="t-icon">🔋</span>Magazyn</div>
+  <div class="tab" onclick="showTab('montaz')" id="tab-montaz"><span class="t-icon">🔧</span>Montaż</div>
+  <div class="tab" onclick="showTab('wizyta')" id="tab-wizyta"><span class="t-icon">🤝</span>Wizyta</div>
+  <div class="tab" onclick="showTab('techniki')" id="tab-techniki"><span class="t-icon">🎯</span>Techniki</div>
+  <div class="tab" onclick="showTab('zwroty')" id="tab-zwroty"><span class="t-icon">💬</span>Zwroty</div>
+  <div class="tab" onclick="showTab('kalk')" id="tab-kalk"><span class="t-icon">🧮</span>Kalkulator</div>
+  <div class="tab" onclick="showTab('rachunek')" id="tab-rachunek"><span class="t-icon">📄</span>Rachunek</div>
+</div>
+
+<!-- SEARCH RESULTS -->
+<div id="searchResults" class="empty"></div>
+
+<!-- ═══════ DOTACJE ═══════════════════════════════════════════════ -->
+<div class="section active" id="s-dotacje">
+  <div class="page-title">💰 Dotacje OZE</div>
+  <div class="page-sub">Czyste Powietrze 2026 · NFOŚiGW · Mój Prąd</div>
+
+  <div class="card">
+    <div class="card-title gold">Czyste Powietrze — POMPA CIEPŁA + modernizacja CO</div>
+    <table class="dot-table">
+      <thead><tr><th>Próg</th><th>Dotacja max</th><th>Warunek dochodu</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Podstawowy</strong></td><td class="big">22 280 zł</td><td>do 135 000 zł/rok</td></tr>
+        <tr><td><strong>Podwyższony</strong></td><td class="big" style="color:var(--green)">38 990 zł</td><td>do 2 250 zł/os. (wieloos.)<br>do 3 150 zł/os. (jednooso.)</td></tr>
+        <tr><td><strong>Najwyższy</strong></td><td class="big" style="color:var(--red)">55 700 zł</td><td>do 1 300 zł/os. (wieloos.)<br>do 1 800 zł/os. (jednooso.)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title gold">Czyste Powietrze — KOCIOŁ NA PELLET + modernizacja CO</div>
+    <table class="dot-table">
+      <thead><tr><th>Próg</th><th>Dotacja max</th><th>Zakres</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Podstawowy</strong></td><td class="big">16 400 zł</td><td>Kocioł + modernizacja CO</td></tr>
+        <tr><td><strong>Podwyższony</strong></td><td class="big" style="color:var(--green)">28 700 zł</td><td>Kocioł + modernizacja CO</td></tr>
+        <tr><td><strong>Najwyższy</strong></td><td class="big" style="color:var(--red)">41 000 zł</td><td>Kocioł + modernizacja CO</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Kto może skorzystać z Czystego Powietrza?</div>
+    <div class="alert info">Właściciel lub współwłaściciel domu jednorodzinnego. Wymagane zaświadczenie dochodowe z gminy lub PIT.</div>
+    <table class="dot-table">
+      <thead><tr><th>Poziom dotacji</th><th>Jednoosobowe</th><th>Wieloosobowe</th></tr></thead>
+      <tbody>
+        <tr><td>Do 40% (podstawowy)</td><td colspan="2">dochód roczny do 135 000 zł</td></tr>
+        <tr><td>Do 70% (podwyższony)</td><td>do 3 150 zł/os.</td><td>do 2 250 zł/os.</td></tr>
+        <tr><td>Do 100% (najwyższy)</td><td>do 1 800 zł/os.</td><td>do 1 300 zł/os.</td></tr>
+      </tbody>
+    </table>
+    <div class="alert warn" style="margin-top:10px">100% dofinansowania tylko dla budynków z zapotrzebowaniem energetycznym powyżej 140 kWh/m² rocznie lub osób pobierających zasiłki.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Mój Prąd 6.0 — Fotowoltaika + Magazyn</div>
+    <ul class="kv">
+      <li><span class="k">PV do 10 kWp</span><span class="v">do 7 000 zł dotacji</span></li>
+      <li><span class="k">Magazyn energii</span><span class="v">do 16 000 zł dotacji (NFOŚiGW, program 2026–2030)</span></li>
+      <li><span class="k">Połączenie</span><span class="v">PV + magazyn można łączyć w jednym wniosku</span></li>
+      <li><span class="k">Kto może</span><span class="v">Właściciel, prosument net-billing, instalacja do 50 kWp</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ważne zasady dotacji</div>
+    <ul class="kv">
+      <li><span class="k">Własność KW</span><span class="v">Klient MUSI być właścicielem w księdze wieczystej — najem wyklucza CP</span></li>
+      <li><span class="k">Termin montażu</span><span class="v">Wniosek składa się przed lub po montażu (ale nie po upływie terminów)</span></li>
+      <li><span class="k">Kotłownia</span><span class="v">Przeróbki kotłowni wchodzą w zakres dotacji CP</span></li>
+      <li><span class="k">VAT</span><span class="v">8% dla prywatnych domów jednorodzinnych, 23% dla firm i działalności</span></li>
+      <li><span class="k">Prefinansowanie</span><span class="v">Najwyższy próg → możliwe prefinansowanie (klient dostaje kasę z góry)</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════ POMPA CIEPŁA ══════════════════════════════════════════ -->
+<div class="section" id="s-pompa">
+  <div class="page-title">🌡️ Pompa ciepła GALMET</div>
+  <div class="page-sub">Polska firma · 42 lata doświadczenia · Serwis 48h</div>
+
+  <div class="stat-grid">
+    <div class="stat-box gold"><div class="sv">1:3</div><div class="sl">Średni SCOP (z 1 kWh prądu → 3 kWh ciepła)</div></div>
+    <div class="stat-box green"><div class="sv">−25°C</div><div class="sl">Gwarantowane działanie do tej temp.</div></div>
+    <div class="stat-box"><div class="sv">48h</div><div class="sl">Czas reakcji serwisu</div></div>
+    <div class="stat-box"><div class="sv">3 dni</div><div class="sl">Czas montażu (ostatnie 2 = testy + szkolenie)</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Dostępne moce GALMET (Woltanic)</div>
+    <table class="dot-table">
+      <thead><tr><th>Model</th><th>Moc</th><th>Typ</th></tr></thead>
+      <tbody>
+        <tr><td>GALMET ARCTIC HP SPLIT 6kW</td><td class="big">6 kW</td><td>Split</td></tr>
+        <tr><td>GALMET ARCTIC HP SPLIT 8kW</td><td class="big">8 kW</td><td>Split</td></tr>
+        <tr><td>GALMET ARCTIC HP SPLIT 10kW</td><td class="big">10 kW</td><td>Split</td></tr>
+        <tr><td>GALMET ARCTIC HP SPLIT 12kW</td><td class="big">12 kW</td><td>Split</td></tr>
+        <tr><td>GALMET ARCTIC HP SPLIT 14kW</td><td class="big">14 kW</td><td>Split</td></tr>
+        <tr><td>GALMET ARCTIC HP MONOBLOK 18kW</td><td class="big">18 kW</td><td>Monoblok</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Monoblok vs Split</div>
+    <ul class="kv">
+      <li><span class="k">Monoblok</span><span class="v">Całość na zewnątrz. Rury z wodą do budynku. Serwis roczny ~350 zł. Prostsza instalacja.</span></li>
+      <li><span class="k">Split</span><span class="v">Jednostka zewnętrzna + wewnętrzna. Czynnik chłodniczy między nimi. Serwis ~1 000 zł/rok. Wyższa sprawność.</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Jak działa pompa ciepła — cykl termodynamiczny</div>
+    <ul class="kv">
+      <li><span class="k">① Parownik</span><span class="v">Czynnik chłodniczy pochłania ciepło z otoczenia (powietrze/woda/grunt) i paruje przy niskiej temperaturze</span></li>
+      <li><span class="k">② Sprężarka</span><span class="v">Zwiększa ciśnienie i temperaturę czynnika — tu zużywany jest prąd elektryczny</span></li>
+      <li><span class="k">③ Skraplacz</span><span class="v">Czynnik oddaje ciepło do instalacji grzewczej budynku i skrapla się</span></li>
+      <li><span class="k">④ Zawór rozprężny</span><span class="v">Obniża ciśnienie i temperaturę czynnika — wraca do parownika i cykl się powtarza</span></li>
+    </ul>
+    <div class="alert good" style="margin-top:8px">Pompa pobiera DARMOWE ciepło z otoczenia i dostarcza więcej ciepła niż zużywa prądu. To właśnie COP = 3–5.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Typy pomp ciepła — skąd pobierają energię</div>
+    <ul class="kv">
+      <li><span class="k">Powietrze</span><span class="v">Powietrzne pompy ciepła pobierają ciepło z powietrza zewnętrznego. Najpopularniejszy typ — łatwy montaż, wysoka wydajność. <strong>To oferuje Woltanic (GALMET).</strong></span></li>
+      <li><span class="k">Woda</span><span class="v">Pompy woda/woda — wymagają dostępu do studni lub stawu. Działają efektywnie niezależnie od pory roku.</span></li>
+      <li><span class="k">Grunt</span><span class="v">Pompy solankowe (gruntowe) — wymiennik w ziemi, stała temperatura. Droższe w montażu, bardzo stabilne.</span></li>
+      <li><span class="k">Zaleta powietrza</span><span class="v">Prosta instalacja, brak odwiertów, możliwość współpracy z PV — idealne dla większości klientów</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title gold">6 argumentów za GALMET (slajd sprzedażowy)</div>
+    <ul class="kv">
+      <li><span class="k">1. Polski</span><span class="v">Polski producent, polski serwis, polska gwarancja, polski montaż. Wspierasz gospodarkę, masz pewność wsparcia na każdym etapie.</span></li>
+      <li><span class="k">2. Części 48h</span><span class="v">Przesyłka krajowa w 48h — zagranica czeka do 6 tygodni. Czas ma znaczenie, zwłaszcza zimą.</span></li>
+      <li><span class="k">3. Audyt techniczny</span><span class="v">Przeprowadzamy profesjonalny audyt potwierdzający dobór. Masz pewność, że system działa efektywnie.</span></li>
+      <li><span class="k">4. Realna gwarancja</span><span class="v">Gwarancja ma sens gdy ktoś za nią stoi. Galmet honoruje szybko, bez formalności.</span></li>
+      <li><span class="k">5. 44 lata</span><span class="v">Polska firma z 44-letnim doświadczeniem. Największy producent bojlerów i zbiorników w Europie.</span></li>
+      <li><span class="k">6. Kompletny system</span><span class="v">Pompa + zbiornik + bufor od jednego producenta = pełna kompatybilność. Inni oferują „składaki" z 3 różnych firm → błędy i problemy.</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">ZASOBNIK vs BUFOR — różnica (ważne!)</div>
+    <div class="alert info" style="margin-bottom:10px">Klienci często mylą te dwa zbiorniki. Umiej wyjaśnić prosto.</div>
+    <ul class="kv">
+      <li><span class="k">ZASOBNIK (CWU)</span><span class="v">Zbiornik z CIEPŁĄ WODĄ UŻYTKOWĄ — to co leci z kranu i spod prysznica. Magazynuje gotową ciepłą wodę. Zapewnia stały dostęp dla całej rodziny jednocześnie.</span></li>
+      <li><span class="k">BUFOR (CO)</span><span class="v">Zbiornik z wodą na CENTRALNE OGRZEWANIE (grzejniki, podłogówka). Magazynuje nadmiar energii cieplnej z pompy. Zapobiega częstemu start/stop — optymalizuje pompę i wydłuża jej żywotność.</span></li>
+      <li><span class="k">Jak tłumaczyć</span><span class="v">„Zasobnik = to co leci z kranu. Bufor = to co grzeje podłogę."</span></li>
+    </ul>
+    <div class="alert good" style="margin-top:8px">Bufor to inwestycja w oszczędność i niezawodność — mniejszy cykl włącz/wyłącz = dłuższa żywotność całego systemu.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Kluczowe komponenty instalacji</div>
+    <ul class="kv">
+      <li><span class="k">Bufor CO</span><span class="v">Zbiornik wody na centralne ogrzewanie — optymalizuje pracę pompy (unika częstego start/stop)</span></li>
+      <li><span class="k">Zasobnik CWU</span><span class="v">Zbiornik ciepłej wody użytkowej (kran)</span></li>
+      <li><span class="k">Zawór 3-drogowy</span><span class="v">Przełącza przepływ między CO a CWU wg potrzeb</span></li>
+      <li><span class="k">Grzałka 3 kW</span><span class="v">W pompach 6–10 kW (1-fazowa). Szczytowe źródło ciepła lub dogrzewanie CWU.</span></li>
+      <li><span class="k">Grzałka 3-6-9 kW</span><span class="v">W pompach 12–16 kW (3-fazowa, modulowana)</span></li>
+      <li><span class="k">Filtr skośny</span><span class="v">Chroni przepływ przed zanieczyszczeniami ze starej instalacji</span></li>
+      <li><span class="k">Odmulacz magnet.</span><span class="v">Wychwytuje drobiny metalu z grzejników i rur</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--red)">⚡ Ile prądu pobiera? (wzorzec liczenia)</div>
+    <div class="alert info">Średni SCOP = 1:3 → pompa 12 kW zużyje ~4 000 kWh/rok prądu. Przy cenie 0,75 zł/kWh to ~3 000 zł/rok zamiast węgla/gazu.</div>
+    <ul class="kv">
+      <li><span class="k">Pompa 6 kW</span><span class="v">~2 000 kWh/rok prądu</span></li>
+      <li><span class="k">Pompa 10 kW</span><span class="v">~3 300 kWh/rok prądu</span></li>
+      <li><span class="k">Pompa 12 kW</span><span class="v">~4 000 kWh/rok prądu</span></li>
+      <li><span class="k">Pompa 18 kW</span><span class="v">~6 000 kWh/rok prądu</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Obiekcje — pompa ciepła</div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Czy to ogrzeje cały dom?<span class="arrow">▼</span></div>
+      <div class="obj-a">Rozmawiamy o pompach ciepła czy zimna? 😄 Pompa jest dobierana NA PODSTAWIE AUDYTU — to pompa dobrana do domu, nie odwrotnie. Mamy audytora technicznego, który przed montażem weryfikuje dobór. Nasz autorski system doboru to pompa szyta na miarę budynku.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Sąsiad płaci wysokie rachunki za prąd<span class="arrow">▼</span></div>
+      <div class="obj-a">Nie wiemy, kto montował sąsiadowi i jaka moc. My dobieramy pompę na podstawie Państwa rachunków i rocznego zużycia. Możemy sprawdzić, czy sąsiadowi nie zamontowano za dużej pompy lub za małej.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">GALMET jest mało znany z pomp ciepła<span class="arrow">▼</span></div>
+      <div class="obj-a"><strong>Galmet to polska firma z 42-letnim doświadczeniem</strong> w branży grzewczej. Ich pompy są wysoko w rankingach. Mają zintegrowany system (pompa + bojler) — długotrwała efektywność. Polski producent = polska gwarancja i serwis w 48h w każdym województwie.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Czy poradzi sobie w mrozy?<span class="arrow">▼</span></div>
+      <div class="obj-a">Producent gwarantuje działanie do <strong>−25°C</strong>. Kiedy ostatnio mieliśmy takie mrozy? W pompach 12–16 kW jest trójstopniowa grzałka 3-6-9 kW na ekstrema. Startuje od temperatury zasilania 65°C.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Czy nie będzie hałasować?<span class="arrow">▼</span></div>
+      <div class="obj-a">GALMET ma cichy wentylator i nowoczesną izolację akustyczną — jeden z najcichszych w swojej klasie.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Czy muszę wymienić grzejniki?<span class="arrow">▼</span></div>
+      <div class="obj-a"><strong>Nie ma takiej potrzeby.</strong> To pompa jest dobrana do Państwa systemu grzewczego, nie odwrotnie. Audytor potwierdzi to przed montażem.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Czy moja kotłownia się nada?<span class="arrow">▼</span></div>
+      <div class="obj-a">Oczywiście, inaczej nie proponowalibyśmy tego rozwiązania. Bufor i bojler zajmują mniej miejsca niż obecny piec.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Muszę wypalić węgiel?<span class="arrow">▼</span></div>
+      <div class="obj-a">Mamy ~1,5 miesiąca do montażu — spokojnie zdążą Państwo spalić zapasy. Jeśli nie, można je sprzedać i przeznaczyć na wkład własny.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Ile trwa montaż?<span class="arrow">▼</span></div>
+      <div class="obj-a">Do 3 dni — ostatnie 2 to testy i szkolenie. Zwykle gotowe po jednym dniu. Dom nie ma szans się wychłodzić.</div>
+    </div>
+  </div>
+
+  <!-- TECHNIKI ZE SZKOLENIA — POMPA CIEPŁA -->
+  <div class="card" style="border:2px solid var(--blue)">
+    <div class="card-title" style="color:var(--blue)">🎓 Techniki rozmowy — pompa ciepła (notatki szkoleniowe)</div>
+
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">① „Czy pompa dogrzeje? Pompa deptać, a zimna?"<span class="arrow">▼</span></div>
+      <div class="obj-a">
+        <strong>Odpowiedź z humorem:</strong> „Od tego jest! Pompa ciepła czy pompa zimna? 😄"<br><br>
+        Następnie na poważnie: <em>„Jeżeli o pompę chodzi — to jak jest dla dobraka, to może rzeczywiście nie dogrzać. Dlatego my robimy audyt. Dobierana jest do konkretnego budynku, nie na oko."</em><br><br>
+        Kluczowa zasada: <strong>nie podpytywać się ani pozytywnie, ani negatywnie</strong> — zachowaj spokój i profesjonalizm przez cały czas.
+      </div>
+    </div>
+
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">② Klient płacił 3 000 zł/rok za opał — po pompie wyższe rachunki za prąd?<span class="arrow">▼</span></div>
+      <div class="obj-a">
+        <strong>Scenariusz: klient płacił 3 000 zł/rok za węgiel/gaz. Po pompie 8–10 tys. zł za prąd.</strong><br><br>
+        Jak reagować:<br>
+        • Trzeba zwrócić uwagę na <em>oszczędność na opale</em> — nie tylko na koszt prądu<br>
+        • Pompa działa <strong>bezobsługowo</strong> — brak kucia węgla, noszenia, przestawiania<br>
+        • Dla wygody i zdrowia — nawet jeśli prąd kosztuje 1 000 zł więcej, to jest warte tego spokoju<br>
+        • Porównaj <strong>łączny koszt:</strong> opał + czas + praca + zdrowie vs. komfort + brak wysiłku<br><br>
+        <em>„Nawet gdyby prąd kosztował 1 000 zł więcej niż węgiel — za taki spokój i wygodę to uczciwa cena, zgadza się Pan?"</em>
+      </div>
+    </div>
+
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">③ Co się dzieje przy dużych mrozach — poniżej -20°C?<span class="arrow">▼</span></div>
+      <div class="obj-a">
+        <strong>Fakty techniczne GALMET:</strong><br>
+        • Pompa działa do <strong>−30°C</strong> temperatury zewnętrznej<br>
+        • Temperatura zasilania CO: max <strong>50–60–70°C</strong> — „to tym bardziej dogrzeje!"<br>
+        • Wbudowana grzałka szczytowa jako backup na ekstremalne mrozy<br><br>
+        Zasada rozmowy: <strong>nie podpiercać się ani pozytywnie, ani negatywnie</strong> — spokojny, pewny ton. Klient widzi pewność siebie = ufa produktowi.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ FOTOWOLTAIKA ══════════════════════════════════════════ -->
+<div class="section" id="s-pv">
+  <div class="page-title">☀️ Fotowoltaika ML System</div>
+  <div class="page-sub">Polska fabryka · TÜV · Atest niepalności · Oficjalny przedstawiciel</div>
+
+  <div class="stat-grid">
+    <div class="stat-box gold"><div class="sv">22%</div><div class="sl">Sprawność modułów</div></div>
+    <div class="stat-box green"><div class="sv">25 lat</div><div class="sl">Gwarancja na moc (tylko 14-17% spadek)</div></div>
+    <div class="stat-box"><div class="sv">5–7 lat</div><div class="sl">Czas zwrotu inwestycji</div></div>
+    <div class="stat-box"><div class="sv">4</div><div class="sl">Gwarancje producenta (4 różne)</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Zasada doboru (złota reguła)</div>
+    <div class="alert good">Instalacja dobierana w stosunku <strong>1:1 względem rocznego zużycia prądu</strong> (średnia z ostatnich 365 dni). Nie przewartościowana — nadwyżki są odkupowane po zaniżonej stawce + opłata za przesył.</div>
+    <ul class="kv">
+      <li><span class="k">Licznik 1-fazowy</span><span class="v">Max 3,68 kWp instalacji jednofazowej</span></li>
+      <li><span class="k">Licznik 3-fazowy</span><span class="v">Można instalację 1-fazową lub 3-fazową (wyższa moc)</span></li>
+      <li><span class="k">Moc przyłączeniowa</span><span class="v">MUSI być większa niż moc instalacji PV. Info: faktura, umowa z OSD lub infolinia OSD.</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Typy instalacji</div>
+    <ul class="kv">
+      <li><span class="k">On-Grid</span><span class="v">Podłączona do sieci. Bez baterii. Nadwyżki do sieci. Nie działa przy braku sieci.</span></li>
+      <li><span class="k">Off-Grid</span><span class="v">Wyspowa — niezależna. Akumulatory. Droższa, dla miejsc bez sieci.</span></li>
+      <li><span class="k">Hybrydowa</span><span class="v">On-Grid + bateria. Działa przy awarii sieci. Najlepsza opcja z magazynem energii.</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Moc przyłączeniowa a magazyn (ważne!)</div>
+    <div class="alert warn">Moc magazynu = połowa pojemności (5 kWh → 2,5 kW). Jeśli moc magazynu > moc paneli — moc przyłączeniowa musi być większa niż suma obu!</div>
+    <ul class="kv">
+      <li><span class="k">Przykład 1</span><span class="v">Panele 4kW + magazyn 10 kWh (5kW) → przyłącze min. 9 kW</span></li>
+      <li><span class="k">Przykład 2</span><span class="v">Panele 9,9kW + magazyn 5 kWh (2,5kW) → przyłącze min. 12,4 kW</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Optymalizatory mocy — kiedy stosować?</div>
+    <ul class="kv">
+      <li><span class="k">Zacienienie &lt;5%</span><span class="v">Nie wymaga optymalizatora</span></li>
+      <li><span class="k">Zacienienie 5–10%</span><span class="v">WYMAGANY optymalizator</span></li>
+      <li><span class="k">Zacienienie &gt;10%</span><span class="v">Zalecane — nie montuj modułu w tym miejscu</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Na jakich dachach NIE montujemy?</div>
+    <div class="chips">
+      <span class="chip chip-red">Eternit (azbest)</span>
+      <span class="chip chip-red">Stara/wątpliwa konstrukcja</span>
+      <span class="chip chip-red">Szkło</span>
+      <span class="chip chip-red">Strzecha drewniana</span>
+      <span class="chip chip-red">Plastik</span>
+      <span class="chip chip-gold">Północna orientacja</span>
+    </div>
+    <div class="alert info" style="margin-top:10px">Najlepsze kierunki: Południe → Wschód/Zachód. Min. odstęp od połaci: 12 cm (wentylacja i chłodzenie).</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Obiekcje — fotowoltaika</div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Czy na nowych warunkach się opłaca?<span class="arrow">▼</span></div>
+      <div class="obj-a">Na nowych warunkach jest tak samo opłacalna jak na starych. Instalacja dobrana 1:1 do zużycia. Zarabia od pierwszego dnia. Zwrot 5–7 lat, a potem 18–20 lat darmowego prądu.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Czy instalacje się palą?<span class="arrow">▼</span></div>
+      <div class="obj-a">Instalacje ML System mają <strong>atest niepalności</strong>. To instalacja przemysłowa — Tauron używa ML System na farmie PV w Mysłowicach. Prezydent Duda chwalił fabrykę ML System.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Czy wydajność spadnie po latach?<span class="arrow">▼</span></div>
+      <div class="obj-a">W przypadku tanich chińskich — tak. ML System to produkt przemysłowy. Gwarancja producenta potwierdza: <strong>tylko 14–17% spadku przez 25 lat</strong>.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Co jeśli elektrownia nie odbierze prądu?<span class="arrow">▼</span></div>
+      <div class="obj-a">Przy prawidłowym doborze (poniżej mocy przyłączeniowej) nie ma możliwości rozłączenia. Nasze instalacje mają odbiór powykonawczy energetyczny i budowlany — projekt trafia do klienta mailem.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Co jeśli zmienią się przepisy?<span class="arrow">▼</span></div>
+      <div class="obj-a">Po wykonaniu i zgłoszeniu instalacji nowe przepisy nie będą dotyczyć klienta przez 15 lat (przykład: przejście z net-metering na net-billing).</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Nie wiem, jak długo zostanę w tym domu<span class="arrow">▼</span></div>
+      <div class="obj-a">Instalacja PV podwyższa wartość nieruchomości. Nowy właściciel dostaje darmowy prąd — to atut przy sprzedaży. Możliwość podpięcia pompy ciepła (bezobsługowej) zwiększa atrakcyjność.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Nie ufam firmom montującym fotowoltaikę<span class="arrow">▼</span></div>
+      <div class="obj-a">Współpracujemy z <strong>polskim producentem</strong>, polska gwarancja, certyfikaty UE. Jesteśmy oficjalnym i jedynym przedstawicielem ML System. Tauron i Enea stosują te same panele w swoich farmach.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Sąsiedzi mówili, że się nie opłaca<span class="arrow">▼</span></div>
+      <div class="obj-a">Gdyby się nie opłacało, PV nie byłoby na tak wielu dachach w Polsce. Instalacja zaczyna zarabiać pierwszego dnia. Przy regularnych podwyżkach prądu (~10%/rok) zwrot wynosi 5–7 lat.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ KOCIOŁ PELLET ══════════════════════════════════════════ -->
+<div class="section" id="s-pellet">
+  <div class="page-title">🌿 Kocioł na pellet</div>
+  <div class="page-sub">Rakoczy / FEROLI / MOCEK BIOPAL · Stalowa Wola · 50 lat na rynku</div>
+
+  <div class="card">
+    <div class="card-title">Jak działa kocioł na pellet — 4 kroki</div>
+    <ul class="kv">
+      <li><span class="k">① Zasilanie</span><span class="v">Pellet umieszczany w zbiorniku (np. na górze kotła) i automatycznie podawany do komory spalania przez mechanizm podajnika paliwa (ślimak podający). Zbiornik starcza na ok. 2 tygodnie pracy.</span></li>
+      <li><span class="k">② Spalanie</span><span class="v">W komorze spalania pellet poddawany jest działaniu ognia. W wyniku tego procesu uwalniana jest energia w postaci ciepła. Komora wyłożona jest szamotem (ceramiką), co zapewnia wysoką efektywność spalania i minimalną ilość popiołu.</span></li>
+      <li><span class="k">③ Wymiana ciepła</span><span class="v">Ciepło wytworzone przez spalanie pelletu jest przenoszone do wody w obiegu grzewczym za pomocą wymiennika ciepła. Woda krąży przez system grzewczy i może być używana do ogrzewania pomieszczeń, wody użytkowej, czy nawet do podgrzewania wody w basenie.</span></li>
+      <li><span class="k">④ Usuwanie popiołu</span><span class="v">Popiół, który pozostaje po spalaniu pelletu, zbierany jest w specjalnej komorze popiołowej i można go regularnie usuwać — raz na 2 miesiące. Z 1 tony pelletu → tylko 2–3 kg popiołu! Popiół można stosować jako nawóz.</span></li>
+    </ul>
+    <div class="alert good">Certyfikat wymagany: <strong>klasa A1 lub A2</strong> — tylko taki pellet zapewnia wysoką sprawność i uprawnia do dotacji!</div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box gold"><div class="sv">8 lat</div><div class="sl">Gwarancja (najdłuższa na rynku)</div></div>
+    <div class="stat-box green"><div class="sv">30 lat</div><div class="sl">Przewidywana żywotność kotła</div></div>
+    <div class="stat-box"><div class="sv">48h</div><div class="sl">Serwis w każdym województwie</div></div>
+    <div class="stat-box"><div class="sv">2–3 tony</div><div class="sl">Roczne zużycie pelletu</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Modele Woltanic</div>
+    <table class="dot-table">
+      <thead><tr><th>Model</th><th>Moc</th></tr></thead>
+      <tbody>
+        <tr><td>FEROLI DOMICOMPACT B 12kW</td><td class="big">12 kW</td></tr>
+        <tr><td>FEROLI DOMICOMPACT B 15kW</td><td class="big">15 kW</td></tr>
+        <tr><td>FEROLI DOMICOMPACT B 20kW</td><td class="big">20 kW</td></tr>
+        <tr><td>MOCEK BIOPAL 25kW</td><td class="big">25 kW</td></tr>
+        <tr><td>MOCEK BIOPAL 30kW</td><td class="big">30 kW</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">6 zalet kotła na pellet — argumenty sprzedażowe</div>
+    <ul class="kv">
+      <li><span class="k">🌿 Ekologiczne</span><span class="v">Pellet to odnawialne źródło energii o niskiej emisji spalin. Spełnia normy środowiskowe, brak kar za smogg. OZE = kwalifikuje się do dotacji CP.</span></li>
+      <li><span class="k">💰 Ekonomiczne</span><span class="v">Wysoka sprawność kotła (90–95%) i relatywnie niski koszt pelletu pozwalają na oszczędności. Koszt ogrzewania do 30–50% niższy niż gaz czy olej.</span></li>
+      <li><span class="k">🤖 Automatyczna praca</span><span class="v">Automatyczny podajnik, zapłon i sterowanie zapewniają wygodę i komfort użytkowania. Obsługa przez telefon. Zero ręcznego dokładania.</span></li>
+      <li><span class="k">📊 Wysoka sprawność</span><span class="v">Nowoczesne kotły na pellet osiągają sprawność nawet powyżej 90% — znacznie wyżej niż piece tradycyjne (drewno: 60–70%).</span></li>
+      <li><span class="k">🏗 Uniwersalne</span><span class="v">Może służyć do ogrzewania pomieszczeń, podgrzewania wody użytkowej, a także współpracować z instalacją basenową. Dom, hala, obiekt użyteczności publicznej.</span></li>
+      <li><span class="k">✨ Czystość i porządek</span><span class="v">Zamknięty system podawania paliwa i niewielka ilość popiołu zapewniają czystość w kotłowni. Brak kurzu węglowego, brak zapasu drewna zajmującego plac.</span></li>
+    </ul>
+    <div class="alert info">Stosowanie: domy jednorodzinne, budynki wielorodzinne, obiekty użyteczności publicznej (szkoły, urzędy, hale sportowe), baseny (podgrzewanie wody), woda użytkowa do całego gospodarstwa.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Obsługa użytkownika (ZERO skomplikowania)</div>
+    <div class="alert good">Obsługa prostsza niż korzystanie ze smartfona!</div>
+    <ul class="kv">
+      <li><span class="k">Co dwa tygodnie</span><span class="v">Dosypanie pelletu do zasobnika</span></li>
+      <li><span class="k">Co dwa miesiące</span><span class="v">Usunięcie popiołu (z 1 tony pelletu → tylko 2–3 kg popiołu!)</span></li>
+      <li><span class="k">Co 2 lata</span><span class="v">Serwis ~400 zł (wymagany do utrzymania 8-letniej gwarancji)</span></li>
+      <li><span class="k">Sterowanie</span><span class="v">Przez telefon + prosty sterownik w piecu</span></li>
+    </ul>
+    <div class="alert info" style="margin-top:10px">Kocioł jest SAMOCZYSZCZĄCY — "jednoręki bandyta". Komora wyłożona szamotem → minimalny popiół. Popiół z pelletu można stosować jako nawóz.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Bezpieczeństwo kotła Firemax</div>
+    <ul class="kv">
+      <li><span class="k">Podajnik wew.</span><span class="v">Zapobiega zatrzymaniu paliwa w rurze zsypowej → chroni przed cofnięciem płomienia do zbiornika</span></li>
+      <li><span class="k">Czujnik temp.</span><span class="v">W palniku — zapobiega cofnięciu płomienia i przegrzaniu palnika</span></li>
+      <li><span class="k">Topliwa rura</span><span class="v">Elastyczna, między palnikiem a zasobnikiem — zapobiega cofnięciu się żaru</span></li>
+      <li><span class="k">Wyrównanie ciśn.</span><span class="v">Uniemożliwia przepływ spalin z palnika do zasobnika paliwa</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Wymagania kotłowni</div>
+    <ul class="kv">
+      <li><span class="k">Pomieszczenie</span><span class="v">Wydzielona kotłownia, podłoga niepalna, wpust kanalizacyjny</span></li>
+      <li><span class="k">Wentylacja</span><span class="v">Grawitacyjna, otwór nawiewny min. 200 cm². Bez przepustnic w kanale nawiewnym.</span></li>
+      <li><span class="k">Komin</span><span class="v">Kanał wywiewny min. 14×14 cm, materiał niepalny, wyprowadzony ponad dach</span></li>
+      <li><span class="k">Pellet</span><span class="v">Klasa A1 lub A2! Suche i przewiewne miejsce przechowywania.</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pellet vs tradycyjny piec na drewno</div>
+    <table class="dot-table">
+      <thead><tr><th></th><th>Kocioł na pellet</th><th>Piec na drewno</th></tr></thead>
+      <tbody>
+        <tr><td>Sprawność</td><td class="big" style="color:var(--green)">90–95%</td><td style="color:var(--red)">60–70%</td></tr>
+        <tr><td>Emisja pyłów/dymu</td><td style="color:var(--green)">znacznie mniej</td><td style="color:var(--red)">wysoka</td></tr>
+        <tr><td>Automatyzacja</td><td style="color:var(--green)">automatyczny podajnik + czujniki</td><td style="color:var(--red)">ręczne dokładanie drewna</td></tr>
+        <tr><td>Obsługa</td><td style="color:var(--green)">mały popiół, czysta i łatwa</td><td style="color:var(--red)">dużo popiołu, ciągłe pilnowanie</td></tr>
+        <tr><td>Dotacja CP</td><td class="big" style="color:var(--green)">do 41 000 zł</td><td style="color:var(--red)">brak dotacji</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">5 wymagań instalacji pieca na pellet (FERROLI/MOCEK)</div>
+    <ul class="kv">
+      <li><span class="k">① Miejsce</span><span class="v">Stabilne, niepalne podłoże. Min. odległości od ścian zgodne z instrukcją. Przestrzeń serwisowa wokół urządzenia.</span></li>
+      <li><span class="k">② Wentylacja</span><span class="v">Stały dopływ świeżego powietrza do spalania. Grawitacyjna lub mechaniczna — zaprojektowana wg przepisów producenta.</span></li>
+      <li><span class="k">③ Komin</span><span class="v">Sprawny komin o odpowiedniej średnicy i ciągu lub system koncentryczny. Szczelny, odporny na wysoką temp. Regularne czyszczenie obowiązkowe.</span></li>
+      <li><span class="k">④ Przyłącze elektr.</span><span class="v">Osobne gniazdo z uziemieniem, 230V / 50Hz. Moc zgodna z wymaganiami producenta (zasilanie automatyki, podajnika, wentylatora, zapłonu).</span></li>
+      <li><span class="k">⑤ Zalecenia</span><span class="v">Stosuj pellet klasy A1 lub A2. Regularny serwis co 2 lata. Przestrzegaj instrukcji producenta.</span></li>
+    </ul>
+    <div class="alert good" style="margin-top:8px">Prawidłowa instalacja = bezpieczeństwo + wysoka efektywność + niższe koszty + długa bezawaryjna praca.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Obiekcje — kocioł pellet</div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Co jeśli pellet podrożeje?<span class="arrow">▼</span></div>
+      <div class="obj-a">Jeśli pellet podrożeje, wzrosną też ceny gazu i prądu. Pellet to OZE — jeden z najtańszych sposobów ogrzewania. Nasz piec jest hybrydowy — można palić też drewnem. Polska to <strong>2. największy producent pelletu na świecie</strong>. Możliwość zakupu własnej pelleciarki za ~3 000 zł (dla tych z dostępem do drewna).</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Czy pellet ogrzeje dom?<span class="arrow">▼</span></div>
+      <div class="obj-a">Pellet to paliwo wysokotemperaturowe. Stosujemy trzyetapową weryfikację doboru: (1) technik ocenia podczas spotkania z aplikacją, (2) audytor z uprawnieniami potwierdza, (3) biuro weryfikuje finalnie. NFOŚiGW nie przyznałby dotacji na nieefektywne rozwiązania. Nasz kocioł jest na <strong>Liście ZUM</strong> (urządzenia o podwyższonej efektywności).</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Co to za firma Rakoczy?<span class="arrow">▼</span></div>
+      <div class="obj-a">Polska firma z <strong>50-letnimi tradycjami</strong>, lider produkcji pieców na pellet. Produkcja w Stalowej Woli. Najdłuższa gwarancja na rynku — 8 lat. Kotły wyłożone ceramiką. Serwis do 48h w każdym województwie. Sprzedaż w innych krajach Europy.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Czy obsługa jest skomplikowana?<span class="arrow">▼</span></div>
+      <div class="obj-a">Nie! W pełni zautomatyzowany. Pellet raz na 2 tygodnie, popiół raz na 2 miesiące. Sterowanie przez telefon. Przeszkolimy Państwa.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Czy nie lepiej kupić gaz?<span class="arrow">▼</span></div>
+      <div class="obj-a">Gaz? Oczywiście — ale tylko do auta, nie do ogrzewania! 😄 Gaz jest <strong>najdroższym</strong> źródłem ogrzewania. NFOŚiGW nie daje dotacji na gaz. Nowe przyłącza gazowe nie są realizowane. <strong>Do 2030 roku gaz ma zostać wycofany jako źródło ogrzewania.</strong></div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Gdzie przechowywać pellet?<span class="arrow">▼</span></div>
+      <div class="obj-a">A gdzie teraz trzymają Państwo węgiel lub drewno? Pellet zajmuje <strong>10 razy mniej miejsca</strong> niż węgiel czy drewno. Worki można przechowywać nawet na zewnątrz (przykryte). Jedna paleta lub worki — Państwa wybór.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Jak długo wytrzyma piec?<span class="arrow">▼</span></div>
+      <div class="obj-a">Spokojnie <strong>30 lat</strong>. 8-letnia gwarancja. Przy pellecie klasy A1 i odpowiedniej konserwacji — minimum 30 lat. Można wymieniać pojedyncze części eksploatacyjne objęte gwarancją.</div>
+    </div>
+  </div>
+
+  <!-- BIOPAL + TECHNIKI SZKOLENIOWE -->
+  <div class="card" style="border:2px solid var(--green)">
+    <div class="card-title" style="color:var(--green)">🎓 BIOPAL — przewaga techniczna + techniki rozmowy (notatki szkoleniowe)</div>
+    <ul class="kv" style="margin-bottom:12px">
+      <li><span class="k">Gwarancja</span><span class="v">BIOPAL daje <strong>5 lat gwarancji</strong>. Reszta producentów zazwyczaj 3 lata. Rakoczy/FEROLI — 8 lat (najdłuższa na rynku).</span></li>
+      <li><span class="k">Blacha</span><span class="v">Palenisko z blachy <strong>6 mm</strong> — inne piece mają cieńszą. Kluczowe dla trwałości i żywotności ponad 30 lat.</span></li>
+      <li><span class="k">Podwójne spalanie</span><span class="v">Dopalanie spalin = wyższa sprawność + mniej pyłów + pełne spełnienie norm 5 klasy i Ekoprojektu.</span></li>
+      <li><span class="k">Monitoring / App</span><span class="v">Bezpieczeństwo, aplikacja mobilna, nadzór w czasie rzeczywistym. Powiadomienia o błędach.</span></li>
+      <li><span class="k">Filozofia</span><span class="v"><em>„Chcę pomóc, nie wciskać. Chcę Pana spokoju na lata."</em> — postawa doradcy, nie sprzedawcy.</span></li>
+    </ul>
+
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">① Co jeśli pelletu nie będzie albo będzie za drogi?<span class="arrow">▼</span></div>
+      <div class="obj-a">
+        Pellet jest <strong>robiony z odnawialnych źródeł</strong> — trociny, zrębki, odpady leśne. Nie zabraknie, bo surowca jest pod dostatkiem.<br><br>
+        Dlatego oferujemy <strong>2-funkcyjny kocioł</strong> — na pellet i na drewno kawałkowe. Na wszelki wypadek.<br><br>
+        <em>„Nawet gdyby pellet podrożał o 50% — i tak wyjdzie taniej niż gaz czy olej opałowy."</em>
+      </div>
+    </div>
+
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">② Kocioł pellet jest drogi — porównanie z gazem i olejem<span class="arrow">▼</span></div>
+      <div class="obj-a">
+        <strong>Piec sam w sobie NIE jest drogi</strong> — drogi jest montaż i infrastruktura u konkurencji:<br><br>
+        • <strong>Gaz:</strong> tyle samo za urządzenie, ALE montaż z butlą = <strong>50 000 zł</strong> albo dzierżawa butli (tylko 1 dostawca, uzależnienie, brak negocjacji ceny)<br>
+        • <strong>Olej opałowy:</strong> przeszedł do lamusa. Zbiorniki + koszt zatankowania = <strong>15 000–70 000 zł</strong><br>
+        • <strong>Mit większego zużycia niż węgiel:</strong> tradycyjny kocioł węglowy = 80% sprawności. Nasz pellet = <strong>90–95% sprawności</strong> → mniejsze zużycie, więcej ciepła z kg paliwa<br><br>
+        Podsumowanie: „Piec jest najtańszą opcją w zestawieniu z jakimkolwiek alternatywnym paliwem."
+      </div>
+    </div>
+
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">③ „Zapychający się podajnik" — słyszałem że tak jest<span class="arrow">▼</span></div>
+      <div class="obj-a">
+        <strong>Przyczyna:</strong> mokry lub złej jakości pellet. Suchy pellet klasy A1 w ogóle nie generuje takich problemów.<br><br>
+        Nasz piec ma <strong>cięcie podawania</strong> (system anti-jam) — automatycznie wykrywa zastój i go eliminuje.<br><br>
+        Zasada: <em>pellet A1 lub A2 + dobrej jakości = zero problemów z podajnikiem przez dekady.</em><br>
+        Polecamy sprawdzonych dostawców pelletu — możemy rekomendować lokalnych.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MAGAZYN ENERGII ════════════════════════════════════════ -->
+<div class="section" id="s-magazyn">
+  <div class="page-title">🔋 Magazyn energii</div>
+  <div class="page-sub">SOFAR · LiFePO4 (niepalny) · 10 lat gwarancji · Modułowy</div>
+
+  <div class="stat-grid">
+    <div class="stat-box gold"><div class="sv">6 000</div><div class="sl">Cykli ładowania (1 cykl = 1 dzień)</div></div>
+    <div class="stat-box green"><div class="sv">16,5 roku</div><div class="sl">Efektywna praca urządzenia</div></div>
+    <div class="stat-box"><div class="sv">10 lat</div><div class="sl">Gwarancja producenta (SOFAR)</div></div>
+    <div class="stat-box"><div class="sv">0 zł</div><div class="sl">Koszt serwisu w okresie gwarancji</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Jak magazyn energii wspiera OZE — cykl dobowy</div>
+    <ul class="kv">
+      <li><span class="k">☀️ Wysoka produkcja (dzień)</span><span class="v">Instalacja PV produkuje więcej energii niż jest aktualnie potrzebna → nadwyżka jest magazynowana zamiast oddawana do sieci.</span></li>
+      <li><span class="k">🔋 Magazynowanie</span><span class="v">Nadwyżka energii jest ładowana do magazynu (ogniwa LiFePO₄). Magazyn nie traci nic w procesie — efektywność ładowania/rozładowania ~95%.</span></li>
+      <li><span class="k">🌙 Niska produkcja (noc/pochmurno)</span><span class="v">Produkcja z PV jest niska lub zerowa → zgromadzona energia jest uwalniana z magazynu i zasila dom oraz urządzenia.</span></li>
+      <li><span class="k">⚡ Wykorzystanie energii</span><span class="v">Zmagazynowana energia zastępuje drogi prąd z sieci (szczytowe taryfy wieczorem). Wyniki: brak rachunków nocnych, pełna niezależność 24/7.</span></li>
+    </ul>
+    <div class="alert good"><strong>Rezultat: stabilne dostarczanie energii 24/7, niezależnie od pogody.</strong> Większa niezależność energetyczna i efektywne wykorzystanie energii z OZE.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Z magazynem vs bez magazynu</div>
+    <table class="dot-table">
+      <thead><tr><th></th><th style="color:var(--green)">✅ Z magazynem</th><th style="color:var(--red)">❌ Bez magazynu</th></tr></thead>
+      <tbody>
+        <tr><td>Nadwyżka PV</td><td style="color:var(--green)">Magazynowana i używana w nocy</td><td style="color:var(--red)">Oddawana do sieci za 0,50 zł/kWh</td></tr>
+        <tr><td>Wieczór/noc</td><td style="color:var(--green)">Zasilanie z magazynu (0 zł)</td><td style="color:var(--red)">Kupowany z sieci (drogo, szczyt)</td></tr>
+        <tr><td>Niezależność</td><td style="color:var(--green)">Wysoka, ~80–90% autokonsumpcji</td><td style="color:var(--red)">Niska, ~30–40% autokonsumpcji</td></tr>
+        <tr><td>Przerwy w dostawie</td><td style="color:var(--green)">Podtrzymanie przez baterię</td><td style="color:var(--red)">Całkowity brak prądu</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Korzyści ekonomiczne i środowiskowe</div>
+    <ul class="kv">
+      <li><span class="k">💰 Mniejsze koszty</span><span class="v">Zmniejszenie kosztów energii przez unikanie szczytowych taryf. Kupujesz z sieci tylko gdy absolutnie konieczne.</span></li>
+      <li><span class="k">📈 Lepsza efektywność PV</span><span class="v">Poprawa efektywności energetycznej — lepsze wykorzystanie wyprodukowanej energii. Bez magazynu marnujesz ~60–70% produkcji (oddajesz do sieci po złej cenie).</span></li>
+      <li><span class="k">🏠 Niezależność</span><span class="v">Mniejsza zależność od zewnętrznych dostawców energii i zmiennych cen prądu. Twoje zapasy energii = Twoje bezpieczeństwo.</span></li>
+      <li><span class="k">🌱 Mniej CO₂</span><span class="v">Redukcja emisji gazów cieplarnianych przez większe wykorzystanie czystej energii z OZE.</span></li>
+      <li><span class="k">🛢 Mniej paliw kopalnych</span><span class="v">Mniej energii z węgla, gazu i ropy — setki tysięcy ton CO₂ mniej rocznie w skali kraju.</span></li>
+      <li><span class="k">🌍 Przyszłe pokolenia</span><span class="v">Odpowiedzialne zarządzanie zasobami energii dla przyszłych pokoleń. Ograniczenie eksploatacji zasobów naturalnych i zanieczyszczeń.</span></li>
+    </ul>
+    <div class="alert good">Magazyny energii to klucz do czystej, stabilnej i taniej energii przyszłości. Każdy magazyn to ok. 3–5 ton CO₂ mniej rocznie.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Technologia LiFePO4</div>
+    <div class="alert good">Ogniwa litowo-żelazowe (LiFePO₄) — atestowane jako NIEPALNE, dopuszczone do użytku domowego. Najwyższy standard bezpieczeństwa. Atest niepalności = brak wyłączeń ubezpieczenia.</div>
+    <ul class="kv">
+      <li><span class="k">BMS</span><span class="v">Battery Management System — zabezpieczenia temperaturowe, zwarciowe, napięciowe</span></li>
+      <li><span class="k">Modułowość</span><span class="v">Każdy moduł można wymienić lub rozbudować oddzielnie</span></li>
+      <li><span class="k">Lokalizacja</span><span class="v">Wewnątrz budynku — nie martwisz się o mrozy</span></li>
+      <li><span class="k">Montaż</span><span class="v">Kilka godzin, bez przeróbek, pod falownikiem (małe gabaryty)</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Zwrot z inwestycji (przykład)</div>
+    <div class="alert info">Klient płacił 600 zł/mies. za prąd → po magazynie spłaca raty. Roczna oszczędność: 6 000–7 200 zł. Po dotacji magazyn to 24 000–30 000 zł. <strong>Zwrot: 4–5 lat. Potem 11–12 lat praktycznie za darmo.</strong></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Dobór pojemności magazynu</div>
+    <ul class="kv">
+      <li><span class="k">Mała rodzina + małe PV</span><span class="v">10–15 kWh</span></li>
+      <li><span class="k">Standardowy dom + PV</span><span class="v">15–20 kWh</span></li>
+      <li><span class="k">Duży dom / biznes</span><span class="v">20+ kWh (system modułowy)</span></li>
+      <li><span class="k">Reguła prosta</span><span class="v">~1,2× moc zainstalowanego PV (kWp → kWh)</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Obiekcje — magazyn energii</div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Ile lat to wytrzyma?<span class="arrow">▼</span></div>
+      <div class="obj-a">6 000 cykli ładowania, jeden cykl = jeden dzień = <strong>16,5 roku pracy</strong>. Gwarancja 10 lat. Nowoczesne ogniwa LiFePO₄ nie degradują się.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Kiedy się zwróci?<span class="arrow">▼</span></div>
+      <div class="obj-a">Zwrot od pierwszego dnia używania. Przy rachunku 600 zł/mies. oszczędność ~7 200 zł/rok. Po dotacji koszt 24–30 tys. → zwrot w 4–5 lat. Przez następne 11–12 lat prąd za darmo. Gwarancja 10 lat.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Magazyny się palą?<span class="arrow">▼</span></div>
+      <div class="obj-a">Technologia ogniw LiFePO₄ — <strong>atestowane jako niepalne</strong>, dopuszczone do użytku domowego. Najwyższy standard. SOFAR ma atest UE. Ubezpieczyciele nie robią wyłączeń.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Jakie koszty serwisu?<span class="arrow">▼</span></div>
+      <div class="obj-a">Magazyn nie wymaga żadnych przeglądów ani konserwacji. 10-letnia gwarancja producenta = zero dodatkowych kosztów.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Co jeśli się zepsuje po gwarancji?<span class="arrow">▼</span></div>
+      <div class="obj-a">SOFAR to globalny producent z oficjalnym przedstawicielstwem w Polsce. Serwis i wymiana komponentów przez producenta.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════ MONTAŻ I TECHNIKALIA ══════════════════════════════════ -->
+<div class="section" id="s-montaz">
+  <div class="page-title">🔧 Montaż i technikalia</div>
+  <div class="page-sub">Audyt · Weryfikacja · Formalności · Ważne parametry</div>
+
+  <div class="card">
+    <div class="card-title">Proces sprzedaży — kroki</div>
+    <ul class="kv">
+      <li><span class="k">1. Wizyta handlowa</span><span class="v">Formularz doboru, zainteresowania klienta, wstępna kalkulacja</span></li>
+      <li><span class="k">2. Audyt techniczny</span><span class="v">Audytor z uprawnieniami weryfikuje dobór i kotłownię. Potwierdza zgodność z CP.</span></li>
+      <li><span class="k">3. Wniosek CP</span><span class="v">Składany przed lub po montażu. Wymaga KW + zaświadczenie dochodowe.</span></li>
+      <li><span class="k">4. Montaż</span><span class="v">Pompa ciepła: 1–3 dni. Kocioł pellet: 2 dni. PV: 1 dzień. Magazyn: kilka godzin.</span></li>
+      <li><span class="k">5. Odbiory</span><span class="v">Energetyczny + budowlany. Projekt do klienta mailem.</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Dobór mocy grzewczej (EN 12831 uproszczona)</div>
+    <table class="dot-table">
+      <thead><tr><th>Ocieplenie</th><th>W/m²</th><th>Charakterystyka</th></tr></thead>
+      <tbody>
+        <tr><td>Brak</td><td class="big">160</td><td>Stary dom, bez żadnego ocieplenia</td></tr>
+        <tr><td>Słabe</td><td class="big">125</td><td>Styropian &lt;5 cm</td></tr>
+        <tr><td>Średnie</td><td class="big">90</td><td>Styropian 5–10 cm</td></tr>
+        <tr><td>Dobre</td><td class="big">60</td><td>Styropian 12–15 cm</td></tr>
+        <tr><td>Bardzo dobre</td><td class="big">38</td><td>15 cm+ / energooszczędny</td></tr>
+      </tbody>
+    </table>
+    <div class="alert info" style="margin-top:8px">Korekty: rok budowy (&lt;1960: ×1.15, &lt;1975: ×1.08, &lt;1990: ×1.02, &lt;2005: ×0.97, &lt;2015: ×0.92, nowszy: ×0.87) · Kondygnacje (1 piętro: ×1.08, 3 piętra: ×0.94) · Strefa zimna (Olecko/Suwałki/Ełk: ×1.07)</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">VAT — ważne!</div>
+    <ul class="kv">
+      <li><span class="k">Dom prywatny</span><span class="v"><strong>8% VAT</strong> — właściciel nie prowadzi działalności w budynku</span></li>
+      <li><span class="k">Firma/działalność</span><span class="v"><strong>23% VAT</strong> — działalność gospodarcza w budynku lub budynek niemieszkalni</span></li>
+      <li><span class="k">Pytanie do klienta</span><span class="v">Czy prowadzi Pan/i działalność pod tym adresem lub jest NIP budynku w CEIDG?</span></li>
+    </ul>
+    <div class="alert warn">Różnica VAT to nawet 15% wartości instalacji! Zawsze ustal przed wyceną.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Autokonsumpcja — jak tłumaczyć klientowi</div>
+    <ul class="kv">
+      <li><span class="k">Bez magazynu</span><span class="v">Nadwyżka idzie do sieci → odbierasz z potrąceniem wartości (mniej korzystne)</span></li>
+      <li><span class="k">Z magazynem</span><span class="v">Zużywasz własny prąd → mniej kupujesz z sieci → większa niezależność</span></li>
+      <li><span class="k">Z pompą ciepła</span><span class="v">Pompa zużywa prąd w ciągu dnia gdy panele produkują → naturalna autokonsumpcja</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">HybBox — praca bez sieci</div>
+    <ul class="kv">
+      <li><span class="k">Co to jest</span><span class="v">Urządzenie umożliwiające pracę instalacji PV przy braku napięcia w sieci</span></li>
+      <li><span class="k">Zastosowanie</span><span class="v">Klient pyta „co jeśli wyłączą prąd?" → z HybBox instalacja działa mimo awarii sieci</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════ SPRZEDAŻ ══════════════════════════════════════════════ -->
+<div class="section" id="s-sprzedaz">
+  <div class="page-title">💬 Argumenty sprzedażowe</div>
+  <div class="page-sub">Kluczowe przekazy · Obiekcje finansowe · Jak mówić o zwrocie</div>
+
+  <div class="card" style="border:2px solid var(--gold)">
+    <div class="card-title gold">⭐ GŁÓWNY ARGUMENT — Zamiana rachunku na ratę</div>
+    <div class="alert good" style="margin-bottom:12px;font-size:13px;line-height:1.7">
+      <strong>„Nie sprzedajemy Panu/Pani nowego wydatku. Zamieniamy miesięczny rachunek za prąd — który co roku rośnie o 10% — na stałą ratę za własny sprzęt."</strong>
+    </div>
+    <ul class="kv">
+      <li><span class="k">Problem klienta</span><span class="v">Co miesiąc płaci zakładowi energetycznemu. Ta kwota rośnie co roku ~10%.</span></li>
+      <li><span class="k">Opłata OZE na fakturze</span><span class="v">Dziś to ok. <strong>3–5 zł/mies.</strong> — ale to opłata rządowa, która rośnie co roku decyzją UE. Rok 2022: 0 zł, rok 2024: 3 zł, rok 2026: ? Nikt nie wie kiedy skoczy do 30–100 zł. Klient płaci za cudzą turbinę wiatrową — a gdyby płacił za swoją PV?</span></li>
+      <li><span class="k">Co proponujemy</span><span class="v">Zamieniamy ten miesięczny rachunek na ratę za sprzęt. Ta rata jest STAŁA — nie wzrośnie. Prąd będzie drożał, rata nie.</span></li>
+      <li><span class="k">Efekt</span><span class="v">Klient przestaje płacić komuś innemu i zaczyna inwestować we własną produkcję prądu + niezależność energetyczną.</span></li>
+    </ul>
+    <div class="alert info" style="margin-top:10px">
+      <strong>Jak powiedzieć:</strong> „Widzi Pan tę pozycję na fakturze — 'opłata OZE'? Dziś to może 3 zł. Ale ta opłata jest rządowa i rośnie co roku — bo Polska buduje farmy wiatrowe i słoneczne, a my wszyscy za to płacimy. Za kilka lat może być 50–100 zł — nikt tego nie kontroluje. My zamieniamy Pana rachunek 400 zł/mies. na ratę 380 zł/mies. — tylko że ta rata za 5 lat będzie nadal 380 zł, a rachunek będzie 650 zł."
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Wzrost cen prądu — argument liczbowy</div>
+    <table class="dot-table">
+      <thead><tr><th>Rok</th><th>Rachunek (wzrost 10%/rok)</th><th>Opłata OZE (szacunkowo)</th></tr></thead>
+      <tbody>
+        <tr><td>Teraz</td><td class="big">400 zł/mies.</td><td>~3–5 zł (ale rośnie!)</td></tr>
+        <tr><td>Za 2 lata</td><td class="big">484 zł/mies.</td><td>nieznana — zależy od rządu</td></tr>
+        <tr><td>Za 5 lat</td><td class="big">644 zł/mies.</td><td>rosnąca</td></tr>
+        <tr><td>Za 10 lat</td><td class="big">1 037 zł/mies.</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <div class="alert warn" style="margin-top:8px">Rata kredytowa za instalację OZE przez 10 lat: stała. Rachunek za prąd przez 10 lat: +160% wzrostu.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Schemat rozmowy — kiedy co powiedzieć</div>
+    <ul class="kv">
+      <li><span class="k">Klient mówi o kosztach</span><span class="v">„Rozumiem. Ile teraz miesięcznie Pan/Pani płaci za prąd + ogrzewanie? Bo właśnie o tym chcę porozmawiać."</span></li>
+      <li><span class="k">Klient pyta o zwrot</span><span class="v">„Niezależnie czy płaci Pan gotówką czy ratalnie — instalacja zaczyna zwracać się <strong>pierwszego dnia po uruchomieniu</strong>. Dlaczego? Bo od dziś Pan produkuje prąd który wcześniej kupował. Płacił Pan za prąd 400 zł/mies. — od jutra część tego idzie do Pana kieszeni, nie do zakładu. Zwrot inwestycji to 5–7 lat, a potem 18–20 lat Pan zarabia. Ale ważniejsze pytanie: <em>ile Pan straci</em> jeśli poczeka rok? Odpowiedź: 12 × 400 zł = 4 800 zł oddane zakładowi + prąd w tym czasie zdroży o ~10% = w rok Pan traci prawie 5 000 zł możliwości."</span></li>
+      <li><span class="k">Klient pyta o ratę</span><span class="v">„Rata wyniesie mniej więcej tyle, ile teraz płaci Pan za ogrzewanie + prąd łącznie. Tylko że ta rata za 5 lat będzie <strong>taka sama</strong>, a Pana rachunek bez instalacji będzie 2× wyższy. To nie jest wydatek — to zamiana rosnącego rachunku na stałą ratę za własny sprzęt."</span></li>
+      <li><span class="k">„Muszę się zastanowić"</span><span class="v">„Oczywiście — to poważna decyzja i rozumiem. Chcę tylko powiedzieć szczerze: każdy miesiąc zwłoki to ok. 400 zł rachunku oddanego zakładowi energetycznemu zamiast zainwestowanego we własny sprzęt. Z przyjemnością przyjadę jeszcze raz — ale chcę być z Panem szczery: dotacje kończą się czasem w ciągu kilku dni od ogłoszenia, bo inni klienci też to liczą. Poza tym ekipa montażowa teraz ma okno, a za dwa miesiące mogę mieć dłuższy termin. Kiedy możemy umówić się na audyt techniczny? On nic nie kosztuje i da nam konkretne liczby dla Pana domu."</span></li>
+      <li><span class="k">„To drogie"</span><span class="v">„Drogie w porównaniu do czego? Do płacenia 1 000 zł/mies. za prąd za 8 lat bez instalacji? Policzmy razem koszt <em>braku</em> decyzji — to jest rzeczywisty koszt który Pan ponosi każdego miesiąca."</span></li>
+      <li><span class="k">„Przyjadę za tydzień"</span><span class="v">„Z przyjemnością. Tylko informuję: dostępność dotacji i termin ekipy może się zmienić. Czy możemy dziś wstępnie zarezerwować datę audytu — nie wiąże Pana, tylko trzyma miejsce w kalendarzu?"</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Kolejność argumentów (typowa rozmowa)</div>
+    <ol style="padding-left:18px;font-size:13px;line-height:2">
+      <li>Zbadaj zainteresowania i obecne koszty</li>
+      <li>Pokaż formularz doboru — oblicz moc i dobierz zestaw</li>
+      <li>Pokaż dostępne dotacje (Czyste Powietrze — konkretna kwota)</li>
+      <li>Policz ratę po dotacji vs obecny rachunek</li>
+      <li>Argument „zamiana rachunku na ratę" — tu wybuch zainteresowania</li>
+      <li>Argument „opłata OZE rośnie" — czas nagli</li>
+      <li>Umów audyt techniczny — konkretna data</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Porównanie kosztów — Pompa ciepła vs Kocioł gazowy</div>
+    <table class="dot-table">
+      <thead><tr><th></th><th>Pompa ciepła</th><th>Kocioł gazowy</th></tr></thead>
+      <tbody>
+        <tr><td>Koszt ogrzewania (rocznie)</td><td class="big" style="color:var(--green)">niższy o 30–60%</td><td>wyższy</td></tr>
+        <tr><td>Emisja CO₂ (rocznie)</td><td class="big" style="color:var(--green)">nawet 70% mniej</td><td>wysoka</td></tr>
+        <tr><td>Źródło energii</td><td>odnawialne (powietrze/woda/grunt)</td><td>paliwa kopalne</td></tr>
+        <tr><td>Efektywność</td><td class="big" style="color:var(--green)">COP 4–5</td><td>sprawność 85–95%</td></tr>
+        <tr><td>Dotacje CP</td><td class="big" style="color:var(--green)">do 55 700 zł</td><td>brak dotacji</td></tr>
+        <tr><td>Nowe przyłącza gaz</td><td>—</td><td class="big" style="color:var(--red)">nie są realizowane</td></tr>
+        <tr><td>Perspektywa 2030</td><td>preferowane przez UE</td><td class="big" style="color:var(--red)">wycofywane</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Dlaczego WOLTANIC — przekazy dla klienta</div>
+    <ul class="kv">
+      <li><span class="k">ML System PV</span><span class="v">Polski producent. Tauron buduje farmy na ML System. Atest niepalności. TÜV. 4 gwarancje.</span></li>
+      <li><span class="k">GALMET</span><span class="v">44 lata na rynku. Największy producent bojlerów w Europie. Polski serwis 48h. Kompletny system od jednego producenta.</span></li>
+      <li><span class="k">Rakoczy / FEROLI</span><span class="v">50 lat tradycji, Stalowa Wola. 8 lat gwarancji (najdłuższa na rynku). Lista ZUM.</span></li>
+      <li><span class="k">SOFAR (magazyn)</span><span class="v">Globalny producent, oficjalne przedstawicielstwo PL. LiFePO₄ niepalny, 10 lat gwarancji.</span></li>
+    </ul>
+  </div>
+
+  <!-- OBIEKCJE ZE SZKOLENIA -->
+  <div class="card" style="border:2px solid var(--red)">
+    <div class="card-title" style="color:var(--red)">🛡 4 GŁÓWNE OBIEKCJE — jak reagować (notatki ze szkolenia)</div>
+
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">① CENOWE — „Dla mnie to jest za drogie"<span class="arrow">▼</span></div>
+      <div class="obj-a">
+        <strong>Najpierw ustal: co konkretnie jest za drogie?</strong><br><br>
+        Przedstaw jak najwęziej co jest w cenie: u nas piece po 20 lat, ale w zestawie są <em>bufor, złącza, audyt, części, gwarancja, zasobniki, kształtki</em> — to są koszty ukryte u innych.<br><br>
+        <strong>Kluczowe pytanie zwrotne:</strong> „Co jest za drogie — urządzenie, montaż, czy całość łącznie z dotacją?"<br>
+        Po uzyskaniu odpowiedzi rozbij cenę na części i pokaż koszt netto po dofinansowaniu.
+      </div>
+    </div>
+
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">② BRAK ZAUFANIA — klient jest nieufny lub negatywnie nastawiony<span class="arrow">▼</span></div>
+      <div class="obj-a">
+        <strong>Minimum 1h budowania relacji — to jest priorytet ①.</strong><br><br>
+        • Rozmawiamy z osobą źle nastawioną → nie walcz, pytaj<br>
+        • <strong>Dotyk klienta</strong> — bark, łokieć, plecy — fizyczny kontakt buduje zaufanie podświadomie<br>
+        • Dużo pytamy i szukamy jego potrzeb — co szczególnie zwraca uwagę?<br>
+        • Zaufanie budowane przez pytania i badanie potrzeb, nie przez mówienie<br><br>
+        <em>Reguła: im więcej klient mówi — tym bardziej Ci ufa. Słuchaj.</em>
+      </div>
+    </div>
+
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">③ BRAK POTRZEBY — „Nie potrzebuję tego teraz"<span class="arrow">▼</span></div>
+      <div class="obj-a">
+        <strong>Uświadom, że TU I TERAZ jest najlepszy moment.</strong><br><br>
+        • Kończące się dotacje — pule CP mają limity<br>
+        • Tak czy inaczej to kupi — UE wymaga wymiany źródeł ciepła → <em>lepiej dziś po niższej cenie i z dotacją niż za 3 lata z przymusu</em><br>
+        • Jeśli nie teraz — zapłaci 2× tyle i bez dofinansowania<br>
+        • Energia i tak drożeje co roku o ~10%<br>
+        • <strong>Sezonowość:</strong> piece są tańsze latem (technik ma czas), panele tańsze zimą (produkcja najwyższa latem)<br>
+        • Ja mogę przyjechać później — tylko <em>fundusz może być wtedy nieosiągalny</em><br>
+        • Uwaga klienta = praca, dzieci, zajęcia → „głowa zajęta" — stoimy twardo ale uprzejmie i cierpliwie
+      </div>
+    </div>
+
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">④ KONKURENCJA — „Muszę sprawdzić inne oferty"<span class="arrow">▼</span></div>
+      <div class="obj-a">
+        <strong>Zagrać ekspertem — pochwal klienta, że chce porównać!</strong><br><br>
+        <em>„Bardzo dobrze, że Pan porównuje — to świadczy o rozsądku."</em><br><br>
+        Po pochwale: <em>„Znam każdy sprzęt jaki ma konkurencja — porównajmy teraz razem."</em><br><br>
+        <strong>Technika kartki na 4–5 części:</strong><br>
+        Narysuj tabelę porównawczą na kartce. Kolumny: FEROLI / NAKOCZY / BIOPAL (nasz — zawsze pierwszy). Wpisuj razem z klientem. Gdy BIOPAL jest pierwszy w zestawieniu — klient sam widzi przewagę.<br><br>
+        Stoimy twardo ale uprzejmie na swoim — nie zaniżamy ceny, pokazujemy wartość.
+      </div>
+    </div>
+  </div>
+
+  <!-- ZROZUMIENIE KLIENTA -->
+  <div class="card">
+    <div class="card-title">🧠 Technika zrozumienia klienta — „Od 1 do 10"</div>
+    <ul class="kv">
+      <li><span class="k">Gdy nie rozumie</span><span class="v">„Od 1 do 10 jak ocenia Pan nasze spotkanie?" → odpowie np. „9". Wtedy: <strong>„A co mógłbym zrobić żeby było 10?"</strong> — sam wskazuje co mu przeszkadza.</span></li>
+      <li><span class="k">Reguła rewanżu</span><span class="v">Tyle czasu jechałem — musi zrobić coś dla nas (herbata, faktura, pomiar). Klient który dał Ci coś — czuje się zobowiązany do wysłuchania.</span></li>
+      <li><span class="k">Nigdy nie wychodź</span><span class="v">bez konkretnego następnego kroku: terminu, daty telefonu, umówionego audytu.</span></li>
+    </ul>
+  </div>
+
+  <!-- 2 PYTANIA ZAMYKAJĄCE - NAJWAŻNIEJSZE -->
+  <div class="card" style="border:2px solid var(--gold);margin-top:4px">
+    <div class="card-title gold" style="font-size:13px">⭐ DWA PYTANIA KTÓRE DOMYKAJĄ SPRZEDAŻ — odpowiedź dla każdego produktu</div>
+    <div class="alert warn" style="margin-bottom:14px">Odpowiedzi na oba pytania umieść mentalnie NA KOŃCU każdej rozmowy sprzedażowej — zanim wyjdziesz.</div>
+
+    <div class="close-q q1">
+      <div class="cq-num">①</div>
+      <div class="cq-title">❓ Dlaczego DZIŚ, nie za tydzień?</div>
+
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#b37800;margin:10px 0 4px">☀️ Fotowoltaika — dlaczego dziś?</div>
+      <ul>
+        <li>Każdy dzień bez PV to prąd kupowany od zakładu po coraz wyższej cenie. Od dziś zamieniasz rachunek na produkcję własną — instalacja zwraca się od <strong>pierwszego dnia uruchomienia</strong>, niezależnie czy gotówka czy kredyt.</li>
+        <li>Rata kredytu jest <strong>stała</strong>, rachunek za prąd rośnie ~10%/rok. Za 5 lat rata nadal 380 zł, rachunek bez PV — 650 zł. Każdy miesiąc zwłoki to realna różnica w kieszeni.</li>
+        <li>Dotacje <strong>Mój Prąd i CP mają roczne pule</strong> — kończą się w ciągu kilku dni od ogłoszenia. Inni klienci też czekają. Kto złoży wniosek pierwszy, ten dostaje dotację.</li>
+        <li>Montaż i projekt PV trwa 4–6 tygodni od zamówienia. Jeśli zaczniesz teraz, <strong>zaczniesz produkować prąd latem</strong> — przy najwyższej produkcji w roku. Rok zwłoki = utracone 1000–1500 kWh darmowego prądu.</li>
+        <li>Opłata OZE na rachunku jest teraz 3 zł — ale to opłata rządowa i <strong>będzie rosła co roku</strong> decyzją UE. Za kilka lat może być 100 zł/mies. Płacisz za cudzą farmę, nie za swoją.</li>
+        <li>Inflacja działa na Twoją korzyść: za 2 lata rata będzie stanowić mniejszy % budżetu, a wartość własnej produkcji prądu wzrośnie. <strong>Dziś kupujesz kWh po cenie 2026, za 10 lat ten kWh będzie 2× droższy.</strong></li>
+      </ul>
+
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#b37800;margin:10px 0 4px">🌡️ Pompa ciepła — dlaczego dziś?</div>
+      <ul>
+        <li>Każdy miesiąc z węglem/gazem/olejem to pieniądze oddane dostawcy. Po montażu pompy te pieniądze <strong>zostają w Pana domu</strong>. Oszczędność widoczna od pierwszego sezonu.</li>
+        <li><strong>Sezonowość cen i dostępności:</strong> latem ekipa montażowa ma okno terminowe, ceny urządzeń stabilne. Zimą — kolejki 6–8 tygodni, ekipa zajęta. Najlepszy czas na zakup pompy to wiosna/lato.</li>
+        <li>Dofinansowanie Czyste Powietrze <strong>do 55 700 zł</strong> — pula ograniczona. Kończą się w ciągu dni po ogłoszeniu naboru. Możliwość prefinansowania (nie czekasz na pieniądze — CP płaci z góry).</li>
+        <li>Każdą zimę zwlekania oznacza jeden pełny sezon kosztów ogrzewania (węgiel, drewno, gaz) bez oszczędności. Przy 8 000 zł/rok na opał — rok zwłoki = 8 000 zł strata.</li>
+        <li>Normy Ekoprojekt i przepisy UE → stare kotły będą stopniowo wycofywane. Wymiana z przymusu = brak dotacji, wyższe ceny, brak wyboru dostawcy. <strong>Dziś masz wybór, za 3 lata możesz nie mieć.</strong></li>
+        <li>Pompa pracuje bezobsługowo. Nie musisz już kupować opału jesienią, dźwigać worków, obsługiwać kotła. <strong>Spokój na lata — bezcenne.</strong> Każdy rok zwłoki = rok bez tego komfortu.</li>
+      </ul>
+
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#b37800;margin:10px 0 4px">🌿 Kocioł pellet — dlaczego dziś?</div>
+      <ul>
+        <li><strong>Latem piece są tańsze</strong> + technik ma czas. Zimą kolejki 6–8 tygodni i drożej. Najlepszy moment na zakup kotła to wiosna/lato — montujesz przed sezonem, pierwszy sezon grzewczy masz za darmo (w sensie kosztów montażu).</li>
+        <li>Dotacje CP na kocioł pellet <strong>do 41 000 zł</strong> — pule ograniczone i kończą się szybko. Prefinansowanie oznacza że nie czekasz na zwrot.</li>
+        <li>Każda zima z węglem = nowe koszty zakupu opału, czas na obsługę, kopce przy domu, brud. Rok zwłoki = kolejna zima z tymi samymi problemami.</li>
+        <li>Ceny pelletu stabilne i przewidywalne. <strong>Węgiel i gaz drożeją systematycznie.</strong> Im szybciej przejdziesz, tym więcej różnicy w kosztach rocznie.</li>
+        <li>Normy środowiskowe UE — coraz trudniej kupić kocioł niespełniający Ekoprojektu. Za 2–3 lata może nie być innego wyjścia niż droga wymiana z przymusu. Dziś masz wybór sprzętu i dofinansowanie.</li>
+        <li>BIOPAL/FEROLI mają <strong>5–8 lat gwarancji</strong>. Im szybciej kupisz, tym dłużej gwarancja na Ciebie pracuje.</li>
+      </ul>
+
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#b37800;margin:10px 0 4px">🔋 Magazyn energii — dlaczego dziś?</div>
+      <ul>
+        <li>Dotacja NFOŚiGW <strong>do 16 000 zł</strong> — pule kończą się w dosłownie kilka dni od ogłoszenia. Kto nie złożył na czas — czeka rok lub więcej na kolejną rundę.</li>
+        <li>Bez magazynu PV produkuje prąd w dzień → oddajesz nadwyżki do sieci za ułamek ceny. Z magazynem <strong>używasz go wieczorem i nocą</strong> — zero rachunku za prąd w domu.</li>
+        <li>Każdy dzień bez magazynu to oddany prąd sieci za grosze (0,20 zł/kWh odkup) zamiast 0,90 zł/kWh wartości dla Ciebie. Przy 10 kWh/dzień nadwyżki = 7 zł/dzień straty = 2 500 zł/rok.</li>
+        <li>Ceny magazynów zaczęły rosnąć po okresie spadków. Teraz jest <strong>dobry moment cenowy</strong> zanim następna fala podwyżek komponentów.</li>
+        <li>Niezależność energetyczna: przy awarii sieci (przerwy w dostawie prądu) — magazyn + PV dają autonomię. <strong>Z każdym rokiem częstotliwość przerw w Polsce rośnie.</strong></li>
+      </ul>
+    </div>
+
+    <div class="close-q q2">
+      <div class="cq-num">②</div>
+      <div class="cq-title">❓ Dlaczego ODE MNIE, nie od konkurencji?</div>
+
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--green);margin:10px 0 4px">☀️ Fotowoltaika ML System — dlaczego Woltanic?</div>
+      <ul>
+        <li><strong>Jedyny i oficjalny przedstawiciel ML System</strong> w regionie — gwarantuje oryginalne panele, pełne gwarancje producenta, dostęp do części i serwisu.</li>
+        <li>Te same panele co <strong>Tauron na farmie 200 MW w Mysłowicach</strong> — czy Tauron kupiłby coś, na czym nie może polegać przez 25 lat? To najlepsze referencje na rynku.</li>
+        <li><strong>Atest niepalności</strong> — wielu producentów tego nie posiada. Ważne dla ubezpieczyciela — polisy mogą nie obejmować instalacji bez atestu. ML System jest bezpieczny.</li>
+        <li><strong>4 osobne gwarancje:</strong> na produkt (10 lat), na moc liniową (25 lat), na montaż, na inwerter. Każda oddzielna — żadna nie kasuje innej.</li>
+        <li>TÜV Rheinland — niezależna europejska certyfikacja. Nie chiński certyfikat z własnej fabryki.</li>
+        <li>Serwis w Polsce <strong>w 48h</strong>, nie 6 tygodni na technika z Chin lub Niemiec. Przy usterce jesteśmy następnego dnia.</li>
+        <li>Kompleksowa obsługa: projekt, dokumentacja przyłączeniowa, montaż, wniosek o dotację CP i Mój Prąd, serwis po. Jedna firma — pełna odpowiedzialność.</li>
+        <li>Możliwość <strong>prefinansowania dotacji CP</strong> — klient nie czeka na pieniądze z urzędu, dotacja przychodzi z góry i obniża koszt inwestycji natychmiast.</li>
+      </ul>
+
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--green);margin:10px 0 4px">🌡️ Pompa ciepła GALMET — dlaczego Woltanic?</div>
+      <ul>
+        <li><strong>Polska firma, 44 lata na rynku</strong> — serwis w 48h w każdym województwie. Nie szukasz zagranicznego technika, nie czekasz 6 tygodni na część z Niemiec.</li>
+        <li>Części zamienne <strong>dostępne od ręki w Polsce</strong>. U konkurencji z importowanymi markami: 4–6 tygodni na część. W środku zimy — to poważny problem.</li>
+        <li><strong>Kompletny system od jednego producenta:</strong> pompa + bufor + zasobnik CWU — pełna kompatybilność. Zero problemów z integracją różnych marek, jedna gwarancja na cały system.</li>
+        <li>Audyt techniczny przed montażem + kontrola po montażu. <strong>Nie sprzedajemy i znikamy</strong> — upewniamy się że system działa optymalnie.</li>
+        <li>Największy producent bojlerów i zasobników w Europie — firma stabilna, będzie za 20 lat. Mniejsze ryzyko że po 5 latach producent zniknie z rynku.</li>
+        <li>Dobór mocy na podstawie realnego audytu energetycznego — <strong>nie na oko</strong>. Nie narażamy na przewymiarowanie (wyższy koszt) ani niedowymiarowanie (nie dogrzeje).</li>
+        <li><strong>8 lat gwarancji na urządzenie</strong> — standard u innych: 2–3 lata. Pompa GALMET gwarantuje spokój przez dekadę.</li>
+      </ul>
+
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--green);margin:10px 0 4px">🌿 Kocioł pellet BIOPAL/FEROLI — dlaczego Woltanic?</div>
+      <ul>
+        <li>Rakoczy / FEROLI: <strong>50 lat tradycji</strong>, produkcja Stalowa Wola — polska firma, serwis na miejscu, odpowiedzialność prawna w Polsce.</li>
+        <li><strong>8 lat gwarancji</strong> — najdłuższa na rynku. Standard u innych: 2–3 lata. Gwarancja działa, bo firma polska i duża.</li>
+        <li>Palenisko z blachy <strong>6 mm</strong> — konkurencja robi 3–4 mm. Grubsza blacha = żywotność 30+ lat zamiast 15 lat. Mniej remontów, niższy koszt całkowity przez dekady.</li>
+        <li>BIOPAL: <strong>podwójne spalanie</strong> = dopalanie gazów spalinowych → wyższa sprawność 90–95% vs tradycyjne 75–80%. Mniej pelletu na tę samą ilość ciepła = oszczędność na paliwie.</li>
+        <li><strong>Aplikacja mobilna + monitoring</strong> — zawsze wiesz co się dzieje z piecem. Zdalna kontrola temperatury, powiadomienia o błędach, historia pracy.</li>
+        <li>Lista ZUM (urządzenia o podwyższonej efektywności) — <strong>kwalifikuje do wyższej dotacji CP</strong>. Konkurencja bez ZUM = niższa dotacja dla klienta.</li>
+        <li>System cięcia podawania (anti-jam) — nie blokuje się przy pellecie dobrej jakości. <strong>„Zapychający się podajnik"</strong> to problem tanich pieców z cienką blachą i bez tej technologii.</li>
+        <li>2-funkcyjny: pellet + drewno kawałkowe. <strong>Niezależność od jednego dostawcy paliwa</strong> — nawet przy problemach z pelletem masz alternatywę.</li>
+      </ul>
+
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--green);margin:10px 0 4px">🔋 Magazyn energii SOFAR — dlaczego Woltanic?</div>
+      <ul>
+        <li><strong>LiFePO₄ — jedyne ogniwa bezpieczne</strong>: niepalne, niedegradujące. Inne typy baterii (NMC) wybuchają i palą się. SOFAR dopuszczony do pomieszczeń mieszkalnych i garażu.</li>
+        <li><strong>10 lat gwarancji</strong> — standard to 5 lat. Dwukrotnie dłuższa pewność bez kosztów.</li>
+        <li>6 000 cykli ładowania = ponad 16 lat użytkowania przy ładowaniu raz dziennie. <strong>Realna inwestycja na dwie dekady.</strong></li>
+        <li>Oficjalny przedstawiciel SOFAR w Polsce — pełny serwis, oryginalne części, gwarancja honorowana bez biurokracji.</li>
+        <li><strong>Modułowy system</strong> — zacznij od małego, rozbuduj gdy potrzeba. Nie musisz kupować wszystkiego naraz. Inwestujesz tyle ile potrzebujesz teraz.</li>
+        <li>Integracja z falownikiem PV — jeden ekosystem, jedna aplikacja, jedno zarządzanie. Zero problemów z kompatybilnością różnych marek.</li>
+      </ul>
+
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--green);margin:10px 0 4px">🏢 WOLTANIC ogólnie — dlaczego nas?</div>
+      <ul>
+        <li><strong>Chcę pomóc, nie wciskać. Chcę Pana spokoju na lata.</strong> Jestem tu jako doradca, nie jako sprzedawca. Jeśli to nie ma sensu w Pana przypadku — powiem to wprost.</li>
+        <li>Serwis <strong>48h</strong> w każdym województwie. Nie jesteśmy anonimową firmą internetową.</li>
+        <li>Kompleksowość: projekt → dobór → dotacja → montaż → serwis. Jedna firma, jedna odpowiedzialność — nie szukasz podwykonawców i nie "łatasz" problemów między producentem a instalatorem.</li>
+        <li>Referencje lokalne — możemy pokazać realizacje w okolicy. Klient może zadzwonić do sąsiada który ma naszą instalację.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ WIZYTA ══════════════════════════════════════════════ -->
+<div class="section" id="s-wizyta">
+  <div class="page-title">🤝 Jak prowadzić wizytę</div>
+  <div class="page-sub">Etapy · Zachowanie · Pierwsze wrażenie · Budowanie relacji</div>
+
+  <div class="alert warn" style="font-size:13px;font-weight:700">⏱ Zasada ze szkolenia: minimum <strong>1 godzina na budowanie relacji</strong> zanim przejdziesz do prezentacji. Klient który Ci ufa — kupuje. Klient który nie ufa — porówna ceny i wybierze najtańszego.</div>
+
+  <div class="card" style="border:2px solid var(--gold)">
+    <div class="card-title gold">⏱ Etapy wizyty handlowej — przebieg ok. 2h</div>
+    <ul class="kv">
+      <li><span class="k">① Rekon<br><small style="font-weight:400;color:var(--gray)">dzień wcześniej</small></span><span class="v">Uruchom raport OSINT w zakładce Rekon — zanim wjedziesz do klienta wiedz o nim więcej niż się spodziewa. Sprawdź DISC, sygnały OZE, profil ekonomiczny. Przygotuj <em>pierwsze zdanie</em> na powitanie z raportu.</span></li>
+      <li><span class="k">② Przybycie<br><small style="font-weight:400;color:var(--gray)">pierwsze 90 s</small></span><span class="v">Punktualność ±5 min — ani wcześniej, ani za późno. Mocny uścisk, kontakt wzrokowy. Powiedz imię klienta. Pochwal coś konkretnego z domu lub ogrodu — coś co zapamiętałeś z Rekonu lub widzisz na miejscu. <strong>Pierwsze wrażenie = 4 sekundy, trwa całe spotkanie.</strong></span></li>
+      <li><span class="k">③ Budowanie relacji<br><small style="font-weight:400;color:var(--gray)">🔑 min. 60 min — PRIORYTET</small></span><span class="v"><strong>To najważniejszy etap.</strong> Pytaj o rodzinę, dom, historię, plany. Small talk z raportu (pasje, sport, lokalne tematy). Dotyk klienta — bark, łokieć, plecy — naturalny kontakt fizyczny buduje zaufanie podświadomie. <strong>Reguła 70/30: klient mówi 70%, Ty 30%. Im więcej mówi — tym bardziej Ci ufa.</strong> Nie spiesz się do prezentacji — klient który Ci ufa kupi, klient który nie ufa porówna i kupi najtańszego.</span></li>
+      <li><span class="k">④ Rozpoznanie potrzeb<br><small style="font-weight:400;color:var(--gray)">w trakcie relacji</small></span><span class="v">Pytaj SPIN: sytuacja → problem → implikacje → naprawcze. Co mu najbardziej przeszkadza (ból głowy to ból głowy)? Jakie ogrzewanie, co mu nie odpowiada, ile płaci miesięcznie. Notuj — klient widzi zaangażowanie = czuje się ważny. Technika „Od 1–10": jak ocenia spotkanie? Co zrobić żeby było 10?</span></li>
+      <li><span class="k">⑤ Oględziny budynku<br><small style="font-weight:400;color:var(--gray)">10–15 min</small></span><span class="v">Wyjdź razem — zmierz lub zapytaj o m². Sprawdź: rodzaj ogrzewania, typ instalacji (grzejniki/podłogówka), rok budowy, ocieplenie, tablicę elektryczną, dach (ekspozycja, kąt, wolna powierzchnia). Zrób zdjęcia tablicy i dachu — budujesz wizerunek eksperta i masz dane do wyceny. Używaj miarki nawet jeśli klient zna m² — to gest eksperta.</span></li>
+      <li><span class="k">⑥ Prezentacja i kalkulacja<br><small style="font-weight:400;color:var(--gray)">15–20 min</small></span><span class="v">Licz <strong>NA GŁOS i przy kliencie</strong>. Pisz liczby na kartce — klient zapamiętuje co widzi, nie co słyszy. Pokaż ROI, dotacje, ratę vs. rachunek. Zdjęcia realizacji w okolicy. Technika kartki na 4–5 części — porównaj z konkurencją razem z klientem (BIOPAL pierwszy).</span></li>
+      <li><span class="k">⑦ Zamknięcie — 2 pytania<br><small style="font-weight:400;color:var(--gray)">5–10 min</small></span><span class="v">Zadaj <strong>2 pytania zamykające</strong> (patrz zakładka Sprzedaż → koniec). Pytaj o decyzję wprost. Zaproponuj termin audytu lub montażu. <strong>Nie wychodź bez jasnego TAK lub NIE z konkretną datą.</strong> Po pytaniu zamykającym — milcz. Kto przemówi pierwszy, ten przegrywa.</span></li>
+      <li><span class="k">⑧ Follow-up<br><small style="font-weight:400;color:var(--gray)">max 24h po</small></span><span class="v">SMS lub e-mail z podsumowaniem liczb. Konkretny termin kiedy TY dzwonisz — nie czekaj na klienta. Dodaj coś personalnego z rozmowy (temat który poruszył, imię psa). Klient poczuje że słuchałeś.</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">👔 Zachowanie i wizerunek — co zawsze robić</div>
+    <ul class="kv">
+      <li><span class="k">Strój</span><span class="v">Schludny — koszula lub polo Woltanic, czyste buty. Nie musisz być w garniturze, ale musisz wyglądać profesjonalnie.</span></li>
+      <li><span class="k">Telefon</span><span class="v">Wyłącz dźwięk PRZED wejściem. Nie sprawdzaj go podczas rozmowy — to zabija zaufanie.</span></li>
+      <li><span class="k">Imię</span><span class="v">Użyj imienia klienta w rozmowie min. 3 razy. Zapamiętaj imię współmałżonka i użyj je.</span></li>
+      <li><span class="k">Zwierzak</span><span class="v">Jeśli jest pies lub kot — zauważ to. Zapytaj jak ma na imię. To 5 sekund inwestycji w relację.</span></li>
+      <li><span class="k">Kawa</span><span class="v">Przyjmij jeśli oferują — to sygnał zaproszenia do relacji. Podziękuj szczerze.</span></li>
+      <li><span class="k">Notatki</span><span class="v">Pisz podczas rozmowy. Klient widzi zaangażowanie. Mówi „jestem dla Ciebie ważny".</span></li>
+      <li><span class="k">Słuchaj do końca</span><span class="v">Nigdy nie przerywaj klientowi. Nawet jeśli wiesz co powie — pozwól mu skończyć.</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--red)">🚫 Czego NIGDY nie robić na wizycie</div>
+    <div class="chips">
+      <span class="chip chip-red">Krytykować obecne ogrzewanie klienta</span>
+      <span class="chip chip-red">Mówić źle o konkurencji z nazwy</span>
+      <span class="chip chip-red">Sprawdzać telefon podczas rozmowy</span>
+      <span class="chip chip-red">Kłócić się z klientem o fakty</span>
+      <span class="chip chip-red">Dawać rabatu bez pytania o decyzję</span>
+      <span class="chip chip-red">Wychodzić bez kolejnego kroku</span>
+      <span class="chip chip-red">Obiecywać terminów nie do dotrzymania</span>
+      <span class="chip chip-red">Mówić o produkcie przed zbadaniem potrzeb</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧠 Pytania diagnostyczne — zbierz ZAWSZE</div>
+    <ul class="kv">
+      <li><span class="k">Dom</span><span class="v">Powierzchnia m² · rok budowy · liczba kondygnacji · rodzaj ścian · typ ogrzewania · grzejniki czy podłogówka · liczba osób</span></li>
+      <li><span class="k">Finanse CP</span><span class="v">Orientacyjny dochód per capita · czy KDR/świadczenia · czy dom jest własnością w KW · inni właściciele wymagający podpisu</span></li>
+      <li><span class="k">Decyzja</span><span class="v">Czy współmałżonek musi być przy decyzji? · Horyzont czasowy (teraz/wiosna/rok)? · Co powstrzymuje?</span></li>
+      <li><span class="k">VAT</span><span class="v">Czy prowadzi działalność pod tym adresem lub jest NIP budynku w CEIDG? (8% vs 23% — ogromna różnica!)</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💡 Budowanie relacji — złote zasady</div>
+    <ul class="kv">
+      <li><span class="k">Nie spiesz się</span><span class="v">Klient który czuje presję — ucieka. Klient który czuje zainteresowanie — zostaje.</span></li>
+      <li><span class="k">Wspólne tematy</span><span class="v">Znajdź coś na co patrzysz tak samo (sąsiedztwo, drożyzna, energetyka). To buduje most.</span></li>
+      <li><span class="k">Konkretne obietnice</span><span class="v">Jeśli obiecujesz zadzwonić w czwartek — zadzwoń w czwartek. Małe obietnice budują wielkie zaufanie.</span></li>
+      <li><span class="k">Personalizacja follow-up</span><span class="v">„Tak jak rozmawialiśmy przy kawie…" lub „wrzucam ofertę z uwzględnieniem kotłowni od wschodniej strony" — pokazuje że naprawdę słuchałeś.</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════ TECHNIKI ════════════════════════════════════════════ -->
+<div class="section" id="s-techniki">
+  <div class="page-title">🎯 Techniki sprzedaży OZE</div>
+  <div class="page-sub">SPIN Selling · Zamknięcia · Budowanie wartości · Typy klientów</div>
+
+  <div class="card" style="border:2px solid var(--blue)">
+    <div class="card-title">📊 SPIN Selling — 4 typy pytań</div>
+    <ul class="kv">
+      <li><span class="k" style="color:#1565c0">S — Sytuacyjne</span><span class="v">Poznaj stan faktyczny. „Czym teraz ogrzewacie?" / „Ile orientacyjnie płacicie za prąd rocznie?" / „Jak stary jest dom?"</span></li>
+      <li><span class="k" style="color:var(--gold)">P — Problemowe</span><span class="v">Uwydatnij ból. „Czy to ogrzewanie kosztuje więcej niż chcielibyście?" / „Czy z roku na rok rachunki rosną?"</span></li>
+      <li><span class="k" style="color:var(--red)">I — Implikacyjne</span><span class="v">Pokaż konsekwencje. „Co by to znaczyło gdyby ceny gazu znów wzrosły o 30% jak w 2022?" / „Jak to wpłynie na wartość domu ze starym kotłem węglowym?"</span></li>
+      <li><span class="k" style="color:var(--green)">N — Naprawcze</span><span class="v">Klient sam formułuje wartość. „Co by zmieniło gdyby ogrzewanie kosztowało połowę?" / „Jak ważna jest dla Pana niezależność energetyczna?" <br><strong>Tu klient SAM mówi dlaczego chce kupić — najsilniejszy argument!</strong></span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔑 Techniki zamknięcia sprzedaży</div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Zamknięcie alternatywne (kiedy / kiedy)<span class="arrow">▼</span></div>
+      <div class="obj-a">Nie pytaj „czy chce Pan" — pytaj „kiedy". <br><strong>„Czy woli Pan montaż w przyszłym tygodniu, czy może lepiej za dwa tygodnie?"</strong><br>Klient wybiera między dwiema opcjami zakupu — nie między kupnem a niekupnem.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Zamknięcie odwrotne (usuń ostatnią przeszkodę)<span class="arrow">▼</span></div>
+      <div class="obj-a">Zidentyfikuj ostatnią wątpliwość, rozwiąż ją, pytaj wprost.<br><strong>„Gdybym rozwiązał kwestię finansowania — jest Pan gotowy żebyśmy ustalili termin audytu?"</strong></div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Zamknięcie próbne (test gotowości)<span class="arrow">▼</span></div>
+      <div class="obj-a">Testujesz gotowość klienta już w środku rozmowy.<br><strong>„Gdybyśmy zaczęli w sierpniu — co Pan sądzi?"</strong><br>Pozytywna odpowiedź = sygnał zakupu. Negatywna = jeszcze jedna wątpliwość do rozwiązania.</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Zamknięcie pilnością (deadline)<span class="arrow">▼</span></div>
+      <div class="obj-a">Podaj realny powód pilności — nie wymyślony.<br><strong>„Czyste Powietrze ma pule na ten rok — kto złoży wniosek wcześniej, ma pewność dotacji."</strong><br>Lub: „Mamy jeszcze 2 wolne terminy montażu w lipcu — potem ekipa zajęta do września."</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">Zamknięcie ciszą (najpotężniejsze!)<span class="arrow">▼</span></div>
+      <div class="obj-a">Zadaj pytanie zamykające — potem MILCZ. 30 sekund ciszy jest normalne. <strong>Kto przemówi pierwszy, ten przegrywa negocjacje.</strong><br>Przykład: „Jak Pan widzi tę inwestycję?" [CISZA]</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">👥 Typy klientów DISC — jak rozmawiać</div>
+    <ul class="kv">
+      <li><span class="k">D — Dominujący<br><small style="color:var(--red)">szybki, decyzyjny</small></span><span class="v">Mów konkretnie i krótko. Podaj liczby i fakty. Daj poczucie kontroli. Nie przedłużaj. <strong>„Pan decyduje kiedy startujemy."</strong></span></li>
+      <li><span class="k">I — Wpływowy<br><small style="color:var(--gold)">rozmowny, emocjonalny</small></span><span class="v">Buduj relację. Mów o sąsiadach którzy już mają. Pokaż wizualizacje. Angażuj emocje. <strong>„Wszyscy w okolicy są zachwyceni."</strong></span></li>
+      <li><span class="k">S — Stabilny<br><small style="color:var(--green)">ostrożny, lojalny</small></span><span class="v">Nie spiesz. Buduj zaufanie powoli. Pokaż gwarancje i referencje. Nie naciskaj. <strong>„Możemy się umówić kiedy będzie Pan gotowy."</strong></span></li>
+      <li><span class="k">C — Sumienny<br><small style="color:#1565c0">analityczny, dokładny</small></span><span class="v">Daj specyfikacje techniczne. Odpowiadaj precyzyjnie. Miej dane do wglądu. Nie przesadzaj z opowieściami. <strong>„Mam pełną dokumentację techniczną."</strong></span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💰 Budowanie wartości — zawsze przed ceną</div>
+    <ul class="kv">
+      <li><span class="k">1. Ile traci</span><span class="v">Pokaż ile klient płaci (i będzie płacić) BEZ instalacji. Licz za 10 lat.</span></li>
+      <li><span class="k">2. Dotacja</span><span class="v">Pokaż konkretną kwotę dotacji. Dopiero teraz klient słyszy cenę w kontekście.</span></li>
+      <li><span class="k">3. Cena netto</span><span class="v">Cena minus dotacja = rzeczywisty koszt. Porównaj do 10 lat rachunków.</span></li>
+      <li><span class="k">4. ROI</span><span class="v">„To się zwróci w X lat, a działa 25 lat." Narysuj oś czasu na kartce.</span></li>
+      <li><span class="k">Reguła</span><span class="v"><strong>Nigdy nie podawaj ceny bez wcześniejszego zbudowania wartości.</strong> Cena bez kontekstu zawsze wydaje się za duża.</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════ ZWROTY ══════════════════════════════════════════════ -->
+<div class="section" id="s-zwroty">
+  <div class="page-title">💬 Pro tip'y — zwroty</div>
+  <div class="page-sub">Co mówić · Czego unikać · Jak otwierać · Jak zamykać</div>
+
+  <div class="card" style="border:2px solid var(--green)">
+    <div class="card-title" style="color:var(--green)">✅ Złote zwroty — otwieranie rozmowy</div>
+    <ul class="kv">
+      <li><span class="k">Pierwsze słowa</span><span class="v"><em>„Rozmawialiśmy przez telefon — chcę zobaczyć jak wyglądają możliwości u Pana konkretnie, bo każdy dom jest inny."</em></span></li>
+      <li><span class="k">Budowanie zaufania</span><span class="v"><em>„Zanim cokolwiek zaproponuję, chcę najpierw posłuchać — bo nie wiem jeszcze czy w ogóle możemy Panu pomóc."</em></span></li>
+      <li><span class="k">Po oględzinach</span><span class="v"><em>„Widzę że ma Pan [solarniki/stary kocioł/piękny dach] — to ważna informacja do naszych obliczeń."</em></span></li>
+      <li><span class="k">Diagnoza CP</span><span class="v"><em>„Chcę sprawdzić do jakiego progu dofinansowania się Pan kwalifikuje — to zajmie 2 minuty."</em></span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--green)">✅ Zwroty przy cenie i dotacji</div>
+    <ul class="kv">
+      <li><span class="k">Przed ceną</span><span class="v"><em>„Zanim powiem cenę — policzmy ile Pan teraz wydaje. To jest punkt odniesienia."</em></span></li>
+      <li><span class="k">Dotacja konkretna</span><span class="v"><em>„Przy tym progu może Pan dostać X zł dotacji — czyli rzeczywisty koszt to Y zł."</em></span></li>
+      <li><span class="k">Prefinansowanie</span><span class="v"><em>„Przy tym progu Woltanic dostaje dotację z góry — Pan nie wykłada całości, płaci Pan tylko swoją część."</em></span></li>
+      <li><span class="k">ROI</span><span class="v"><em>„Proszę zobaczyć — przez 25 lat zaoszczędzi Pan orientacyjnie X zł. To jak kupić sobie 25 lat spokoju."</em></span></li>
+      <li><span class="k">Drogi?</span><span class="v"><em>„Drogie w porównaniu do czego? Do płacenia 1 000 zł/mies. za prąd za 8 lat? Pomówmy o koszcie braku decyzji."</em></span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--green)">✅ Zwroty zamykające</div>
+    <ul class="kv">
+      <li><span class="k">Pytanie wprost</span><span class="v"><em>„Co Pana powstrzymuje żeby powiedzieć tak dzisiaj?"</em></span></li>
+      <li><span class="k">Podsumowanie</span><span class="v"><em>„Gdybym to wszystko jeszcze raz podsumował — co jest dla Pana najważniejsze w tej decyzji?"</em></span></li>
+      <li><span class="k">Termin</span><span class="v"><em>„Jaki termin montażu byłby dla Pana najlepszy — żebym mógł zarezerwować ekipę?"</em></span></li>
+      <li><span class="k">Muszę się zastanowić</span><span class="v"><em>„Oczywiście. Co konkretnie chce Pan przemyśleć? Może rozwiążemy to teraz."</em></span></li>
+      <li><span class="k">Za rok</span><span class="v"><em>„Rozumiem. Czy wiadomo co zmieni się za rok? Bo każdy miesiąc to ~400 zł rachunku oddanego zakładowi."</em></span></li>
+    </ul>
+  </div>
+
+  <div class="card" style="border:2px solid var(--red)">
+    <div class="card-title" style="color:var(--red)">❌ Zwroty których UNIKAJ — zabójcy sprzedaży</div>
+    <ul class="kv">
+      <li><span class="k" style="color:var(--red)">„Ale to i tak niedrogie…"</span><span class="v">Nigdy nie relatywizuj ceny bez zbudowania wartości. Najpierw wartość, potem cena.</span></li>
+      <li><span class="k" style="color:var(--red)">„Wszyscy teraz to robią"</span><span class="v">Klient nie chce być „jak wszyscy". Zamiast: „W Pana okolicy zrealizowaliśmy już X instalacji."</span></li>
+      <li><span class="k" style="color:var(--red)">„To się NA PEWNO opłaci"</span><span class="v">Nie możesz gwarantować. Zamiast: „według naszych obliczeń i danych z instalacji w okolicy…"</span></li>
+      <li><span class="k" style="color:var(--red)">„Nie wiem, sprawdzę"</span><span class="v">Tracisz wiarygodność. Zanotuj głośno: „Zapisuję to, wrócę z odpowiedzią do piątku."</span></li>
+      <li><span class="k" style="color:var(--red)">„Proszę się zastanowić i zadzwonić"</span><span class="v">Śmierć dla transakcji. Zamiast: ustal konkretny termin, kiedy Ty zadzwonisz.</span></li>
+      <li><span class="k" style="color:var(--red)">„Nasza firma to najlepsza firma"</span><span class="v">Nie twierdź — udowadniaj. Pokaż realizacje, certyfikaty, referencje.</span></li>
+      <li><span class="k" style="color:var(--red)">„Tamta firma to niskiej jakości"</span><span class="v">Nigdy nie krytykuj konkurencji z nazwy. Zamiast: „Nie znam ich oferty — pokażę co my oferujemy."</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 Obiekcje finansowe — gotowe odpowiedzi</div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">„Za drogo."<span class="arrow">▼</span></div>
+      <div class="obj-a"><strong>Nie broń ceny — zadaj pytanie.</strong><br>„Za drogo w porównaniu do czego konkretnie? Bo jeśli porównamy z 15 latami rachunków za gaz, wychodzi inaczej. Policzmy razem." [wyciągnij kalkulator]</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">„Sąsiad zrobił taniej u innej firmy."<span class="arrow">▼</span></div>
+      <div class="obj-a">„Rozumiem — cena jest ważna. Może zapytam: jaki producent, jaka moc, z montażem czy bez, z audytem czy bez, jaka gwarancja? Często różnice są właśnie w tych szczegółach."</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">„Nie stać mnie teraz."<span class="arrow">▼</span></div>
+      <div class="obj-a">„Rozumiem. Właśnie dlatego mamy kilka opcji finansowania — kredyt 0%, raty bez oprocentowania, prefinansowanie Czystego Powietrza. Przy najwyższym progu Woltanic dostaje dotację z góry."</div>
+    </div>
+    <div class="obj" onclick="toggleObj(this)">
+      <div class="obj-q">„Papierologia z CP jest za skomplikowana."<span class="arrow">▼</span></div>
+      <div class="obj-a">„To właśnie robimy za Pana — zbieramy dokumenty, składamy wniosek, pilnujemy terminów. Pan tylko podpisuje gotowe dokumenty. Zero papirologii po Pana stronie."</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ KALKULATOR ══════════════════════════════════════════ -->
+<div class="section" id="s-kalk">
+  <div class="page-title">🧮 Kalkulatory</div>
+  <div class="page-sub">Licz przy kliencie — na głos, na kartce, na tablecie</div>
+
+  <div class="alert info">Licz <strong>PRZY KLIENCIE i NA GŁOS</strong>. Klient który widzi jak powstają liczby — ufa im bardziej niż gotowym cyfrom z ulotki.</div>
+
+  <!-- SELEKTOR PRODUKTU -->
+  <div class="card" style="border:2px solid var(--gold)">
+    <div class="card-title gold">① Czym interesuje się klient?</div>
+    <div class="chips" style="gap:8px">
+      <button onclick="filterKalk('all')" id="kbAll" style="padding:10px 14px;border-radius:10px;border:2px solid var(--gold);background:var(--gold);color:#fff;font-weight:700;font-size:12px;cursor:pointer">🏠 Wszystko</button>
+      <button onclick="filterKalk('pv')" id="kbPV" style="padding:10px 14px;border-radius:10px;border:2px solid var(--border);background:#fff;font-weight:700;font-size:12px;cursor:pointer">☀️ Fotowoltaika</button>
+      <button onclick="filterKalk('pompa')" id="kbPompa" style="padding:10px 14px;border-radius:10px;border:2px solid var(--border);background:#fff;font-weight:700;font-size:12px;cursor:pointer">🌡️ Pompa ciepła</button>
+      <button onclick="filterKalk('pellet')" id="kbPellet" style="padding:10px 14px;border-radius:10px;border:2px solid var(--border);background:#fff;font-weight:700;font-size:12px;cursor:pointer">🌿 Pellet</button>
+      <button onclick="filterKalk('mag')" id="kbMag" style="padding:10px 14px;border-radius:10px;border:2px solid var(--border);background:#fff;font-weight:700;font-size:12px;cursor:pointer">🔋 Magazyn</button>
+    </div>
+  </div>
+
+  <!-- MOC GRZEWCZA (Pompa + Pellet) -->
+  <div class="card kalk-pompa kalk-pellet kalk-all">
+    <div class="card-title gold">🏠 Dobór mocy grzewczej (EN 12831 uproszczony)</div>
+    <div class="alert info" style="margin-bottom:10px;font-size:12px">Zbierz te dane podczas oględzin budynku — mierz i pytaj przy kliencie.</div>
+    <ul class="kv" style="margin-bottom:12px">
+      <li>
+        <span class="k">Powierzchnia ogrzewana (m²)</span>
+        <span class="v"><input type="number" id="kArea" placeholder="np. 150" min="30" max="1000" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span>
+      </li>
+      <li>
+        <span class="k">Liczba kondygnacji</span>
+        <span class="v">
+          <select id="kFloors" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit">
+            <option value="1.0">Parterowy (1 kondygnacja)</option>
+            <option value="0.9" selected>1 piętro (2 kondygnacje)</option>
+            <option value="0.85">2 piętra (3 kondygnacje)</option>
+          </select>
+        </span>
+      </li>
+      <li>
+        <span class="k">Piwnica / fundament</span>
+        <span class="v">
+          <select id="kBasement" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit">
+            <option value="1.0">Bez piwnicy (płyta lub grunt)</option>
+            <option value="1.1">Piwnica nieocieplona</option>
+            <option value="1.0" selected>Piwnica ocieplona / nieużytkowa</option>
+          </select>
+        </span>
+      </li>
+      <li>
+        <span class="k">Ocieplenie ścian</span>
+        <span class="v">
+          <select id="kIns" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit">
+            <option value="160">Brak ocieplenia (przed 1980)</option>
+            <option value="125">Słabe (styropian &lt;5 cm, lata 80–90)</option>
+            <option value="90" selected>Średnie (5–10 cm, lata 90–2010)</option>
+            <option value="60">Dobre (12–15 cm, po 2010)</option>
+            <option value="38">Bardzo dobre / energooszczędny (po 2020)</option>
+          </select>
+        </span>
+      </li>
+      <li>
+        <span class="k">Region Polski</span>
+        <span class="v">
+          <select id="kRegion" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit">
+            <option value="1.0" selected>Polska centralna i zachodnia (−16°C)</option>
+            <option value="1.1">Polska wschodnia i północna (−20°C)</option>
+            <option value="1.05">Polska południowa (−18°C)</option>
+            <option value="1.2">Góry / Podkarpacie (−22°C)</option>
+          </select>
+        </span>
+      </li>
+      <li>
+        <span class="k">Instalacja grzewcza</span>
+        <span class="v">
+          <select id="kInst" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit">
+            <option value="grzejniki">Grzejnikowa (do 55°C)</option>
+            <option value="podloga" selected>Podłogówka (do 35°C)</option>
+            <option value="mieszana">Mieszana grzejniki + podłogówka</option>
+          </select>
+        </span>
+      </li>
+      <li>
+        <span class="k">Okna</span>
+        <span class="v">
+          <select id="kWindows" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit">
+            <option value="1.1">Stare jednoszybowe lub drewniane</option>
+            <option value="1.0" selected>Dwuszybowe (standard)</option>
+            <option value="0.95">Trzyszybowe / energooszczędne</option>
+          </select>
+        </span>
+      </li>
+    </ul>
+    <button onclick="calcMoc()" style="width:100%;padding:12px;background:var(--blue);color:#fff;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer">Oblicz moc i dobierz urządzenie →</button>
+    <div id="rMoc" style="display:none;margin-top:12px;background:var(--light);border-radius:8px;padding:12px">
+      <div style="font-size:28px;font-weight:900;color:var(--green);text-align:center" id="rMocMain">—</div>
+      <div style="text-align:center;font-size:11px;color:var(--gray);margin-bottom:10px">Zapotrzebowanie na moc grzewczą (z marginesem)</div>
+      <ul class="kv">
+        <li><span class="k">Wskaźnik + region</span><span class="v" id="rWsk">—</span></li>
+        <li><span class="k">Moc bazowa → z marginesem</span><span class="v" id="rBaz">—</span></li>
+        <li><span class="k">✅ Zalecana pompa GALMET</span><span class="v" id="rPompa" style="color:var(--green);font-weight:700;font-size:14px">—</span></li>
+        <li><span class="k">✅ Zalecany kocioł pellet</span><span class="v" id="rKociol" style="color:var(--green);font-weight:700">—</span></li>
+        <li><span class="k">Instalacja grzewcza</span><span class="v" id="rInstNote" style="font-size:11px">—</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PV ROI -->
+  <div class="card kalk-pv kalk-mag kalk-all">
+    <div class="card-title gold">☀️ Fotowoltaika — opłacalność i ROI</div>
+    <div class="alert info" style="margin-bottom:10px;font-size:12px">Dane z rachunku za prąd klienta (patrz zakładka Rachunek). Moc PV ≈ roczne zużycie ÷ 1050.</div>
+    <ul class="kv" style="margin-bottom:12px">
+      <li><span class="k">Roczne zużycie prądu (kWh)<br><small style="font-weight:400;color:var(--gray)">z rachunku klienta</small></span><span class="v"><input type="number" id="kKwh" value="4000" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+      <li><span class="k">Miesięczny rachunek za prąd (zł)<br><small style="font-weight:400;color:var(--gray)">średni, z rachunku</small></span><span class="v"><input type="number" id="kMies" value="400" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+      <li><span class="k">Cena prądu (zł/kWh)<br><small style="font-weight:400;color:var(--gray)">energia + dystrybucja zmienna</small></span><span class="v"><input type="number" id="kCena" value="0.90" step="0.01" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+      <li><span class="k">Proponowana moc PV (kWp)</span><span class="v"><input type="number" id="kKwp" value="6" step="0.5" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+      <li><span class="k">Ekspozycja dachu</span><span class="v">
+        <select id="kRoof" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit">
+          <option value="1050">Południe, kąt 30–45° (optymalne)</option>
+          <option value="950" selected>Południe/SE/SW, kąt 20–50°</option>
+          <option value="850">Wschód lub Zachód</option>
+          <option value="750">Płaski dach lub niekorzystna orientacja</option>
+        </select>
+      </span></li>
+      <li><span class="k">Koszt instalacji (zł)</span><span class="v"><input type="number" id="kKoszt" value="30000" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+      <li><span class="k">Dotacja CP + Mój Prąd (zł)</span><span class="v"><input type="number" id="kDot" value="7000" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+    </ul>
+    <button onclick="calcPV()" style="width:100%;padding:12px;background:var(--blue);color:#fff;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer">Oblicz ROI i porównanie →</button>
+    <div id="rPV" style="display:none;margin-top:12px;background:var(--light);border-radius:8px;padding:12px">
+      <div style="font-size:22px;font-weight:900;color:var(--green);text-align:center" id="rPVMain">—</div>
+      <div style="text-align:center;font-size:11px;color:var(--gray);margin-bottom:10px">Zwrot inwestycji</div>
+      <ul class="kv">
+        <li><span class="k">Produkcja roczna PV</span><span class="v" id="rProd">—</span></li>
+        <li><span class="k">Oszczędność rok 1</span><span class="v" id="rOszcz">—</span></li>
+        <li><span class="k">Koszt po dotacji</span><span class="v" id="rNetto">—</span></li>
+        <li><span class="k">Zwrot inwestycji</span><span class="v" id="rROI" style="color:var(--green);font-weight:700">—</span></li>
+        <li><span class="k">💰 Zysk przez 25 lat (inflacja 10%)</span><span class="v" id="r25" style="color:var(--green);font-weight:700;font-size:14px">—</span></li>
+        <li><span class="k">🔴 Zapłacisz zakładowi bez PV (25 lat)</span><span class="v" id="rRachunek25" style="color:var(--red);font-weight:700;font-size:14px">—</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- POMPA CIEPŁA VS OBECNE OGRZEWANIE -->
+  <div class="card kalk-pompa kalk-all">
+    <div class="card-title gold">🌡️ Pompa ciepła — oszczędności vs obecne ogrzewanie</div>
+    <div class="alert info" style="margin-bottom:10px;font-size:12px">Dane z faktury za ogrzewanie lub od klienta bezpośrednio. Zapytaj: „Ile ton węgla/m³ gazu/litrów oleju i po ile?"</div>
+    <ul class="kv" style="margin-bottom:12px">
+      <li><span class="k">Powierzchnia ogrzewana (m²)<br><small style="font-weight:400;color:var(--gray)">przepiszesz z doboru mocy</small></span><span class="v"><input type="number" id="kAreaP" placeholder="np. 150" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+      <li><span class="k">Obecne paliwo i roczny koszt (zł/rok)<br><small style="font-weight:400;color:var(--gray)">zapytaj klienta o łączny roczny koszt</small></span><span class="v"><input type="number" id="kOpalKoszt" placeholder="np. 8000" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+      <li><span class="k">Obecne ogrzewanie</span><span class="v">
+        <select id="kFuel" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit">
+          <option value="0.40">Gaz (ok. 0,40 zł/kWh)</option>
+          <option value="0.50">Olej opałowy (ok. 0,50 zł/kWh)</option>
+          <option value="0.35" selected>Węgiel (ok. 0,35 zł/kWh)</option>
+          <option value="0.32">Pellet (ok. 0,32 zł/kWh)</option>
+          <option value="0.85">Grzejniki elektryczne (ok. 0,85 zł/kWh)</option>
+          <option value="0.20">Drewno (ok. 0,20 zł/kWh)</option>
+        </select>
+      </span></li>
+      <li><span class="k">Cena prądu (zł/kWh)</span><span class="v"><input type="number" id="kEl" value="0.75" step="0.01" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+      <li><span class="k">SCOP pompy<br><small style="font-weight:400;color:var(--gray)">podłogówka 35°C → SCOP 4.5 | grzejniki 55°C → SCOP 3.0 | mieszana → SCOP 3.5</small></span><span class="v">
+        <select id="kCop" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit">
+          <option value="4.5">4.5 — podłogówka (max efektywność)</option>
+          <option value="3.5" selected>3.5 — instalacja mieszana (standard)</option>
+          <option value="3.0">3.0 — grzejniki wysokotemperaturowe</option>
+        </select>
+      </span></li>
+    </ul>
+    <button onclick="calcPompa()" style="width:100%;padding:12px;background:var(--blue);color:#fff;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer">Oblicz oszczędności →</button>
+    <div id="rPompaDiv" style="display:none;margin-top:12px;background:var(--light);border-radius:8px;padding:12px">
+      <div style="font-size:28px;font-weight:900;color:var(--green);text-align:center" id="rPompaMain">—</div>
+      <div style="text-align:center;font-size:11px;color:var(--gray);margin-bottom:10px">Roczna oszczędność na ogrzewaniu</div>
+      <ul class="kv">
+        <li><span class="k">Koszt obecny (rok)</span><span class="v" id="rCurr">—</span></li>
+        <li><span class="k">Koszt z pompą (rok)</span><span class="v" id="rNew">—</span></li>
+        <li><span class="k">💚 Oszczędność roczna</span><span class="v" id="rSav" style="color:var(--green);font-weight:700;font-size:14px">—</span></li>
+        <li><span class="k">Oszczędność przez 15 lat</span><span class="v" id="rSav15" style="color:var(--green);font-weight:700">—</span></li>
+        <li><span class="k">Czas pracy pompy</span><span class="v" id="rPompaNote" style="font-size:11px">—</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MAGAZYN ENERGII -->
+  <div class="card kalk-mag kalk-all">
+    <div class="card-title gold">🔋 Magazyn energii — kiedy się opłaca</div>
+    <div class="alert info" style="margin-bottom:10px;font-size:12px">Magazyn sens ma gdy klient ma już PV i oddaje nadwyżki do sieci, lub planuje PV i chce pełną niezależność.</div>
+    <ul class="kv" style="margin-bottom:12px">
+      <li><span class="k">Roczna produkcja PV (kWh)</span><span class="v"><input type="number" id="kMagPV" placeholder="np. 6000" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+      <li><span class="k">Roczne zużycie prądu (kWh)</span><span class="v"><input type="number" id="kMagZuz" placeholder="np. 4000" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+      <li><span class="k">Cena odkupu (zł/kWh)<br><small style="font-weight:400;color:var(--gray)">sprzedaż do sieci — zwykle 0,15–0,25 zł</small></span><span class="v"><input type="number" id="kMagOdkup" value="0.20" step="0.01" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+      <li><span class="k">Cena prądu z sieci (zł/kWh)</span><span class="v"><input type="number" id="kMagCena" value="0.90" step="0.01" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+      <li><span class="k">Koszt magazynu po dotacji (zł)</span><span class="v"><input type="number" id="kMagKoszt" placeholder="np. 20000" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit"></span></li>
+    </ul>
+    <button onclick="calcMag()" style="width:100%;padding:12px;background:var(--blue);color:#fff;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer">Oblicz opłacalność magazynu →</button>
+    <div id="rMagDiv" style="display:none;margin-top:12px;background:var(--light);border-radius:8px;padding:12px">
+      <div style="font-size:28px;font-weight:900;color:var(--green);text-align:center" id="rMagMain">—</div>
+      <div style="text-align:center;font-size:11px;color:var(--gray);margin-bottom:10px">Roczna dodatkowa oszczędność z magazynem</div>
+      <ul class="kv">
+        <li><span class="k">Nadwyżka PV (rok)</span><span class="v" id="rMagNad">—</span></li>
+        <li><span class="k">Zysk z autokonsumpcji vs sprzedaży</span><span class="v" id="rMagZysk" style="color:var(--green);font-weight:700">—</span></li>
+        <li><span class="k">Zwrot inwestycji w magazyn</span><span class="v" id="rMagROI" style="color:var(--green);font-weight:700">—</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ RACHUNEK ZA PRĄD ════════════════════════════════════════ -->
+<div class="section" id="s-rachunek">
+  <div class="page-title">📄 Rachunek za prąd</div>
+  <div class="page-sub">Jak czytać, co liczyć, jak pokazać klientowi że zmiana ma sens</div>
+
+  <div class="alert warn">Przed wizytą poproś klienta o ostatni rachunek za prąd i ostatnią fakturę za ogrzewanie. Te dwa dokumenty to Twój najlepszy argument sprzedażowy.</div>
+
+  <!-- CO I GDZIE SZUKAĆ NA RACHUNKU -->
+  <div class="card">
+    <div class="card-title gold">🔍 Co i gdzie szukać na rachunku — pola kluczowe</div>
+    <div class="bill-row"><div class="bill-label">Zużycie (kWh)</div><div class="bill-val"><span class="bill-hot">NAJWAŻNIEJSZE</span> — roczne zużycie energii w kWh. To podstawa doboru instalacji PV. Reguła: 1 kWh zużycia = ~1 Wp paneli (przybliżenie). Szukaj pozycji <em>„energia czynna"</em> lub <em>„zużycie"</em>.</div></div>
+    <div class="bill-row"><div class="bill-label">Taryfa</div><div class="bill-val"><strong>G11</strong> = jedna cena całą dobę. <strong>G12</strong> = tańsza noc (22:00–6:00). <strong>G12W</strong> = weekend tańszy. Przy G12 pompa ciepła może pracować nocą po tańszej stawce → pokazuje to jako dodatkowa oszczędność.</div></div>
+    <div class="bill-row"><div class="bill-label">Cena za kWh</div><div class="bill-val">Suma: opłata za energię czynną + opłata dystrybucyjna zmienna. Często 0,70–1,00 zł/kWh łącznie. Wpisz tę kwotę do kalkulatora PV.</div></div>
+    <div class="bill-row"><div class="bill-label">Opłata stała / dystr.</div><div class="bill-val"><span class="bill-hot">Klucz do argumentu!</span> Stałe opłaty (dystrybucja, przesył, kogeneracja, OZE, moc) to <strong>płacisz niezależnie od tego ile zuzyjesz</strong>. Nawet z PV zapłacisz część. Im więcej autokonsumpcji — tym mniejsza faktura końcowa.</div></div>
+    <div class="bill-row"><div class="bill-label">Opłata OZE</div><div class="bill-val"><span class="bill-hot">Argument!</span> Klient już TERAZ płaci za OZE innych. <em>„Pan finansuje czyjąś elektrownię wiatrową — a gdyby Pan finansował swoją?"</em></div></div>
+    <div class="bill-row"><div class="bill-label">Opłata mocowa</div><div class="bill-val">Stała opłata za dostępność sieci — rośnie co roku. Nie zależy od zużycia. Pokazuje trend: <em>„Samo podłączenie do sieci będzie coraz droższe."</em></div></div>
+    <div class="bill-row"><div class="bill-label">VAT</div><div class="bill-val">5% dla gospodarstw domowych na energię. Uwaga: przy działalności gospod. w domu może być 23% → inny próg Czystego Powietrza i inne obliczenia ROI.</div></div>
+    <div class="bill-row"><div class="bill-label">Okres rozliczeniowy</div><div class="bill-val">Roczne zestawienie (styczeń–grudzień) jest najlepsze do analizy. Jeśli klient ma tylko 2-miesięczny — pomnóż ×6. Poproś o poprzedni rok jeśli możliwe.</div></div>
+  </div>
+
+  <!-- JAK LICZYĆ KOSZT PRZY KLIENCIE -->
+  <div class="card">
+    <div class="card-title gold">🧮 Jak liczyć koszt — krok po kroku przy kliencie</div>
+    <div class="alert info" style="margin-bottom:12px">Licz na głos i na kartce. Klient który widzi matematykę — ufa jej.</div>
+
+    <div class="bill-calc">
+      <div class="bc-title">Krok 1 — Aktualny koszt energii (z rachunku)</div>
+      <div class="bc-row"><span>Roczne zużycie (kWh)</span><span>np. 4 200 kWh</span></div>
+      <div class="bc-row"><span>Cena/kWh (łączna ze stałymi)</span><span>np. 0,85 zł</span></div>
+      <div class="bc-row"><span>Roczny koszt prądu</span><span>= 4 200 × 0,85 = <strong>3 570 zł</strong></span></div>
+    </div>
+    <div class="bill-calc" style="background:var(--green)">
+      <div class="bc-title">Krok 2 — Koszt przez 25 lat z 10% wzrostem cen/rok</div>
+      <div class="bc-row"><span>Rok 1</span><span>3 570 zł</span></div>
+      <div class="bc-row"><span>Rok 5</span><span>~5 750 zł</span></div>
+      <div class="bc-row"><span>Rok 10</span><span>~9 260 zł</span></div>
+      <div class="bc-row"><span>Łącznie 25 lat (est.)</span><span><strong>~120 000 zł</strong> oddane zakładowi</span></div>
+    </div>
+    <div class="bill-calc" style="background:#7c3aed">
+      <div class="bc-title">Krok 3 — Instalacja PV po dotacji</div>
+      <div class="bc-row"><span>Instalacja 10 kWp (szacunek)</span><span>~45 000 zł</span></div>
+      <div class="bc-row"><span>Dotacja Mój Prąd / CP</span><span>−10 000–20 000 zł</span></div>
+      <div class="bc-row"><span>Koszt netto dla klienta</span><span><strong>25 000–35 000 zł</strong></span></div>
+      <div class="bc-row"><span>Zwrot inwestycji</span><span><strong>7–9 lat</strong>, potem 16 lat za darmo</span></div>
+    </div>
+    <div class="alert good" style="margin-top:10px;font-size:13px;font-weight:700">Różnica: 120 000 zł oddane zakładowi ENERGETYCZNEMU vs. 30 000 zł we własną infrastrukturę. Klient produkuje prąd sam przez 25 lat.</div>
+  </div>
+
+  <!-- ARGUMENTY Z RACHUNKU - CO POKAZAĆ -->
+  <div class="card">
+    <div class="card-title">💡 Argumenty z rachunku — co POKAZAĆ klientowi palcem</div>
+    <ul class="kv">
+      <li><span class="k">Opłata OZE na rachunku</span><span class="v"><em>„Widzi Pan tę pozycję? Płaci Pan za OZE dla całego kraju. Czy nie wolałby Pan płacić za własne?"</em></span></li>
+      <li><span class="k">Opłata mocowa</span><span class="v"><em>„Ta pozycja rośnie co roku automatycznie — niezależnie od tego ile Pan zużywa. To opłata za samo bycie podłączonym."</em></span></li>
+      <li><span class="k">Trend roczny ×10%</span><span class="v">Pokaż dwie ostatnie faktury — jeśli jest wzrost, policz % i pomnóż przez lata. Klient sam zobaczy trajektorię.</span></li>
+      <li><span class="k">Autokonsumpcja</span><span class="v">Im więcej prądu z własnych paneli zużyje w domu — tym mniejsza faktura za dystrybucję. Stare zasady (sprzedaż do sieci) odeszły. Nowe = autokonsumpcja im większa tym lepiej. OZE spada, marża sieci maleje.</span></li>
+      <li><span class="k">Wymiana opłaty</span><span class="v">Rata kredytu za PV = <strong>stała kwota</strong>. Inflacja powoduje, że za 2 lata rata będzie stanowić mniejszy % budżetu niż dziś. Zakład energetyczny tego nie zagwarantuje.</span></li>
+    </ul>
+  </div>
+
+  <!-- FAKTURA ZA OGRZEWANIE -->
+  <div class="card">
+    <div class="card-title gold">🔥 Faktura za ogrzewanie — co czytać</div>
+    <div class="bill-row"><div class="bill-label">Roczny koszt opału</div><div class="bill-val"><span class="bill-hot">Baza do porównania z pompą ciepła</span>. Zapytaj o całość: węgiel, drewno, gaz, pellet — ile ton/m³/ton i po ile. Licz sumę roczną.</div></div>
+    <div class="bill-row"><div class="bill-label">Czas obsługi kotła</div><div class="bill-val">Ile godzin tygodniowo klient poświęca na kocioł? 3–5h/tyg × 30 tygodni = 90–150h/rok. Przelicz na wartość czasu: 150h × 30 zł/h = 4 500 zł „ukrytego kosztu pracy".</div></div>
+    <div class="bill-row"><div class="bill-label">Koszty pośrednie</div><div class="bill-val">Serwis kotła (~500 zł/rok), czyszczenie komina (~400 zł/rok), wywóz żużlu, zakup opału z dostawą.</div></div>
+    <div class="bill-row"><div class="bill-label">Zdrowie i komfort</div><div class="bill-val"><span class="bill-hot">Niepoliczalne, ale realne:</span> smog przy rozpalaniu, brud od węgla, wstawanie w nocy do kotła, alergie, wilgotność. Pompa ciepła = stała temp. 24/7, brak pracy fizycznej.</div></div>
+    <div class="bill-row"><div class="bill-label">Porównanie roczne</div><div class="bill-val">Zsumuj: opał + serwis + czas + zdrowie. Porównaj z ratą pompy ciepła po dotacji. Pokaż gdzie jest różnica.</div></div>
+  </div>
+
+  <!-- KALKULATOR ZAMIANY OGRZEWANIA -->
+  <div class="card">
+    <div class="card-title gold">🧮 Kalkulator zamiany ogrzewania na pompę</div>
+    <div class="alert info" style="margin-bottom:12px">Wpisz dane z dokumentów klienta i policz oszczędności.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--blue);display:block;margin-bottom:4px">Roczny koszt opału (zł)</label>
+        <input type="number" id="rOpał" placeholder="np. 8000" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--blue);display:block;margin-bottom:4px">Roczny koszt prądu (zł)</label>
+        <input type="number" id="rPradAkt" placeholder="np. 3600" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--blue);display:block;margin-bottom:4px">Szac. wzrost prądu po pompie (zł)</label>
+        <input type="number" id="rPradPompa" placeholder="np. 5000" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--blue);display:block;margin-bottom:4px">Cena instalacji po dotacji (zł)</label>
+        <input type="number" id="rCenaPompa" placeholder="np. 25000" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px">
+      </div>
+    </div>
+    <button onclick="calcRachunek()" style="width:100%;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">Oblicz oszczędności</button>
+    <div id="rRachunekMain" style="margin-top:10px;display:none">
+      <div class="bill-calc">
+        <div class="bc-title">Wynik porównania</div>
+        <div class="bc-row"><span>Obecny koszt ogrzewania/rok</span><span id="rROpał">—</span></div>
+        <div class="bc-row"><span>Dodatkowy prąd po pompie/rok</span><span id="rRDodPrad">—</span></div>
+        <div class="bc-row"><span>Roczna oszczędność na pompie</span><span id="rROszcz">—</span></div>
+        <div class="bc-row"><span>Zwrot z inwestycji</span><span id="rRZwrot">—</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ TABS ═══════════════════════════════════════════════════════
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('searchResults').classList.add('empty');
+  document.getElementById('searchInput').value = '';
+  window.scrollTo(0,0);
+}
+
+// ═══ OBJECTION ACCORDION ══════════════════════════════════════
+function toggleObj(el) {
+  el.classList.toggle('open');
+}
+
+// ═══ SEARCH ══════════════════════════════════════════════════
+const KB = [
+  // DOTACJE
+  {src:'Dotacje', q:'Pompa ciepła — dotacja podstawowy próg', a:'22 280 zł (Czyste Powietrze, pompa ciepła + modernizacja CO, dochód do 135 000 zł/rok)'},
+  {src:'Dotacje', q:'Pompa ciepła — dotacja podwyższony próg', a:'38 990 zł (dochód do 2 250 zł/os. wieloosobowe, do 3 150 zł/os. jednoosobowe)'},
+  {src:'Dotacje', q:'Pompa ciepła — dotacja najwyższy próg', a:'55 700 zł (dochód do 1 300 zł/os. wieloosobowe, do 1 800 zł/os. jednoosobowe)'},
+  {src:'Dotacje', q:'Kocioł pellet — dotacja podstawowy próg', a:'16 400 zł (Czyste Powietrze, kocioł + modernizacja CO)'},
+  {src:'Dotacje', q:'Kocioł pellet — dotacja podwyższony próg', a:'28 700 zł'},
+  {src:'Dotacje', q:'Kocioł pellet — dotacja najwyższy próg', a:'41 000 zł'},
+  {src:'Dotacje', q:'Magazyn energii — dotacja', a:'Do 16 000 zł (NFOŚiGW, program 2026–2030, Mój Prąd 6.0)'},
+  {src:'Dotacje', q:'Fotowoltaika — dotacja Mój Prąd', a:'Do 7 000 zł (instalacje do 10 kWp)'},
+  {src:'Dotacje', q:'Kto może skorzystać z Czystego Powietrza?', a:'Właściciel lub współwłaściciel domu jednorodzinnego. Najem wyklucza CP!'},
+  {src:'Dotacje', q:'VAT — ile wynosi?', a:'8% dla prywatnych domów, 23% dla firm/działalności. Ustal PRZED wyceną!'},
+  // POMPA
+  {src:'Pompa GALMET', q:'Do jakiej temperatury działa pompa?', a:'-25°C gwarantowane przez producenta. W pompach 12-16kW grzałka 3-6-9kW na ekstrema.'},
+  {src:'Pompa GALMET', q:'Ile prądu pobiera pompa 12 kW?', a:'Średnio ~4 000 kWh/rok (SCOP 1:3)'},
+  {src:'Pompa GALMET', q:'Monoblok czy split?', a:'Monoblok: całość na zewnątrz, serwis ~350 zł/rok. Split: 2 jednostki, serwis ~1 000 zł/rok.'},
+  {src:'Pompa GALMET', q:'Ile trwa montaż pompy ciepła?', a:'Do 3 dni (ostatnie 2 to testy i szkolenie). Zwykle gotowe po jednym dniu.'},
+  {src:'Pompa GALMET', q:'Ile lat działa Galmet?', a:'Polska firma z 44-letnim doświadczeniem. Największy producent bojlerów i zbiorników w Europie. Serwis 48h.'},
+  // ML SYSTEM
+  {src:'Fotowoltaika ML', q:'Ile wynosi gwarancja ML System?', a:'25 lat na moc (tylko 14-17% spadek), 10 lat na montaż'},
+  {src:'Fotowoltaika ML', q:'Czy instalacja PV się pali?', a:'ML System ma atest niepalności. Tauron używa ML System na farmie w Mysłowicach.'},
+  {src:'Fotowoltaika ML', q:'Kiedy zwraca się PV?', a:'5–7 lat, potem 18–20 lat darmowego prądu. Przy podwyżkach prądu ~10%/rok.'},
+  {src:'Fotowoltaika ML', q:'Licznik 1-fazowy — jaka max moc PV?', a:'Max 3,68 kWp instalacji jednofazowej'},
+  // PELLET
+  {src:'Kocioł pellet', q:'Ile wynosi gwarancja na kocioł pellet?', a:'8 lat (najdłuższa gwarancja na rynku). Żywotność 30 lat.'},
+  {src:'Kocioł pellet', q:'Ile pelletu zużywa się rocznie?', a:'2–3 tony pelletu rocznie. Serwis co 2 lata ~400 zł.'},
+  {src:'Kocioł pellet', q:'Jak często czyścić kocioł?', a:'Popiół raz na 2 miesiące. Kocioł samoczyszczący. Z 1 tony pelletu tylko 2-3 kg popiołu.'},
+  {src:'Kocioł pellet', q:'Firma Rakoczy — co to za firma?', a:'Polska firma, 50 lat tradycji, Stalowa Wola, lider pellet, 8-lat gwarancji, serwis 48h, sprzedaż w Europie.'},
+  // MAGAZYN
+  {src:'Magazyn energii', q:'Ile lat wytrzyma magazyn energii?', a:'6 000 cykli = 16,5 roku. Gwarancja 10 lat. SOFAR LiFePO4 (niepalny).'},
+  {src:'Magazyn energii', q:'Kiedy zwróci się magazyn?', a:'Zwrot od pierwszego dnia. Przy rachunku 600 zł/mies. → ~7 200 zł oszczędności/rok. Zwrot inwestycji w 4-5 lat.'},
+  {src:'Magazyn energii', q:'Czy magazyn się pali?', a:'LiFePO4 — atestowane jako NIEPALNE. Dopuszczone do użytku domowego. Atest UE od SOFAR.'},
+  // SPRZEDAŻ
+  {src:'Sprzedaż', q:'Główny argument finansowy — zamiana rachunku na ratę', a:'Zamieniamy miesięczny rachunek za prąd (rosnący 10%/rok) na stałą ratę za własny sprzęt. Rata nie wzrośnie, prąd drożeje co roku.'},
+  {src:'Sprzedaż', q:'Opłata OZE na fakturze — argument', a:'Teraz to kilkadziesiąt złotych, za rok-dwa dorówna pełnej fakturze. Dlaczego klient ma płacić za transformację energetyczną zakładowi?'},
+  {src:'Sprzedaż', q:'Pompa ciepła vs kocioł gazowy — koszty', a:'Pompa: koszt ogrzewania niższy o 30-60%, emisja CO2 o 70% mniej, COP 4-5. Gaz: droższy, wysoka emisja, wycofywany do 2030.'},
+  {src:'Sprzedaż', q:'Zasobnik vs Bufor — różnica', a:'Zasobnik = ciepła woda użytkowa (kran, prysznic). Bufor = CO (grzejniki, podłogówka). Prosta formuła: zasobnik to co leci z kranu, bufor to co grzeje podłogę.'},
+  {src:'Sprzedaż', q:'Kiedy mówić o zwrocie inwestycji', a:'Instalacja zarabia od pierwszego dnia. Zwrot 5-7 lat. Ale ważniejsze: ile klient STRACI jeśli nie zainwestuje przez te 7 lat płacąc rosnące rachunki.'},
+  {src:'Sprzedaż', q:'6 argumentów za GALMET', a:'1. Polski producent/serwis  2. Części 48h (zagranica 6 tyg.)  3. Audyt techniczny  4. Realna gwarancja  5. 44 lata doświadczenia  6. Kompletny system od jednego producenta'},
+  // WIZYTA
+  {src:'Wizyta', q:'Etapy wizyty handlowej — 7 kroków', a:'① Przygotowanie (Rekon)  ② Przybycie pierwsze 90s  ③ Rozpoznanie potrzeb 70/30  ④ Oględziny budynku  ⑤ Prezentacja i kalkulacja  ⑥ Zamknięcie  ⑦ Follow-up max 24h'},
+  {src:'Wizyta', q:'Reguła 70/30 — co to?', a:'Klient mówi 70% czasu, Ty 30%. Im więcej mówi — tym bardziej Ci ufa. Pytaj otwarte, aktywnie słuchaj.'},
+  {src:'Wizyta', q:'Pierwsze wrażenie — jak je zrobić?', a:'Punktualność ±5 min. Mocny uścisk, kontakt wzrokowy. Powiedz imię klienta. Pochwal coś konkretnego. Pierwsze 4 sekundy decydują.'},
+  {src:'Wizyta', q:'Pytania diagnostyczne — co zbierać?', a:'Powierzchnia, rok budowy, ocieplenie, ogrzewanie, instalacja (grzejniki/podłogówka), liczba osób, dochód, KW, VAT (działalność?), decydent.'},
+  // TECHNIKI
+  {src:'Techniki', q:'SPIN Selling — co to?', a:'S=Sytuacyjne (fakty), P=Problemowe (ból), I=Implikacyjne (konsekwencje), N=Naprawcze (klient sam formułuje wartość). N to najsilniejszy argument.'},
+  {src:'Techniki', q:'Typy klientów DISC', a:'D=Dominujący (krótko, fakty, daj kontrolę)  I=Wpływowy (emocje, sąsiedzi, wizualizacje)  S=Stabilny (zaufanie, gwarancje, bez pośpiechu)  C=Sumienny (specyfikacje, dane, precyzja)'},
+  {src:'Techniki', q:'Zamknięcie alternatywne', a:'Pytaj kiedy, nie czy. „Woli Pan montaż w przyszłym tygodniu, czy za dwa tygodnie?"'},
+  {src:'Techniki', q:'Zamknięcie ciszą', a:'Po pytaniu zamykającym — MILCZ. Kto przemówi pierwszy, ten przegrywa negocjacje. 30 s ciszy jest normalne.'},
+  {src:'Techniki', q:'Budowanie wartości przed ceną', a:'1. Ile traci (rachunki × lata)  2. Kwota dotacji  3. Cena netto (cena−dotacja)  4. ROI (lata zwrotu). Nigdy cena bez kontekstu!'},
+  // ZWROTY
+  {src:'Zwroty', q:'Pierwsze słowa na wizycie — jak zacząć?', a:'„Zanim cokolwiek zaproponuję, chcę najpierw posłuchać — nie wiem czy możemy Panu pomóc." Lub: „Każdy dom jest inny — chcę zobaczyć sytuację u Pana konkretnie."'},
+  {src:'Zwroty', q:'Jak mówić o cenie?', a:'Najpierw: „Policzmy ile Pan teraz wydaje." Potem dotacja. Potem cena netto. Potem ROI. NIGDY cena na starcie.'},
+  {src:'Zwroty', q:'Czego nie mówić — lista', a:'Nie: „to i tak niedrogie" / „wszyscy teraz robią" / „na pewno się opłaci" / „proszę się zastanowić i zadzwonić" / „nasza firma to najlepsza" / krytyka konkurencji z nazwy.'},
+  {src:'Zwroty', q:'Jak odpowiedzieć na „muszę się zastanowić"?', a:'„Oczywiście. Co konkretnie chce Pan przemyśleć? Może rozwiążemy to teraz." Zawsze ustal KONKRETNY termin kiedy Ty zadzwonisz — nie czekaj na klienta.'},
+];
+
+// ═══ SELEKTOR PRODUKTU ════════════════════════════════════════
+function filterKalk(type) {
+  const allCards = document.querySelectorAll('#s-kalk .card');
+  const btns = ['kbAll','kbPV','kbPompa','kbPellet','kbMag'];
+  btns.forEach(id => {
+    const b = document.getElementById(id);
+    if(b){ b.style.background='#fff'; b.style.borderColor='var(--border)'; b.style.color='#333'; }
+  });
+  const active = {all:'kbAll',pv:'kbPV',pompa:'kbPompa',pellet:'kbPellet',mag:'kbMag'}[type];
+  const ab = document.getElementById(active);
+  if(ab){ ab.style.background='var(--gold)'; ab.style.borderColor='var(--gold)'; ab.style.color='#fff'; }
+  allCards.forEach(card => {
+    if(card.classList.contains('kalk-'+type) || type==='all'){
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  // selektor zawsze widoczny
+  allCards[0].style.display = 'block';
+}
+
+// ═══ KALKULATORY ══════════════════════════════════════════════
+function calcMoc() {
+  const area    = parseFloat(document.getElementById('kArea').value)||0;
+  const wsk     = parseFloat(document.getElementById('kIns').value)||90;
+  const floors  = parseFloat(document.getElementById('kFloors').value)||0.9;
+  const basement= parseFloat(document.getElementById('kBasement').value)||1.0;
+  const region  = parseFloat(document.getElementById('kRegion').value)||1.0;
+  const windows = parseFloat(document.getElementById('kWindows').value)||1.0;
+  const inst    = document.getElementById('kInst').value;
+  if(area<10){alert('Podaj powierzchnię ogrzewaną (m²).');return;}
+  // EN 12831 uproszczony z korektami
+  // wsk = bazowy wskaźnik W/m² wg ocieplenia
+  // floors i windows to korektory (wielokondygnacyjny = mniejsza strata przez dach/podłogę)
+  // basement i region to mnożniki
+  const bazFloor = area * wsk / 1000;
+  const bazKor   = bazFloor * floors * windows;
+  const baz      = bazKor * basement * region;
+  const final    = Math.ceil(baz * 1.15 * 10) / 10; // +15% margines bezpieczeństwa
+  const pompy = [
+    {moc:6,  n:'GALMET 6 kW (1-faz.)'},
+    {moc:8,  n:'GALMET 8 kW (1-faz.)'},
+    {moc:10, n:'GALMET 10 kW (1-faz.)'},
+    {moc:12, n:'GALMET 12 kW (3-faz.)'},
+    {moc:14, n:'GALMET 14 kW (3-faz.)'},
+    {moc:18, n:'GALMET 18 kW Monoblok'}
+  ];
+  const kotly = [
+    {moc:12, n:'BIOPAL/FEROLI 12 kW'},
+    {moc:15, n:'FEROLI 15 kW'},
+    {moc:20, n:'FEROLI 20 kW'},
+    {moc:25, n:'MOCEK 25 kW'},
+    {moc:30, n:'MOCEK 30 kW'}
+  ];
+  const pompa  = pompy.find(p=>p.moc>=final)||pompy[pompy.length-1];
+  const kociol = kotly.find(k=>k.moc>=final)||kotly[kotly.length-1];
+  const instNote = inst==='podloga'
+    ? '✅ Podłogówka — pompa zasilana 35°C → SCOP 4.5+, max oszczędności'
+    : inst==='grzejniki'
+    ? '⚠️ Grzejniki — pompa zasilana 55°C, SCOP ~3.0. Zapytaj o wymianę na niskotemperaturowe.'
+    : 'ℹ️ Instalacja mieszana — SCOP ok. 3.5. Dobór potwierdzić audytem.';
+  const wskLabel = `${wsk} W/m² × ${area} m² × floor(${floors}) × okna(${windows}) × piwnica(${basement}) × region(${region})`;
+  document.getElementById('rMocMain').textContent = final.toFixed(1) + ' kW';
+  document.getElementById('rWsk').textContent = wskLabel;
+  document.getElementById('rBaz').textContent = baz.toFixed(1) + ' kW bazowe → ' + final.toFixed(1) + ' kW z 15% marginesem';
+  document.getElementById('rPompa').textContent  = pompa.n;
+  document.getElementById('rKociol').textContent = kociol.n;
+  document.getElementById('rInstNote').textContent = instNote;
+  document.getElementById('rMoc').style.display = 'block';
+  // przenieś wartość do kalkulatora oszczędności
+  document.getElementById('kAreaP').value = area;
+}
+
+function calcPV() {
+  const kwh   = parseFloat(document.getElementById('kKwh').value)||4000;
+  const mies  = parseFloat(document.getElementById('kMies').value)||0;
+  const cena  = parseFloat(document.getElementById('kCena').value)||0.90;
+  const kwp   = parseFloat(document.getElementById('kKwp').value)||6;
+  const roofY = parseFloat(document.getElementById('kRoof').value)||950;
+  const koszt = parseFloat(document.getElementById('kKoszt').value)||30000;
+  const dot   = parseFloat(document.getElementById('kDot').value)||7000;
+  // Produkcja wg ekspozycji dachu
+  const prod  = kwp * roofY;
+  // Rok 1: autokonsumpcja = min(zużycie, produkcja)
+  const autoR1  = Math.min(kwh, prod);
+  const oszczR1 = autoR1 * cena;
+  const netto   = koszt - dot;
+  // ROI przy stałej cenie prądu
+  const roiFlat = netto / oszczR1;
+  // 25 lat z 10%/rok wzrostem cen prądu
+  let z25inf = 0, annual = oszczR1;
+  for(let i=0;i<25;i++){ z25inf += annual; annual *= 1.10; }
+  z25inf -= koszt;
+  // 25 lat rachunków bez PV
+  let rachunek25 = 0, rAnn = kwh * cena;
+  for(let i=0;i<25;i++){ rachunek25 += rAnn; rAnn *= 1.10; }
+  // ROI z inflacją (poprawna formuła)
+  let zwr = netto, roiInf = 0, ann2 = oszczR1;
+  for(let y=1;y<=25;y++){ zwr -= ann2; if(zwr<=0&&roiInf===0){ roiInf=y+(zwr/ann2); break; } ann2*=1.10; }
+  // Porównanie miesięczne (dla klienta)
+  const miesOszcz = Math.round(oszczR1 / 12);
+  const infoMies = mies > 0 ? ` (klient płaci dziś ${Math.round(mies)} zł/mies. → oszczędność ${miesOszcz} zł/mies.)` : '';
+  document.getElementById('rPVMain').textContent = roiFlat.toFixed(1) + ' lat (stałe ceny)  /  ' + roiInf.toFixed(1) + ' lat (z inflacją 10%/rok)';
+  document.getElementById('rProd').textContent  = prod.toLocaleString('pl') + ' kWh/rok (' + roofY + ' kWh/kWp)';
+  document.getElementById('rOszcz').textContent = Math.round(oszczR1).toLocaleString('pl') + ' zł/rok  (' + miesOszcz + ' zł/mies.)' + infoMies;
+  document.getElementById('rNetto').textContent = Math.round(netto).toLocaleString('pl') + ' zł';
+  document.getElementById('rROI').textContent   = roiFlat.toFixed(1) + ' lat  (z inflacją: ' + roiInf.toFixed(1) + ' lat)';
+  document.getElementById('r25').textContent    = Math.round(z25inf).toLocaleString('pl') + ' zł czystego zysku';
+  document.getElementById('rRachunek25').textContent = Math.round(rachunek25).toLocaleString('pl') + ' zł';
+  document.getElementById('rPV').style.display = 'block';
+}
+
+function calcPompa() {
+  const area  = parseFloat(document.getElementById('kAreaP').value)||0;
+  const opalK = parseFloat(document.getElementById('kOpalKoszt').value)||0;
+  const fuel  = parseFloat(document.getElementById('kFuel').value)||0.35;
+  const el    = parseFloat(document.getElementById('kEl').value)||0.75;
+  const copV  = parseFloat(document.getElementById('kCop').value)||3.5;
+  // Jeśli klient podał roczny koszt ogrzewania — używamy go wprost
+  // Jeśli nie — szacujemy z powierzchni (ok. 100 kWh/m² dla średniego domu)
+  let curr, heat;
+  if(opalK > 0){
+    curr = opalK;
+    heat = curr / fuel; // kWh/rok wstecz
+  } else if(area > 0){
+    heat = area * 130; // 130 kWh/m² szacunek dla przeciętnego domu
+    curr = heat * fuel;
+  } else {
+    alert('Podaj albo roczny koszt ogrzewania albo powierzchnię domu.');
+    return;
+  }
+  const nw  = (heat / copV) * el;
+  const sav = curr - nw;
+  const note = `Dom ~${Math.round(heat/1000)} MWh/rok potrzeb cieplnych, SCOP=${copV} → pompa zużyje ${Math.round(heat/copV)} kWh prądu`;
+  document.getElementById('rPompaMain').textContent = Math.round(sav).toLocaleString('pl') + ' zł/rok oszczędności';
+  document.getElementById('rCurr').textContent = Math.round(curr).toLocaleString('pl') + ' zł/rok';
+  document.getElementById('rNew').textContent  = Math.round(nw).toLocaleString('pl') + ' zł/rok';
+  document.getElementById('rSav').textContent  = Math.round(sav).toLocaleString('pl') + ' zł/rok  (' + Math.round(sav/12).toLocaleString('pl') + ' zł/mies.)';
+  document.getElementById('rSav15').textContent = Math.round(sav*15).toLocaleString('pl') + ' zł przez 15 lat';
+  document.getElementById('rPompaNote').textContent = note;
+  document.getElementById('rPompaDiv').style.display = 'block';
+}
+
+function calcMag() {
+  const prodPV  = parseFloat(document.getElementById('kMagPV').value)||0;
+  const zuz     = parseFloat(document.getElementById('kMagZuz').value)||0;
+  const odkup   = parseFloat(document.getElementById('kMagOdkup').value)||0.20;
+  const cena    = parseFloat(document.getElementById('kMagCena').value)||0.90;
+  const koszt   = parseFloat(document.getElementById('kMagKoszt').value)||0;
+  if(prodPV<100||zuz<100){alert('Podaj produkcję PV i roczne zużycie prądu.');return;}
+  // Nadwyżka = produkcja - zużycie (jeśli > 0)
+  const nadwyzka = Math.max(0, prodPV - zuz);
+  // Bez magazynu: nadwyżka sprzedawana po odkup (0.20)
+  // Z magazynem: nadwyżka zużywana zamiast kupna prądu (0.90)
+  const zyskRok  = nadwyzka * (cena - odkup); // różnica w zł/rok
+  const roi      = koszt > 0 && zyskRok > 0 ? (koszt / zyskRok).toFixed(1) + ' lat' : '—';
+  document.getElementById('rMagMain').textContent = Math.round(zyskRok).toLocaleString('pl') + ' zł/rok';
+  document.getElementById('rMagNad').textContent  = Math.round(nadwyzka).toLocaleString('pl') + ' kWh/rok (produkowane ponad zużycie)';
+  document.getElementById('rMagZysk').textContent = Math.round(zyskRok).toLocaleString('pl') + ' zł/rok (autokonsumpcja ' + cena + ' vs sprzedaż ' + odkup + ' zł/kWh)';
+  document.getElementById('rMagROI').textContent  = roi;
+  document.getElementById('rMagDiv').style.display = 'block';
+}
+
+function calcRachunek() {
+  const opal  = parseFloat(document.getElementById('rOpał').value)||0;
+  const pradA = parseFloat(document.getElementById('rPradAkt').value)||0;
+  const pradP = parseFloat(document.getElementById('rPradPompa').value)||0;
+  const cena  = parseFloat(document.getElementById('rCenaPompa').value)||0;
+  const dodPrad = pradP - pradA;
+  const oszcz = opal - dodPrad;
+  const zwrot = oszcz > 0 ? Math.round(cena / oszcz * 10) / 10 : '—';
+  document.getElementById('rROpał').textContent    = opal.toLocaleString('pl') + ' zł';
+  document.getElementById('rRDodPrad').textContent = dodPrad.toLocaleString('pl') + ' zł';
+  document.getElementById('rROszcz').textContent   = oszcz.toLocaleString('pl') + ' zł/rok';
+  document.getElementById('rRZwrot').textContent   = typeof zwrot === 'number' ? zwrot + ' lat' : zwrot;
+  document.getElementById('rRachunekMain').style.display = 'block';
+}
+
+function szukaj(q) {
+  const sr = document.getElementById('searchResults');
+  const val = q.trim().toLowerCase();
+  if (val.length < 2) { sr.classList.add('empty'); return; }
+
+  const hits = KB.filter(r =>
+    r.q.toLowerCase().includes(val) ||
+    r.a.toLowerCase().includes(val) ||
+    r.src.toLowerCase().includes(val)
+  );
+
+  if (hits.length === 0) {
+    sr.innerHTML = '<div style="padding:20px;text-align:center;color:#999;font-size:13px">Brak wyników dla „'+q+'"</div>';
+    sr.classList.remove('empty');
+    return;
+  }
+
+  const hl = t => t.replace(new RegExp(val,'gi'), m => `<span class="hl">${m}</span>`);
+  sr.innerHTML = hits.map(r => `
+    <div class="search-result">
+      <div class="sr-src">${r.src}</div>
+      <div class="sr-q">${hl(r.q)}</div>
+      <div class="sr-a">${hl(r.a)}</div>
+    </div>`).join('');
+  sr.classList.remove('empty');
+
+  // Hide sections when searching
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+}
+</script>
+</body>
+</html>

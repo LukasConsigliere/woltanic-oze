@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Asystent OZE — Woltanic</title>
+<style>
+:root{
+  --blue:#1a2f5a;--gold:#f0a500;
+  --green:#1e6b3c;--green2:#e8f5e9;
+  --red:#c0392b;--red2:#fdecea;
+  --violet:#5b2d8e;--violet2:#f0e8ff;
+  --gray:#6b7280;--border:#dde3ee;--light:#f5f7fa;--text:#1a1a2e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--light);color:var(--text);padding-bottom:80px}
+
+/* ── HEADER ─────────────────────────────────────────── */
+header{background:var(--blue);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:300}
+.logo{width:32px;height:32px;background:var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:var(--blue);flex-shrink:0}
+header .htxt{flex:1}
+header h1{color:#fff;font-size:13px;font-weight:700}
+header p{color:#99aacc;font-size:10px}
+.hdr-link{color:var(--gold);font-size:20px;text-decoration:none;padding:4px;flex-shrink:0}
+
+/* ── MODE TABS ───────────────────────────────────────── */
+.mode-tabs{display:flex;background:#fff;border-bottom:2px solid var(--border);position:sticky;top:52px;z-index:200}
+.mode-tab{flex:1;padding:11px 6px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--gray);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;-webkit-tap-highlight-color:transparent;user-select:none}
+.mode-tab.active{border-bottom-color:var(--blue);background:rgba(26,47,90,.04)}
+.mode-tab.oferta-tab.active{color:var(--green);border-bottom-color:var(--green)}
+.mode-tab.rekon-tab.active{color:var(--violet);border-bottom-color:var(--violet)}
+.mode-tab.rekon-tab{color:var(--violet);border-left:1px solid var(--border)}
+.mode-tab .mt-icon{display:block;font-size:18px;margin-bottom:2px}
+
+/* ── PASSWORD OVERLAY ────────────────────────────────── */
+#passOverlay{position:fixed;inset:0;background:rgba(26,47,90,.92);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+.pass-box{background:#fff;border-radius:16px;padding:28px 22px;max-width:320px;width:100%;text-align:center}
+.pass-box .pb-icon{font-size:40px;margin-bottom:12px}
+.pass-box h2{font-size:16px;font-weight:800;color:var(--violet);margin-bottom:6px}
+.pass-box p{font-size:12px;color:var(--gray);margin-bottom:18px;line-height:1.5}
+.pass-input{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:10px;font-size:18px;text-align:center;letter-spacing:.2em;font-family:monospace;margin-bottom:10px}
+.pass-input:focus{outline:none;border-color:var(--violet)}
+.pass-input.wrong{border-color:var(--red);animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.btn-unlock{width:100%;padding:13px;background:var(--violet);color:#fff;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer}
+.pass-error{color:var(--red);font-size:12px;font-weight:600;min-height:18px;margin-bottom:6px}
+
+/* ── BANNERS ─────────────────────────────────────────── */
+.active-banner{padding:8px 14px;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;cursor:pointer;border-bottom:1px solid}
+.oferta-banner{background:var(--green2);border-color:#b5d9c2;color:var(--green)}
+.rekon-banner{background:var(--violet2);border-color:#c9b0e8;color:var(--violet)}
+.ab-timer{font-weight:800}
+.ab-open{margin-left:auto;background:#fff;border:1.5px solid currentColor;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;flex-shrink:0}
+
+/* ── EXPIRY BAR ──────────────────────────────────────── */
+.exp-bar{padding:9px 14px;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;position:sticky;border-bottom:2px solid;z-index:100}
+.oferta-exp{background:#1a1a2e;color:#fff;border-color:var(--green);top:92px}
+.rekon-exp{background:#1a1a2e;color:#fff;border-color:var(--violet);top:92px}
+.exp-bar .timer{font-size:14px;font-weight:900;flex:1}
+.oferta-exp .timer{color:var(--gold)}
+.rekon-exp .timer{color:#c084fc}
+.btn-del-exp{background:var(--red);color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0}
+
+/* ── FORMS ───────────────────────────────────────────── */
+.form-wrap{padding:12px;max-width:520px;margin:0 auto}
+.card{background:#fff;border-radius:11px;border:1px solid var(--border);padding:13px;margin-bottom:11px}
+.card-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gray);padding-bottom:7px;border-bottom:1px solid var(--border);margin-bottom:10px}
+.field{margin-bottom:10px}.field:last-child{margin-bottom:0}
+label{display:block;font-size:12px;font-weight:600;color:var(--blue);margin-bottom:4px}
+label small{font-weight:400;color:var(--gray)}
+input[type=text],input[type=email],input[type=number],select,textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;color:var(--text);background:var(--light);-webkit-appearance:none;font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);background:#fff}
+textarea{resize:vertical;min-height:60px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── INTERESTS ───────────────────────────────────────── */
+.int-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.int-btn{background:#fff;border:2px solid var(--border);border-radius:10px;padding:11px 8px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.int-btn.sel{border-color:var(--blue);background:rgba(26,47,90,.06)}
+.int-btn .icon{font-size:20px;margin-bottom:3px}
+.int-btn .lbl{font-size:12px;font-weight:700;color:var(--blue)}
+
+/* ── PROG ────────────────────────────────────────────── */
+.prog-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.prog-btn{background:#fff;border:2px solid var(--border);border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.prog-btn.sel{border-color:var(--green);background:var(--green2)}
+.prog-btn .pv{font-size:10px;font-weight:700;color:var(--blue);line-height:1.2}
+.prog-btn .pl{font-size:9px;color:var(--gray);margin-top:2px}
+.prog-btn.sel .pv{color:var(--green)}
+.prog-info{background:var(--green2);border-radius:8px;padding:9px 11px;margin-top:8px;font-size:11px;line-height:1.5;color:#444}
+.prog-info b{color:var(--green)}
+
+/* ── BUTTONS ─────────────────────────────────────────── */
+.btn-gen{width:100%;padding:14px;font-size:14px;font-weight:700;border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px}
+.btn-green{background:var(--green);color:#fff}
+.btn-violet{background:var(--violet);color:#fff}
+.btn-gen.loading{background:#888;cursor:not-allowed}
+.spinner{width:15px;height:15px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none}
+.btn-gen.loading .spinner{display:block}
+.btn-gen.loading .btxt{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── N8N STATUS ──────────────────────────────────────── */
+.n8n-status{border-radius:10px;padding:12px 14px;margin-bottom:11px;font-size:12px;line-height:1.6;border:1.5px solid}
+.n8n-ok{background:var(--green2);border-color:#81c784;color:var(--green)}
+.n8n-miss{background:var(--red2);border-color:#ef9a9a;color:var(--red)}
+.n8n-loading{background:var(--violet2);border-color:#c9b0e8;color:var(--violet)}
+.n8n-loading .dots::after{content:'...';animation:dots 1.2s steps(4,end) infinite}
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}100%{content:''}}
+
+/* ── REPORT ──────────────────────────────────────────── */
+.rep-wrap{padding:12px;max-width:600px;margin:0 auto}
+.r-hero{border-radius:11px;padding:15px;margin-bottom:10px;text-align:center}
+.oferta-hero{background:var(--blue)}
+.rekon-hero{background:var(--violet)}
+.r-hero .cname{font-size:21px;font-weight:900;color:#fff;margin-bottom:2px}
+.r-hero .csub{font-size:11px;color:rgba(255,255,255,.7);line-height:1.5}
+.r-sec{background:#fff;border-radius:10px;border:1px solid var(--border);padding:13px;margin-bottom:10px}
+.r-ttl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;padding-bottom:7px;border-bottom:1px solid var(--border);margin-bottom:10px}
+.r-ttl.blue{color:var(--blue)}.r-ttl.green{color:var(--green)}.r-ttl.gold{color:#b37800}
+.r-ttl.red{color:var(--red)}.r-ttl.violet{color:var(--violet)}
+.kv-t{width:100%;border-collapse:collapse;font-size:12px}
+.kv-t td{padding:5px 6px;border-bottom:1px solid var(--border)}
+.kv-t td:first-child{font-weight:600;color:var(--blue);width:44%}
+.kv-t tr:last-child td{border:none}
+.kv-t tr:nth-child(even) td{background:var(--light)}
+.strat{padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;line-height:1.5}
+.strat:last-child{border:none}
+.strat .sk{font-weight:700;color:var(--blue);display:block;margin-bottom:2px}
+.obj-r{background:var(--light);border-radius:7px;padding:8px 10px;margin-bottom:6px}
+.obj-r .oq{font-weight:700;font-size:12px;color:var(--blue);margin-bottom:2px}
+.obj-r .oa{font-size:11px;color:#444;line-height:1.5}
+.prod-c{background:var(--light);border-radius:8px;border:1.5px solid var(--border);padding:10px;margin-bottom:7px}
+.prod-c.primary{border-color:var(--gold);background:#fff8e1}
+.prod-c .ptype{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--gray)}
+.prod-c .pname{font-size:14px;font-weight:800;color:var(--blue);margin:2px 0 5px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.chip-b{background:#e8ecf8;color:var(--blue)}.chip-g{background:var(--green2);color:var(--green)}.chip-o{background:#fff8e1;color:#b37800}
+.suma-b{background:var(--blue);border-radius:10px;padding:13px;margin:8px 0}
+.suma-b .sh{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#99aacc;margin-bottom:7px}
+.s-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:12px}
+.s-row:last-child{border:none;padding-top:5px}
+.s-row .sl{color:rgba(255,255,255,.8)}.s-row .sv{font-weight:700;color:#fff}
+.s-row.tot .sl{font-weight:600;color:#fff}.s-row.tot .sv{font-size:17px;color:var(--gold)}
+.al{border-radius:8px;padding:8px 11px;font-size:12px;line-height:1.5;margin:6px 0}
+.al.good{background:var(--green2);border:1.5px solid #81c784;color:var(--green)}
+.al.info{background:#e3f2fd;border:1.5px solid #90caf9;color:#1565c0}
+.al.warn{background:#fff8e1;border:1.5px solid var(--gold);color:#7c5800}
+.al.danger{background:var(--red2);border:2px solid var(--red);color:var(--red);font-weight:700;text-align:center}
+.al.violet{background:var(--violet2);border:1.5px solid #c9b0e8;color:var(--violet)}
+
+/* ── BOTTOM BAR ──────────────────────────────────────── */
+.btn-bar{display:flex;gap:8px;padding:10px 14px;background:#fff;border-top:1px solid var(--border);position:fixed;bottom:0;left:0;right:0;z-index:250}
+.btn-bar .bb{flex:1;padding:12px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer}
+.bb-back{background:var(--light);color:var(--blue);border:1.5px solid var(--border)!important}
+.bb-del{background:var(--red);color:#fff}
+
+/* ── REKON LOCKED STATE ──────────────────────────────── */
+.rekon-locked-info{padding:30px 20px;text-align:center;max-width:340px;margin:0 auto}
+.rekon-locked-info .li-icon{font-size:48px;margin-bottom:14px}
+.rekon-locked-info h3{font-size:16px;font-weight:800;color:var(--violet);margin-bottom:8px}
+.rekon-locked-info p{font-size:12px;color:var(--gray);line-height:1.6;margin-bottom:20px}
+.btn-show-pass{width:100%;padding:14px;background:var(--violet);color:#fff;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════════ -->
+<header>
+  <div class="logo">W</div>
+  <div class="htxt">
+    <h1>Asystent OZE</h1>
+    <p id="headerSub">Narzędzie handlowca Woltanic</p>
+  </div>
+  <a href="wiedza.html" class="hdr-link" title="Baza wiedzy">📚</a>
+</header>
+
+<div class="mode-tabs">
+  <div class="mode-tab oferta-tab active" id="tabOferta" onclick="setMode('oferta')">
+    <span class="mt-icon">📋</span>Oferta
+  </div>
+  <div class="mode-tab rekon-tab" id="tabRekon" onclick="tryRekon()">
+    <span class="mt-icon" id="rekonTabIcon">🔒</span>Rekon
+  </div>
+</div>
+
+<!-- ══ HASŁO OVERLAY ════════════════════════════════════════════════ -->
+<div id="passOverlay" style="display:none">
+  <div class="pass-box">
+    <div class="pb-icon">🔒</div>
+    <h2>Dostęp zastrzeżony</h2>
+    <p>Moduł Rekon OSINT jest dostępny wyłącznie dla upoważnionych pracowników Woltanic.</p>
+    <div class="pass-error" id="passError">&nbsp;</div>
+    <input type="password" class="pass-input" id="passInput" placeholder="••••••••" maxlength="50" onkeydown="if(event.key==='Enter')checkPass()">
+    <button class="btn-unlock" onclick="checkPass()">Odblokuj →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     TRYB: OFERTA
+══════════════════════════════════════════════════════════════════ -->
+<div id="modeOferta">
+
+  <div id="ofertaActiveBanner" class="active-banner oferta-banner" style="display:none" onclick="openOfertaReport()">
+    📋 Aktywna oferta: <b id="ofertaBannerName">—</b> · za <span class="ab-timer" id="ofertaBannerTimer">—</span>
+    <span class="ab-open">Otwórz →</span>
+  </div>
+
+  <div id="ofertaFormScreen">
+  <div class="form-wrap">
+
+    <div class="al good" style="margin-bottom:10px">
+      📋 <strong>NA MIEJSCU / PO WIZYCIE</strong> — wypełnij dane z oględzin i rozmowy z klientem.
+    </div>
+
+    <div class="card">
+      <div class="card-title">Dane klienta</div>
+      <div class="row2">
+        <div class="field"><label>Imię i nazwisko</label><input type="text" id="fName" placeholder="Anna Kowalska"></div>
+        <div class="field"><label>Telefon</label><input type="text" id="fTel" placeholder="600 000 001"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Miejscowość</label><input type="text" id="fMiasto" placeholder="Białystok"></div>
+        <div class="field"><label>Adres</label><input type="text" id="fAdres" placeholder="ul. Polna 5"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Budynek — dane z oględzin</div>
+      <div class="row2">
+        <div class="field"><label>Rok budowy</label><input type="number" id="fRok" placeholder="1990" min="1900" max="2030"></div>
+        <div class="field"><label>Powierzchnia m²</label><input type="number" id="fPow" placeholder="140" min="20"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Kondygnacje</label>
+          <select id="fKond"><option value="1">1 piętro</option><option value="2" selected>2 piętra</option><option value="3">3 piętra</option></select>
+        </div>
+        <div class="field"><label>Ocieplenie</label>
+          <select id="fOcep">
+            <option value="brak">Brak (stare budownictwo)</option>
+            <option value="slabe">Słabe (&lt;5cm)</option>
+            <option value="srednie" selected>Średnie (5–10cm)</option>
+            <option value="dobre">Dobre (12–15cm)</option>
+            <option value="bardzo_dobre">Bardzo dobre (15+cm)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Obecne ogrzewanie</label>
+        <select id="fOgrz">
+          <option value="wegiel">Węgiel / koks</option>
+          <option value="gaz">Gaz ziemny / LPG</option>
+          <option value="olej">Olej opałowy</option>
+          <option value="pellet">Pellet (ma już)</option>
+          <option value="elektryczne">Elektryczne</option>
+          <option value="pompa">Pompa ciepła (ma już)</option>
+          <option value="brak">Nowe budownictwo / brak</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Rodzina i finanse — wywiad z klientem</div>
+      <div class="row2">
+        <div class="field"><label>Liczba osób</label>
+          <select id="fOsoby"><option value="1">1 os.</option><option value="2">2 os.</option><option value="3" selected>3 os.</option><option value="4">4 os.</option><option value="5">5+ os.</option></select>
+        </div>
+        <div class="field"><label>Własność nieruchomości</label>
+          <select id="fWlas"><option value="tak">Właściciel (KW)</option><option value="wspolwlas">Współwłaściciel</option><option value="najem">Najem</option><option value="nieznane">Nieznane</option></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Miesięczny rachunek za energię łącznie <small>(prąd + ogrzewanie, PLN)</small></label>
+        <input type="number" id="fRachunek" placeholder="600" min="0">
+      </div>
+      <div class="field">
+        <label>Próg Czystego Powietrza <small>— dochód netto na osobę miesięcznie</small></label>
+        <div class="prog-grid">
+          <div class="prog-btn" onclick="setProg('podstawowy',this)">
+            <div class="pv">pow. 2 250 zł/os.</div><div class="pl">Podstawowy</div>
+          </div>
+          <div class="prog-btn sel" onclick="setProg('podwyzszony',this)">
+            <div class="pv">1 300–2 250 zł/os.</div><div class="pl">Podwyższony</div>
+          </div>
+          <div class="prog-btn" onclick="setProg('najwyzszy',this)">
+            <div class="pv">pon. 1 300 zł/os.</div><div class="pl">Najwyższy</div>
+          </div>
+        </div>
+        <div class="prog-info" id="progInfoBox">
+          <b>Próg podwyższony:</b> Dochód netto 1 300–2 250 zł/os./mies. Dotacja na pompę: <b>38 990 zł</b>, na pellet: <b>28 700 zł</b>. Jak sprawdzić: zaświadczenie z MOPS/GOPS lub PIT za poprzedni rok.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Czym interesuje się klient?</div>
+      <div class="int-grid">
+        <div class="int-btn" onclick="toggleInt('pv',this)"><div class="icon">☀️</div><div class="lbl">Fotowoltaika</div></div>
+        <div class="int-btn" onclick="toggleInt('pompa',this)"><div class="icon">🌡️</div><div class="lbl">Pompa ciepła</div></div>
+        <div class="int-btn" onclick="toggleInt('magazyn',this)"><div class="icon">🔋</div><div class="lbl">Magazyn energii</div></div>
+        <div class="int-btn" onclick="toggleInt('piec',this)"><div class="icon">🌿</div><div class="lbl">Kocioł pellet</div></div>
+      </div>
+      <div class="al info" style="margin-top:8px;font-size:11px">Nic nie zaznaczone = system dobierze automatycznie na podstawie budynku.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Notatki z rozmowy z klientem</div>
+      <textarea id="fNotatki" placeholder="Co powiedział? Główne wątpliwości? Co go najbardziej interesowało? Jaki był stosunek do ceny?"></textarea>
+    </div>
+
+    <button class="btn-gen btn-green" id="btnOferta" onclick="generateOferta()">
+      <div class="spinner"></div>
+      <span class="btxt">📋 Generuj ofertę klienta</span>
+    </button>
+  </div>
+  </div>
+
+  <div id="ofertaReportScreen" style="display:none">
+    <div class="exp-bar oferta-exp">
+      <span>📋 OFERTA · za&nbsp;</span>
+      <span class="timer" id="ofertaTimer">--h --m</span>
+      <button class="btn-del-exp" onclick="deleteOferta()">🗑 Usuń</button>
+    </div>
+    <div class="rep-wrap" id="ofertaContent"></div>
+    <div class="btn-bar">
+      <button class="bb bb-back" onclick="backToOferta()">← Nowa oferta</button>
+      <button class="bb bb-del" onclick="deleteOferta()">🗑 Usuń raport</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     TRYB: REKON (OSINT przez n8n — hasło wymagane)
+══════════════════════════════════════════════════════════════════ -->
+<div id="modeRekon" style="display:none">
+
+  <!-- Stan: zablokowany -->
+  <div id="rekonLocked">
+    <div class="rekon-locked-info">
+      <div class="li-icon">🔒</div>
+      <h3>Dostęp zastrzeżony</h3>
+      <p>Moduł Rekon OSINT jest dostępny wyłącznie dla upoważnionych pracowników Woltanic. Jeśli masz dostęp, wprowadź hasło aby kontynuować.</p>
+      <button class="btn-show-pass" onclick="showPassOverlay()">Wprowadź hasło →</button>
+    </div>
+  </div>
+
+  <!-- Stan: odblokowany -->
+  <div id="rekonUnlocked" style="display:none">
+
+    <div id="rekonActiveBanner" class="active-banner rekon-banner" style="display:none" onclick="openRekonReport()">
+      🔍 Aktywny rekon: <b id="rekonBannerName">—</b> · za <span class="ab-timer" id="rekonBannerTimer">—</span>
+      <span class="ab-open">Otwórz →</span>
+    </div>
+
+    <!-- formularz -->
+    <div id="rekonFormScreen">
+    <div class="form-wrap">
+
+      <div class="al violet" style="margin-bottom:10px">
+        🔍 <strong>REKON OSINT (AI)</strong> — wpisz dane klienta. Scenariusz n8n automatycznie przeszuka dostępne źródła i zwróci pełny raport. Raport kasuje się po 12h.
+      </div>
+
+      <!-- status webhooka n8n -->
+      <div id="n8nStatusBox" class="n8n-status n8n-miss">
+        ⚠️ <strong>Webhook n8n nie skonfigurowany.</strong> Wpisz URL webhooka w pliku (stała <code>N8N_REKON_URL</code>) aby aktywować moduł.
+      </div>
+
+      <div class="card">
+        <div class="card-title">Dane klienta do raportu OSINT</div>
+        <div class="row2">
+          <div class="field"><label>Imię</label><input type="text" id="rImie" placeholder="Jan"></div>
+          <div class="field"><label>Nazwisko</label><input type="text" id="rNazwisko" placeholder="Nowak"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Telefon</label><input type="text" id="rTel" placeholder="600 000 001"></div>
+          <div class="field"><label>Miejscowość</label><input type="text" id="rMiasto" placeholder="Białystok"></div>
+        </div>
+        <div class="field"><label>Adres <small>(opcjonalnie)</small></label><input type="text" id="rAdres" placeholder="ul. Polna 5"></div>
+        <div class="field"><label>Adres e-mail <small>(opcjonalnie — pomaga w identyfikacji profili)</small></label><input type="email" id="rEmail" placeholder="jan.nowak@example.com"></div>
+        <div class="field"><label>Notatki z rozmowy telefonicznej <small>(co powiedział, co go interesuje)</small></label>
+          <textarea id="rNotatki" placeholder="np. Zainteresowany pompą, wspomniał że ma 150m² z 1980r., pytał o dofinansowanie..."></textarea>
+        </div>
+      </div>
+
+      <button class="btn-gen btn-violet" id="btnRekon" onclick="generateRekon()" disabled>
+        <div class="spinner"></div>
+        <span class="btxt">🔍 Generuj raport OSINT przez n8n</span>
+      </button>
+      <p style="font-size:11px;color:var(--gray);text-align:center;margin-top:8px">Raport generuje AI — może trwać 30–60 sekund</p>
+    </div>
+    </div>
+
+    <!-- raport -->
+    <div id="rekonReportScreen" style="display:none">
+      <div class="exp-bar rekon-exp">
+        <span>🔍 REKON · za&nbsp;</span>
+        <span class="timer" id="rekonTimer">--h --m</span>
+        <button class="btn-del-exp" onclick="deleteRekon()">🗑 Usuń</button>
+      </div>
+      <div class="rep-wrap" id="rekonContent"></div>
+      <div class="btn-bar">
+        <button class="bb bb-back" onclick="backToRekon()">← Nowy rekon</button>
+        <button class="bb bb-del" onclick="deleteRekon()">🗑 Usuń raport</button>
+      </div>
+    </div>
+
+  </div><!-- /rekonUnlocked -->
+</div><!-- /modeRekon -->
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  KONFIGURACJA — ZMIEŃ TE WARTOŚCI
+// ════════════════════════════════════════════════════════════════
+
+// URL webhooka n8n dla modułu Rekon OSINT:
+const N8N_REKON_URL = 'https://henryk120-20120.mikrus.cloud/webhook/asystent-oze-rekon';
+
+// Hasło do modułu Rekon (zmień na swoje):
+const REKON_HASLO   = 'Rekon20';
+
+// Jak długo hasło trzyma sesję (w godzinach):
+const SESSION_H     = 8;
+
+// ════════════════════════════════════════════════════════════════
+//  STAŁE
+// ════════════════════════════════════════════════════════════════
+const EXPIRY_MS    = 12 * 60 * 60 * 1000;
+const SESSION_MS   = SESSION_H * 60 * 60 * 1000;
+const KEY_OFERTA   = 'oze_oferta_v3';
+const KEY_REKON    = 'oze_rekon_v3';
+const KEY_SESSION  = 'oze_rekon_session';
+
+// ════════════════════════════════════════════════════════════════
+//  KATALOG WOLTANIC — specyfikacje wg danych producentów
+// ════════════════════════════════════════════════════════════════
+const POMPY=[
+  {
+    model:'GALMET Prima S Split 6kW (1-faz.)', moc:6, cena:28000,
+    spec:{
+      cop:'5,2 (A7/W35)', scop:'A+++', temp_min:'-25°C', temp_max:'65°C',
+      czynnik:'R32 (GWP=675)', gwarancja:'5 lat', glosnosc:'33 dB',
+      fazy:'230V / 1-faz.', funkcje:'Ogrzewanie + Chłodzenie + CWU',
+      zalety:['COP 5,2 — najwyższa klasa A+++','Praca do −25°C bez wspomagania','Najcichsza 33 dB (spokój sąsiadów)','R32 — ekologiczne chłodziwo','3-w-1: grzanie, chłodzenie, CWU','5 lat gwarancji Galmet']
+    }
+  },
+  {
+    model:'GALMET Prima S Split 8kW (1-faz.)', moc:8, cena:32000,
+    spec:{
+      cop:'5,2 (A7/W35)', scop:'A+++', temp_min:'-25°C', temp_max:'65°C',
+      czynnik:'R32', gwarancja:'5 lat', glosnosc:'36 dB',
+      fazy:'230V / 1-faz.', funkcje:'Ogrzewanie + Chłodzenie + CWU',
+      zalety:['COP 5,2 — najwyższa klasa A+++','Praca do −25°C','Idealna do 80–120 m²','R32 — ekologiczne','Sterowanie SmartHome WiFi','5 lat gwarancji']
+    }
+  },
+  {
+    model:'GALMET Prima S Split 10kW (1-faz.)', moc:10, cena:36000,
+    spec:{
+      cop:'4,95 (A7/W35)', scop:'A++', temp_min:'-25°C', temp_max:'65°C',
+      czynnik:'R32', gwarancja:'5 lat', glosnosc:'39 dB',
+      fazy:'230V / 1-faz.', funkcje:'Ogrzewanie + Chłodzenie + CWU',
+      zalety:['Idealna do 100–150 m²','Praca do −25°C','SCOP A++','Grzałka awaryjna w zestawie','SmartGrid Ready','5 lat gwarancji']
+    }
+  },
+  {
+    model:'GALMET Prima S Split 12kW (3-faz.)', moc:12, cena:40000,
+    spec:{
+      cop:'4,5 (A7/W35)', scop:'A++', temp_min:'-25°C', temp_max:'65°C',
+      czynnik:'R32', gwarancja:'5 lat', glosnosc:'42 dB',
+      fazy:'400V / 3-faz.', funkcje:'Ogrzewanie + Chłodzenie + CWU',
+      zalety:['Idealna do 130–180 m²','3-fazowa — stabilna praca','Grzałka awaryjna 9 kW','Praca do −25°C','SmartGrid Ready','5 lat gwarancji']
+    }
+  },
+  {
+    model:'GALMET Prima S Split 16kW (3-faz.)', moc:16, cena:47000,
+    spec:{
+      cop:'4,1 (A7/W35)', scop:'A+', temp_min:'-25°C', temp_max:'65°C',
+      czynnik:'R32', gwarancja:'5 lat', glosnosc:'45 dB',
+      fazy:'400V / 3-faz.', funkcje:'Ogrzewanie + Chłodzenie + CWU',
+      zalety:['Idealna do 180–250 m²','Największa moc Split','Grzałka 9 kW — bezpieczeństwo','Praca do −25°C','Hybrydowy system grzewczy','5 lat gwarancji']
+    }
+  },
+];
+const PIECE=[
+  {
+    model:'MOCEKO BIOPAL 12kW', moc:12, cena:18000,
+    spec:{
+      klasa:'5 (PN-EN 303-5:2021)', ecodesign:'EcoDesign 2021',
+      klasa_energ:'A+', pyl:'< 20 mg/m³', temp_max:'85°C',
+      palnik:'Batory Pell (autoczyszczenie)', sterownik:'IRYD 620 PID',
+      gwarancja:'60 mies. szczelność / 24 mies. elektronika',
+      cp:'Kwalifikuje się do Czystego Powietrza',
+      zalety:['Klasa 5 + EcoDesign 2021 — max dotacja CP','Pył < 20 mg/m³ — czyste powietrze','A+ klasa energetyczna','Autoczyszczący palnik Batory Pell','Sterownik PID — stabilna temperatura','60 mies. gwarancji szczelności']
+    }
+  },
+  {
+    model:'MOCEKO BIOPAL 20kW', moc:20, cena:24000,
+    spec:{
+      klasa:'5 (PN-EN 303-5:2021)', ecodesign:'EcoDesign 2021',
+      klasa_energ:'A+', pyl:'< 20 mg/m³', temp_max:'85°C',
+      palnik:'Batory Pell (autoczyszczenie)', sterownik:'IRYD 620 PID',
+      gwarancja:'60 mies. szczelność / 24 mies. elektronika',
+      cp:'Kwalifikuje się do Czystego Powietrza',
+      zalety:['Klasa 5 + EcoDesign — max dotacja CP','Zbiornik boczny — łatwy załadunek','Pył < 20 mg/m³','A+ klasa energetyczna','Sterownik PID z harmonogramem','60 mies. gwarancji szczelności']
+    }
+  },
+  {
+    model:'MOCEKO BIOPAL 25kW', moc:25, cena:30000,
+    spec:{
+      klasa:'5 (PN-EN 303-5:2021)', ecodesign:'EcoDesign 2021',
+      klasa_energ:'A+', pyl:'< 20 mg/m³', temp_max:'85°C',
+      palnik:'Batory Pell (autoczyszczenie)', sterownik:'IRYD 620 PID',
+      gwarancja:'60 mies. szczelność / 24 mies. elektronika',
+      cp:'Kwalifikuje się do Czystego Powietrza',
+      zalety:['Duże budynki do 300+ m²','Klasa 5 + EcoDesign 2021','Automatyczne podawanie pelletu','Pył < 20 mg/m³','Praca ciągła z pelletem EN Plus A1/A2','60 mies. gwarancji']
+    }
+  },
+  {
+    model:'MOCEKO BIOPAL 30kW', moc:30, cena:35000,
+    spec:{
+      klasa:'5 (PN-EN 303-5:2021)', ecodesign:'EcoDesign 2021',
+      klasa_energ:'A+', pyl:'< 20 mg/m³', temp_max:'85°C',
+      palnik:'Batory Pell (autoczyszczenie)', sterownik:'IRYD 620 PID',
+      gwarancja:'60 mies. szczelność / 24 mies. elektronika',
+      cp:'Kwalifikuje się do Czystego Powietrza',
+      zalety:['Największe domy i obiekty','Klasa 5 + EcoDesign — max dotacja','Ogrzewanie + CWU + bufory','Automatyczne podajniki pelletu','Sterownik PID + sterowanie strefowe','60 mies. gwarancji szczelności']
+    }
+  },
+];
+// Specyfikacje PV (ML System) i Magazynów (SOFAR)
+const PV_SPEC={
+  marka:'ML System', kraj:'Polska (od 2007)',
+  sprawnosc:'do 21,28%', moc_panel:'400–550 W',
+  gwarancja_prod:'12 lat produktowa',
+  gwarancja_liniowa:'25 lat (min. 83% wydajności)',
+  certyfikaty:'16 patentów, IEC 61215, IEC 61730',
+  zalety:['Polski producent — serwis w PL','Sprawność do 21,28% — top klasa','25 lat gwarancji liniowej','Odporność na grad (25mm/23m/s)','Instalacja: dach, grunt, elewacja','Współczynnik temp. −0,34%/°C']
+};
+const MAG_SPEC={
+  marka:'SOFAR BTS', technologia:'LiFePO4 (żelazowo-fosforanowa)',
+  cykle:'>6000 cykli ładowania', ladowanie:'2–4 godziny',
+  skalowalnosc:'5–20 kWh (moduły)',
+  bezpieczenstwo:'BMS (ochrona ogniw)',
+  zalety:['LiFePO4 — najtrwalsza technologia','6000+ cykli = 15–20 lat pracy','Modułowa budowa — rozbudowa','BMS chroni ogniwa','Zintegrowany z falownikiem SOFAR','Dofinansowanie NFOŚiGW do 16 000 zł']
+};
+const CP={
+  pompa:{podstawowy:22280,podwyzszony:38990,najwyzszy:55700},
+  piec: {podstawowy:16400,podwyzszony:28700,najwyzszy:41000},
+};
+const WM2={brak:160,slabe:125,srednie:90,dobre:60,bardzo_dobre:38};
+const ZIMNE=['olecko','elk','ełk','augustow','augustów','suwalki','suwałki','grajewo','łomża','lomza','białystok','bialystok','giżycko','gizycko','ostroleka','sejny'];
+const OGRZ_N={wegiel:'węgiel/koks',gaz:'gaz ziemny/LPG',olej:'olej opałowy',pellet:'pellet (ma już)',elektryczne:'elektryczne',pompa:'pompa ciepła (ma już)',brak:'nowe budownictwo'};
+const PROG_INFO={
+  podstawowy:'<b>Próg podstawowy:</b> Roczny dochód wnioskodawcy ≤ 135 000 zł. Dotacja na pompę: <b>22 280 zł</b>, na pellet: <b>16 400 zł</b>. Jak sprawdzić: PIT za poprzedni rok.',
+  podwyzszony:'<b>Próg podwyższony:</b> Dochód netto/os./mies. 1 300–2 250 zł. Dotacja na pompę: <b>38 990 zł</b>, na pellet: <b>28 700 zł</b>. Jak sprawdzić: zaświadczenie z MOPS/GOPS.',
+  najwyzszy:'<b>Próg najwyższy:</b> Dochód netto/os./mies. poniżej 1 300 zł. Dotacja na pompę: <b>55 700 zł</b>, na pellet: <b>41 000 zł</b>. <b>⭐ PREFINANSOWANIE</b> — część dotacji PRZED montażem! Zaświadczenie z GOPS.',
+};
+
+// ════════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════════
+let currentMode='oferta', interests=[], prog='podwyzszony';
+let timerO=null, timerR=null;
+
+// ════════════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════════════
+window.onload=function(){
+  checkExpired();
+  updateBanners();
+  checkN8nStatus();
+};
+
+function checkExpired(){
+  [KEY_OFERTA,KEY_REKON].forEach(k=>{
+    const r=localStorage.getItem(k);
+    if(r&&Date.now()-JSON.parse(r).timestamp>EXPIRY_MS) localStorage.removeItem(k);
+  });
+}
+function checkN8nStatus(){
+  const box=document.getElementById('n8nStatusBox');
+  const btn=document.getElementById('btnRekon');
+  if(N8N_REKON_URL){
+    box.className='n8n-status n8n-ok';
+    box.innerHTML='✅ <strong>Webhook n8n aktywny.</strong> System gotowy do generowania raportu OSINT przez AI.';
+    btn.disabled=false;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  MODE SWITCHING
+// ════════════════════════════════════════════════════════════════
+function setMode(m){
+  currentMode=m;
+  document.getElementById('modeOferta').style.display=m==='oferta'?'block':'none';
+  document.getElementById('modeRekon').style.display=m==='rekon'?'block':'none';
+  document.getElementById('tabOferta').classList.toggle('active',m==='oferta');
+  document.getElementById('tabRekon').classList.toggle('active',m==='rekon');
+  document.getElementById('headerSub').textContent=m==='oferta'?'Oferta na miejscu':'Rekon OSINT (zastrzeżony)';
+}
+
+// ════════════════════════════════════════════════════════════════
+//  HASŁO / SESJA
+// ════════════════════════════════════════════════════════════════
+function isSessionActive(){
+  const raw=sessionStorage.getItem(KEY_SESSION);
+  if(!raw) return false;
+  return Date.now()-JSON.parse(raw).ts<SESSION_MS;
+}
+function activateSession(){
+  sessionStorage.setItem(KEY_SESSION,JSON.stringify({ts:Date.now()}));
+}
+function tryRekon(){
+  setMode('rekon');
+  if(isSessionActive()){
+    unlockRekonUI();
+  } else {
+    document.getElementById('rekonLocked').style.display='block';
+    document.getElementById('rekonUnlocked').style.display='none';
+    document.getElementById('rekonTabIcon').textContent='🔒';
+  }
+}
+function showPassOverlay(){
+  document.getElementById('passInput').value='';
+  document.getElementById('passError').innerHTML='&nbsp;';
+  document.getElementById('passInput').classList.remove('wrong');
+  document.getElementById('passOverlay').style.display='flex';
+  setTimeout(()=>document.getElementById('passInput').focus(),100);
+}
+function checkPass(){
+  const val=document.getElementById('passInput').value;
+  if(val===REKON_HASLO){
+    document.getElementById('passOverlay').style.display='none';
+    activateSession();
+    unlockRekonUI();
+  } else {
+    document.getElementById('passError').textContent='Nieprawidłowe hasło. Spróbuj ponownie.';
+    const inp=document.getElementById('passInput');
+    inp.classList.add('wrong');
+    inp.value='';
+    setTimeout(()=>inp.classList.remove('wrong'),400);
+  }
+}
+function unlockRekonUI(){
+  document.getElementById('rekonLocked').style.display='none';
+  document.getElementById('rekonUnlocked').style.display='block';
+  document.getElementById('rekonTabIcon').textContent='🔍';
+  updateBanners();
+  // Jeśli jest aktywny raport — pokaż baner
+  const raw=localStorage.getItem(KEY_REKON);
+  if(raw){
+    const d=JSON.parse(raw);
+    if(Date.now()-d.timestamp<EXPIRY_MS){
+      // baner się zaktualizuje przez updateBanners()
+    }
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  BANNERS + TIMERS
+// ════════════════════════════════════════════════════════════════
+function updateBanners(){
+  _setBanner(KEY_OFERTA,'ofertaActiveBanner','ofertaBannerName','ofertaBannerTimer',cb=>timerO=cb);
+  _setBanner(KEY_REKON, 'rekonActiveBanner', 'rekonBannerName', 'rekonBannerTimer', cb=>timerR=cb);
+}
+function _setBanner(key,bid,nid,tid,setT){
+  clearInterval(setT._last);
+  const raw=localStorage.getItem(key);
+  const el=document.getElementById(bid); if(!el) return;
+  if(!raw){el.style.display='none';return;}
+  const d=JSON.parse(raw);
+  if(Date.now()-d.timestamp>EXPIRY_MS){localStorage.removeItem(key);el.style.display='none';return;}
+  el.style.display='flex';
+  document.getElementById(nid).textContent=d.clientName||'—';
+  function tick(){
+    const left=EXPIRY_MS-(Date.now()-d.timestamp);
+    if(left<=0){localStorage.removeItem(key);el.style.display='none';return;}
+    const h=Math.floor(left/3600000),mi=Math.floor((left%3600000)/60000);
+    const te=document.getElementById(tid); if(te) te.textContent=h+'h'+String(mi).padStart(2,'0')+'m';
+  }
+  tick();
+  const iv=setInterval(tick,60000); setT(iv); setT._last=iv;
+}
+function _startTimer(ts,elId,onExp){
+  function tick(){
+    const left=EXPIRY_MS-(Date.now()-ts);
+    if(left<=0){onExp();return;}
+    const h=Math.floor(left/3600000),mi=Math.floor((left%3600000)/60000);
+    const e=document.getElementById(elId); if(e) e.textContent=h+'h '+String(mi).padStart(2,'0')+'m';
+  }
+  tick(); return setInterval(tick,30000);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  OPEN / DELETE / BACK
+// ════════════════════════════════════════════════════════════════
+function openOfertaReport(){
+  const raw=localStorage.getItem(KEY_OFERTA); if(!raw)return;
+  _showOferta(JSON.parse(raw)); setMode('oferta');
+}
+function openRekonReport(){
+  if(!isSessionActive()){tryRekon();return;}
+  const raw=localStorage.getItem(KEY_REKON); if(!raw)return;
+  _showRekon(JSON.parse(raw)); setMode('rekon');
+}
+function deleteOferta(){
+  localStorage.removeItem(KEY_OFERTA);clearInterval(timerO);
+  document.getElementById('ofertaFormScreen').style.display='block';
+  document.getElementById('ofertaReportScreen').style.display='none';
+  document.getElementById('ofertaActiveBanner').style.display='none';
+}
+function deleteRekon(){
+  localStorage.removeItem(KEY_REKON);clearInterval(timerR);
+  document.getElementById('rekonFormScreen').style.display='block';
+  document.getElementById('rekonReportScreen').style.display='none';
+  document.getElementById('rekonActiveBanner').style.display='none';
+}
+function backToOferta(){if(!confirm('Usunąć aktywną ofertę?'))return;deleteOferta();}
+function backToRekon() {if(!confirm('Usunąć aktywny rekon?'))return;deleteRekon();}
+
+// ════════════════════════════════════════════════════════════════
+//  SHOW REPORTS
+// ════════════════════════════════════════════════════════════════
+function _showOferta(data){
+  document.getElementById('ofertaFormScreen').style.display='none';
+  document.getElementById('ofertaReportScreen').style.display='block';
+  document.getElementById('ofertaContent').innerHTML=data.html;
+  timerO=_startTimer(data.timestamp,'ofertaTimer',deleteOferta);
+  window.scrollTo(0,0);
+}
+function _showRekon(data){
+  document.getElementById('rekonFormScreen').style.display='none';
+  document.getElementById('rekonReportScreen').style.display='block';
+  document.getElementById('rekonContent').innerHTML=data.html;
+  timerR=_startTimer(data.timestamp,'rekonTimer',deleteRekon);
+  window.scrollTo(0,0);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  PROG INFO + INTERESTS
+// ════════════════════════════════════════════════════════════════
+function setProg(val,el){
+  prog=val;
+  document.querySelectorAll('.prog-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('progInfoBox').innerHTML=PROG_INFO[val]||'';
+}
+function toggleInt(val,el){
+  if(interests.includes(val)){interests=interests.filter(v=>v!==val);el.classList.remove('sel');}
+  else{interests.push(val);el.classList.add('sel');}
+}
+
+// ════════════════════════════════════════════════════════════════
+//  GENERATE OFERTA
+// ════════════════════════════════════════════════════════════════
+function fmtPLN(n){return Number(n).toLocaleString('pl-PL');}
+function obliczMoc(pow,rok,kond,ocep){
+  const w=WM2[ocep]||90;
+  const kw=rok<1960?1.15:rok<1975?1.08:rok<1990?1.02:rok<2005?0.97:rok<2015?0.92:0.87;
+  const kk=kond==1?1.08:kond==3?0.94:1.0;
+  return{moc:Math.round(pow*w*kw*kk/100)/10,wskaznik:Math.round(w*kw*kk)};
+}
+function generateOferta(){
+  const btn=document.getElementById('btnOferta');
+  btn.classList.add('loading');
+  setTimeout(()=>{try{_doOferta();}catch(e){alert('Błąd: '+e.message);}btn.classList.remove('loading');},200);
+}
+function _doOferta(){
+  const name   =document.getElementById('fName').value.trim()||'Klient';
+  const tel    =document.getElementById('fTel').value.trim();
+  const miasto =document.getElementById('fMiasto').value.trim()||'—';
+  const adres  =document.getElementById('fAdres').value.trim();
+  const rok    =parseInt(document.getElementById('fRok').value)||1985;
+  const pow    =parseFloat(document.getElementById('fPow').value)||130;
+  const kond   =parseInt(document.getElementById('fKond').value);
+  const ocep   =document.getElementById('fOcep').value;
+  const ogrz   =document.getElementById('fOgrz').value;
+  const osoby  =parseInt(document.getElementById('fOsoby').value);
+  const wlas   =document.getElementById('fWlas').value;
+  const rachunek=parseFloat(document.getElementById('fRachunek').value)||0;
+  const notatki=document.getElementById('fNotatki').value.trim();
+
+  const{moc,wskaznik}=obliczMoc(pow,rok,kond,ocep);
+  const isZ=ZIMNE.some(c=>miasto.toLowerCase().includes(c));
+  const mocK=isZ?Math.round(moc*1.07*10)/10:moc;
+  const eO=Math.round(mocK*1250),eCWU=osoby*1200,eT=eO+eCWU;
+
+  let akt=[...interests];
+  if(!akt.length){if(ogrz==='pompa')akt=['pv','magazyn'];else if(mocK>16)akt=['piec','pv'];else akt=['pompa','pv'];}
+
+  const prods=[];
+  if(akt.includes('pompa')){
+    const g=POMPY.find(p=>p.moc>=mocK)||POMPY[POMPY.length-1];
+    prods.push({typ:'pompa',label:'POMPA CIEPŁA',marka:'GALMET',model:g.model,moc:g.moc,unit:'kW',cena:g.cena,dot:CP.pompa[prog],spec:g.spec});
+  }
+  if(akt.includes('piec')){
+    const p=PIECE.find(p=>p.moc>=mocK)||PIECE[PIECE.length-1];
+    prods.push({typ:'piec',label:'KOCIOŁ NA PELLET',marka:'MOCEKO',model:p.model,moc:p.moc,unit:'kW',cena:p.cena,dot:CP.piec[prog],spec:p.spec});
+  }
+  if(akt.includes('pv')){
+    const kwp=Math.round(eT*0.6/900*10)/10;
+    prods.push({typ:'pv',label:'FOTOWOLTAIKA',marka:'ML SYSTEM',model:'ML System '+kwp+' kWp',moc:kwp,unit:'kWp',cena:Math.round(kwp*4200),dot:0,spec:PV_SPEC});
+  }
+  if(akt.includes('magazyn')){
+    const kwp=Math.round(eT*0.6/900*10)/10,mk=Math.max(10,Math.round(kwp*1.2));
+    prods.push({typ:'magazyn',label:'MAGAZYN ENERGII',marka:'SOFAR',model:'SOFAR BTS '+mk+' kWh',moc:mk,unit:'kWh',cena:Math.round(mk*1800+3000),dot:Math.min(mk*800,16000),spec:MAG_SPEC});
+  }
+
+  const sK=prods.reduce((s,p)=>s+p.cena,0),sD=prods.reduce((s,p)=>s+p.dot,0);
+  const netto=Math.max(0,sK-sD),rata=Math.round(netto*1.16/120);
+  const now=new Date(),exp=new Date(now.getTime()+EXPIRY_MS);
+  const fmt=dt=>dt.toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  const OS={wegiel:'WĘGIEL → najlepsza zamiana. Dotacja CP do 55 700 zł na pompę.',gaz:'GAZ → najdroższe. Do 2030 wycofywany. Brak dotacji CP.',olej:'OLEJ → drogi, niepewny. Sprawdź zbiornik przed montażem.',elektryczne:'ELEKTRYCZNE → najdroższe źródło. PV + pompa = idealne.',pellet:'MA PELLET → PV i magazyn. Upgrade kotła jeśli > 10 lat.',pompa:'MA POMPĘ → PV + magazyn. PV pokryje koszty pracy pompy.',brak:'NOWE BUDOWNICTWO → komplet: pompa + PV + magazyn.'};
+  const strat=[];
+  if(rachunek>0){const r5=Math.round(rachunek*Math.pow(1.1,5)),r10=Math.round(rachunek*Math.pow(1.1,10));strat.push({k:'Zamiana rachunku na ratę',v:`Klient płaci ${fmtPLN(rachunek)} zł/mies. Za 5 lat: ${fmtPLN(r5)} zł/mies., za 10 lat: ${fmtPLN(r10)} zł/mies. Rata: ~${fmtPLN(rata)} zł/mies. ${rata<=rachunek?'✅ RATA ≤ RACHUNEK — argument zamknięcia!':''}`});}
+  if(OS[ogrz])strat.push({k:'Ogrzewanie: '+OGRZ_N[ogrz],v:OS[ogrz]});
+  if(prog==='najwyzszy')strat.push({k:'⭐ Najwyższy próg CP — PREFINANSOWANIE',v:'Klient może dostać dotację PRZED montażem. Zapytaj o zaświadczenie z GOPS.'});
+  if(wlas==='najem')strat.push({k:'⚠️ Najem — brak CP',v:'Brak własności KW = brak dostępu do CP. Skup się na PV i magazynie.'});
+  if(notatki)strat.push({k:'Z rozmowy',v:'„'+notatki+'"'});
+
+  const obj=[];
+  if(akt.includes('pompa')||['wegiel','gaz','olej','elektryczne'].includes(ogrz)){
+    obj.push({q:'Sąsiad ma wysokie rachunki przy pompie',a:'Dobieramy przez audyt techniczny. SCOP 1:3 — 12 kW to ~4 000 kWh/rok. Z PV koszty maleją dalej.'});
+    obj.push({q:'Pompa nie poradzi sobie zimą',a:'Gwarancja GALMET do −25°C. Grzałka awaryjna 3-6-9 kW w modelach 12-16 kW. 44 lata doświadczeń.'});
+  }
+  if(akt.includes('pv'))obj.push({q:'Czy PV się jeszcze opłaca?',a:'Instalacja 1:1 do zużycia. Zarabia od pierwszego dnia. Zwrot 5-7 lat, potem 18-20 lat za darmo.'});
+  if(akt.includes('piec')||ogrz==='wegiel')obj.push({q:'Co jeśli pellet podrożeje?',a:'Polska = 2. producent pelletu na świecie. Wzrośnie też gaz i prąd. Piec hybrydowy — można palić drewnem.'});
+  const r5s=rachunek>0?Math.round(rachunek*12*5).toLocaleString('pl-PL'):'30 000';
+  obj.push({q:'Za drogie',a:`Vs ${r5s} zł przez 5 lat rosnących rachunków? Rata ${rata>0?fmtPLN(rata)+' zł/mies. ':''}— stała, nie wzrośnie.`});
+  obj.push({q:'Muszę się zastanowić',a:'Każdy miesiąc to rachunek oddany zakładowi. Kiedy mogę umówić darmowy audyt techniczny?'});
+
+  const html=`
+<div class="al danger" style="margin-bottom:10px">📋 OFERTA POUFNA · NIE POKAZUJ KLIENTOWI · Usuwa się: ${fmt(exp)}</div>
+<div class="r-hero oferta-hero"><div class="cname">${name}</div><div class="csub">${tel?tel+'&nbsp;·&nbsp;':''}${adres?adres+',&nbsp;':''}${miasto}<br>Wygenerowano: ${fmt(now)}</div></div>
+<div class="r-sec"><div class="r-ttl blue">Dane z oględzin</div><table class="kv-t">
+  <tr><td>Adres</td><td>${adres||'—'}, ${miasto}</td></tr>
+  <tr><td>Budynek</td><td>${rok}r., ${pow} m², ${kond} kondyg., ocieplenie: ${ocep.replace('_',' ')}</td></tr>
+  <tr><td>Ogrzewanie</td><td>${OGRZ_N[ogrz]||ogrz}</td></tr>
+  <tr><td>Rodzina</td><td>${osoby} os. · własność: ${wlas}</td></tr>
+  <tr><td>Próg CP</td><td>${prog}</td></tr>
+  <tr><td>Rachunek</td><td>${rachunek>0?fmtPLN(rachunek)+' zł/mies.':'nie podano'}</td></tr>
+</table></div>
+<div class="r-sec"><div class="r-ttl blue">Analiza techniczna (EN 12831)</div><table class="kv-t">
+  <tr><td>Moc grzewcza</td><td><strong>${moc} kW</strong>${isZ?` → strefa zimna: <strong>${mocK} kW</strong>`:''}</td></tr>
+  <tr><td>Wskaźnik W/m²</td><td>${wskaznik} W/m²</td></tr>
+  <tr><td>Energia ogrzewanie</td><td>~${fmtPLN(eO)} kWh/rok</td></tr>
+  <tr><td>Energia CWU</td><td>~${fmtPLN(eCWU)} kWh/rok (${osoby} os.)</td></tr>
+  <tr><td>Łącznie</td><td><strong>~${fmtPLN(eT)} kWh/rok</strong></td></tr>
+</table></div>
+<div class="r-sec"><div class="r-ttl green">Rekomendowany zestaw Woltanic</div>
+${prods.map((p,i)=>{
+  const s=p.spec||{};
+  const zalety=s.zalety||[];
+  let specRow='';
+  if(p.typ==='pompa'&&s.cop) specRow=`<tr><td>COP / Klasa</td><td>${s.cop} · ${s.scop||'A++'}</td></tr><tr><td>Praca</td><td>${s.temp_min||'−25°C'} do ${s.temp_max||'65°C'} wody</td></tr><tr><td>Chłodziwo</td><td>${s.czynnik||'R32'} · ${s.fazy||'—'}</td></tr><tr><td>Głośność</td><td>${s.glosnosc||'—'} · ${s.funkcje||'—'}</td></tr><tr><td>Gwarancja</td><td>${s.gwarancja||'—'}</td></tr>`;
+  if(p.typ==='piec'&&s.klasa) specRow=`<tr><td>Klasa / Norma</td><td>${s.klasa} · ${s.ecodesign||'—'}</td></tr><tr><td>Klasa energetyczna</td><td>${s.klasa_energ||'A+'}</td></tr><tr><td>Emisje pyłu</td><td>${s.pyl||'—'}</td></tr><tr><td>Max temp. wody</td><td>${s.temp_max||'85°C'}</td></tr><tr><td>Palnik / Sterownik</td><td>${s.palnik||'—'} / ${s.sterownik||'—'}</td></tr><tr><td>Gwarancja</td><td>${s.gwarancja||'—'}</td></tr><tr><td>Dotacja CP</td><td>${s.cp||'—'}</td></tr>`;
+  if(p.typ==='pv'&&s.sprawnosc) specRow=`<tr><td>Marka / Kraj</td><td>${s.marka||'ML System'} · ${s.kraj||'Polska'}</td></tr><tr><td>Sprawność paneli</td><td>${s.sprawnosc||'—'}</td></tr><tr><td>Moc panelu</td><td>${s.moc_panel||'—'}</td></tr><tr><td>Gwarancja prod.</td><td>${s.gwarancja_prod||'—'}</td></tr><tr><td>Gwarancja liniowa</td><td>${s.gwarancja_liniowa||'—'}</td></tr><tr><td>Certyfikaty</td><td>${s.certyfikaty||'—'}</td></tr>`;
+  if(p.typ==='magazyn'&&s.technologia) specRow=`<tr><td>Marka / Technologia</td><td>${s.marka||'SOFAR'} · ${s.technologia||'LiFePO4'}</td></tr><tr><td>Cykle życia</td><td>${s.cykle||'—'}</td></tr><tr><td>Czas ładowania</td><td>${s.ladowanie||'—'}</td></tr><tr><td>Skalowalność</td><td>${s.skalowalnosc||'—'}</td></tr><tr><td>Bezpieczeństwo</td><td>${s.bezpieczenstwo||'—'}</td></tr>`;
+  return `<div class="prod-c${i===0?' primary':''}">
+  ${i===0?'<div style="font-size:9px;font-weight:800;color:#b37800;margin-bottom:3px">★ REKOMENDACJA #1</div>':''}
+  <div class="ptype">${p.label} · ${p.marka}</div>
+  <div class="pname">${p.model}</div>
+  <div class="chips" style="margin-bottom:8px">
+    <span class="chip chip-b">${p.moc} ${p.unit}</span>
+    ${p.dot>0?`<span class="chip chip-g">Dotacja do ${fmtPLN(p.dot)} zł</span>`:''}
+    <span class="chip chip-o">~${fmtPLN(p.cena)} zł</span>
+  </div>
+  ${specRow?`<table class="kv-t" style="margin-bottom:8px;font-size:11px">${specRow}</table>`:''}
+  ${zalety.length?`<div style="font-size:10px;font-weight:700;color:var(--gray);margin-bottom:4px">DLACZEGO TEN PRODUKT:</div><div class="chips">${zalety.map(z=>`<span class="chip chip-g" style="margin-bottom:4px">✓ ${z}</span>`).join('')}</div>`:''}
+</div>`;
+}).join('')}
+<div class="suma-b"><div class="sh">ZESTAWIENIE KOSZTÓW</div>
+  <div class="s-row"><span class="sl">Koszt instalacji</span><span class="sv">~${fmtPLN(sK)} zł</span></div>
+  <div class="s-row"><span class="sl">Dotacje (CP + NFOŚiGW)</span><span class="sv" style="color:var(--gold)">−${fmtPLN(sD)} zł</span></div>
+  ${wlas==='najem'?'<div class="s-row"><span class="sl" style="color:#f8bbd0">⚠️ Najem → sprawdź CP</span><span class="sv" style="color:#f8bbd0">UWAGA</span></div>':''}
+  <div class="s-row tot"><span class="sl">Koszt po dotacji</span><span class="sv">~${fmtPLN(netto)} zł</span></div>
+  <div class="s-row"><span class="sl">Rata 120 mies.</span><span class="sv">~${fmtPLN(rata)} zł/mies.</span></div>
+  ${rachunek>0?`<div class="s-row"><span class="sl">Vs rachunek (${fmtPLN(rachunek)} zł)</span><span class="sv" style="color:var(--gold)">${rata<=rachunek?'✅ rata ≤ rachunek':'+'+(rata-rachunek)+' zł więcej'}</span></div>`:''}
+</div>
+${rachunek>0&&rata<=rachunek?`<div class="al good">✅ <strong>Rata (${fmtPLN(rata)} zł) ≤ rachunek (${fmtPLN(rachunek)} zł)</strong> — zamieniamy rachunek za zakład na ratę za własny sprzęt!</div>`:''}
+</div>
+<div class="r-sec"><div class="r-ttl gold">Strategia rozmowy (WEWNĘTRZNE)</div>${strat.map(s=>`<div class="strat"><span class="sk">${s.k}</span>${s.v}</div>`).join('')}</div>
+<div class="r-sec"><div class="r-ttl red">Oczekiwane obiekcje + odpowiedzi</div>${obj.map(o=>`<div class="obj-r"><div class="oq">„${o.q}"</div><div class="oa">${o.a}</div></div>`).join('')}</div>
+${notatki?`<div class="r-sec"><div class="r-ttl">Notatki z rozmowy</div><p style="font-size:12px;line-height:1.6;color:#444">${notatki}</p></div>`:''}
+<div class="al danger">📋 POUFNA · NIE POKAZUJ KLIENTOWI · Auto-kasuje się: ${fmt(exp)}</div>`;
+
+  const stored={timestamp:Date.now(),clientName:name,html};
+  localStorage.setItem(KEY_OFERTA,JSON.stringify(stored));
+  _showOferta(stored);
+  updateBanners();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  GENERATE REKON (przez n8n)
+// ════════════════════════════════════════════════════════════════
+async function generateRekon(){
+  if(!N8N_REKON_URL){alert('Brak URL webhooka n8n. Skonfiguruj stałą N8N_REKON_URL w pliku.');return;}
+
+  const imie    =document.getElementById('rImie').value.trim();
+  const nazwisko=document.getElementById('rNazwisko').value.trim();
+  const tel     =document.getElementById('rTel').value.trim();
+  const miasto  =document.getElementById('rMiasto').value.trim();
+  const adres   =document.getElementById('rAdres').value.trim();
+  const email   =document.getElementById('rEmail').value.trim();
+  const notatki =document.getElementById('rNotatki').value.trim();
+
+  if(!imie&&!nazwisko&&!tel){alert('Podaj co najmniej imię, nazwisko lub telefon klienta.');return;}
+
+  const name=`${imie} ${nazwisko}`.trim()||'Klient';
+  const btn=document.getElementById('btnRekon');
+  const statusBox=document.getElementById('n8nStatusBox');
+
+  btn.classList.add('loading');
+  statusBox.className='n8n-status n8n-loading';
+  statusBox.innerHTML='🔍 <strong>Trwa rekon<span class="dots"></span></strong> Claude przeszukuje dostępne źródła (~30–60 sekund). Nie zamykaj strony.';
+
+  const payload={imie,nazwisko,telefon:tel,miejscowosc:miasto,adres,email,notatki,timestamp:new Date().toISOString()};
+
+  try{
+    const resp=await fetch(N8N_REKON_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload),
+    });
+    if(!resp.ok) throw new Error('Webhook zwrócił błąd: '+resp.status);
+
+    let html='';
+    const ct=resp.headers.get('content-type')||'';
+    if(ct.includes('application/json')){
+      const data=await resp.json();
+      // Obsługa różnych formatów odpowiedzi z n8n
+      html=data.html||data.raport||data.report||data.output||JSON.stringify(data,null,2);
+    } else {
+      html=await resp.text();
+    }
+
+    // Owiń w nagłówek poufności jeśli n8n zwrócił surowy HTML/tekst
+    const now=new Date(),exp=new Date(now.getTime()+EXPIRY_MS);
+    const fmt=dt=>dt.toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    const wrappedHtml=`
+<div class="al danger" style="margin-bottom:10px">🔍 OSINT · POUFNY · NIE POKAZUJ KLIENTOWI · Usuwa się: ${fmt(exp)}</div>
+<div class="r-hero rekon-hero"><div class="cname">${name}</div><div class="csub">${tel?tel+'&nbsp;·&nbsp;':''}${miasto||''}<br>Raport AI · ${fmt(now)}</div></div>
+${html}
+<div class="al danger">🔍 POUFNY · NIE POKAZUJ KLIENTOWI · Auto-kasuje się: ${fmt(exp)}</div>`;
+
+    const stored={timestamp:Date.now(),clientName:name,html:wrappedHtml};
+    localStorage.setItem(KEY_REKON,JSON.stringify(stored));
+    _showRekon(stored);
+    updateBanners();
+
+    statusBox.className='n8n-status n8n-ok';
+    statusBox.innerHTML='✅ <strong>Webhook n8n aktywny.</strong> System gotowy do generowania raportu OSINT przez AI.';
+
+  }catch(err){
+    statusBox.className='n8n-status n8n-miss';
+    statusBox.innerHTML=`❌ <strong>Błąd połączenia z n8n:</strong> ${err.message}. Sprawdź URL webhooka i czy scenariusz n8n jest aktywny.`;
+  }finally{
+    btn.classList.remove('loading');
+  }
+}
+</script>
+</body>
+</html>

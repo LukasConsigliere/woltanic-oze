@@ -154,6 +154,7 @@ ul.kv li .v{color:var(--text)}
   <div class="tab" onclick="showTab('zwroty')" id="tab-zwroty"><span class="t-icon">💬</span>Zwroty</div>
   <div class="tab" onclick="showTab('kalk')" id="tab-kalk"><span class="t-icon">🧮</span>Kalkulator</div>
   <div class="tab" onclick="showTab('rachunek')" id="tab-rachunek"><span class="t-icon">📄</span>Rachunek</div>
+  <div class="tab" onclick="showTab('pstryk')" id="tab-pstryk"><span class="t-icon">⚡</span>Pstryk</div>
 </div>
 
 <!-- SEARCH RESULTS -->
@@ -1307,6 +1308,290 @@ ul.kv li .v{color:var(--text)}
   </div>
 </div>
 
+<!-- ═══════ PSTRYK ══════════════════════════════════════════════ -->
+<div class="section" id="s-pstryk">
+  <div class="page-title">⚡ Pstryk — taryfa dynamiczna</div>
+  <div class="page-sub">Co to jest, dlaczego warto, co klient musi mieć i jak liczyć</div>
+
+  <div class="alert good">Pstryk to dodatkowy argument sprzedażowy — nie konkurencja dla Woltanic. Im lepszy sprzęt kupi klient, tym więcej zarobi na Pstryk.</div>
+
+  <!-- CO TO JEST -->
+  <div class="card">
+    <div class="card-title gold">💡 Co to jest Pstryk — wyjaśnienie dla laika</div>
+    <div class="alert info" style="margin-bottom:12px">Analogia którą rozumie każdy:</div>
+    <div style="background:#fff8e1;border-radius:10px;padding:14px;margin-bottom:12px;border-left:4px solid var(--gold);font-size:13px;line-height:1.7">
+      <strong>Stary zakład energetyczny</strong> to jak taksówka z taryfą stałą — wsiadasz, licznik bije 0,85 zł/km niezależnie od pory dnia i korków.<br><br>
+      <strong>Pstryk</strong> to jak Uber z dynamiczną ceną — o 3 w nocy kurs kosztuje złotówkę, w godzinach szczytu 8 zł. Ale Ty nie musisz jeździć w szczycie — ładujesz baterię za złotówkę, żeby nie płacić 8 zł wieczorem.
+    </div>
+    <ul class="kv">
+      <li><span class="k">Jak zmienia się cena</span><span class="v">Co godzinę, według giełdy energii (RDN). Noc i weekendy = najtaniej. Zimowe wieczory = najdrożej.</span></li>
+      <li><span class="k">Zakres cen w Polsce</span><span class="v">Od <strong style="color:var(--green)">0,05 zł/kWh</strong> (noc, wietrzne weekendy) do <strong style="color:var(--red)">1,50 zł/kWh</strong> (zimowy wieczór)</span></li>
+      <li><span class="k">Ujemne ceny</span><span class="v">Kilkadziesiąt razy w roku cena spada poniżej zera — Pstryk <strong>dopłaca Ci za zużycie</strong>. Bateria ładuje się za darmo + klient dostaje pieniądze.</span></li>
+      <li><span class="k">Średnia u klientów Pstryk</span><span class="v"><strong style="color:var(--green)">0,39 zł/kWh</strong> (2025)</span></li>
+      <li><span class="k">Taryfa stała (Tauron/Enea)</span><span class="v"><strong style="color:var(--red)">0,85–1,00 zł/kWh</strong> łącznie z dystrybucją</span></li>
+    </ul>
+  </div>
+
+  <!-- PORÓWNANIE Z KONKURENCJĄ -->
+  <div class="card">
+    <div class="card-title gold">⚔️ Pstryk vs tradycyjny zakład — porównanie z liczbami</div>
+    <div class="alert info" style="margin-bottom:10px">Dom z rocznym zużyciem <strong>4 000 kWh</strong> — typowy klient Woltanic</div>
+    <table class="dot-table">
+      <tr>
+        <th>Co porównujemy</th>
+        <th style="color:#ffdd88">Tauron / Enea / PGE</th>
+        <th style="color:#88ffaa">Pstryk + bateria</th>
+      </tr>
+      <tr>
+        <td>Cena energii</td>
+        <td>~0,85 zł/kWh (stała)</td>
+        <td>~0,39 zł/kWh (średnia)</td>
+      </tr>
+      <tr>
+        <td>Roczny koszt energii</td>
+        <td style="color:var(--red)"><strong>3 400 zł/rok</strong></td>
+        <td style="color:var(--green)"><strong>1 560 zł/rok</strong></td>
+      </tr>
+      <tr>
+        <td>Oszczędność roczna</td>
+        <td>—</td>
+        <td style="color:var(--green)"><strong>1 840 zł/rok</strong></td>
+      </tr>
+      <tr>
+        <td>Depozyt prosumencki</td>
+        <td>Wygasa po <strong>12 miesiącach</strong></td>
+        <td>Nie wygasa <strong>nigdy</strong></td>
+      </tr>
+      <tr>
+        <td>Depozyt pokrywa</td>
+        <td>Tylko energię</td>
+        <td><strong>Energię + dystrybucję</strong></td>
+      </tr>
+      <tr>
+        <td>Umowa / kary</td>
+        <td>Często długoterminowa</td>
+        <td>Miesiąc wypowiedzenia, <strong>bez kar</strong></td>
+      </tr>
+      <tr>
+        <td>Ujemne ceny</td>
+        <td>Klient nic z nich nie ma</td>
+        <td><strong>Klient zarabia</strong> na ujemnych cenach</td>
+      </tr>
+      <tr>
+        <td>Zarządzanie pompą ciepła</td>
+        <td>Ręcznie lub G12</td>
+        <td><strong>Automatycznie</strong> w najtańszych godzinach (Pstryk Connect)</td>
+      </tr>
+    </table>
+    <div class="bill-calc" style="margin-top:12px">
+      <div style="font-size:13px;margin-bottom:6px;opacity:0.85">Przykład: dom 4 000 kWh/rok przez 10 lat z podwyżkami 10%/rok</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <div style="flex:1;min-width:120px">
+          <div style="font-size:11px;opacity:0.7;margin-bottom:2px">Tradycyjny zakład</div>
+          <div style="font-size:22px;font-weight:900;color:#ff8888">~48 000 zł</div>
+        </div>
+        <div style="flex:1;min-width:120px">
+          <div style="font-size:11px;opacity:0.7;margin-bottom:2px">Pstryk + bateria</div>
+          <div style="font-size:22px;font-weight:900;color:#88ff88">~22 000 zł</div>
+        </div>
+        <div style="flex:1;min-width:120px">
+          <div style="font-size:11px;opacity:0.7;margin-bottom:2px">Różnica</div>
+          <div style="font-size:22px;font-weight:900;color:var(--gold)">~26 000 zł</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAK DZIAŁA BATERIA + PSTRYK -->
+  <div class="card">
+    <div class="card-title gold">🔋 Jak bateria współpracuje z Pstryk — cały dzień godzina po godzinie</div>
+    <div class="alert info" style="margin-bottom:10px">Przykład: PV 10 kWp + bateria 20 kWh + Pstryk. Letni dzień.</div>
+    <table class="dot-table">
+      <tr><th>Godzina</th><th>Cena prądu</th><th>Co robi system</th><th>Efekt dla klienta</th></tr>
+      <tr>
+        <td>02:00–06:00</td>
+        <td style="color:var(--green)"><strong>0,05 zł/kWh</strong></td>
+        <td>Bateria ładuje się z sieci</td>
+        <td>Kupuje tanio na zapas</td>
+      </tr>
+      <tr>
+        <td>08:00–10:00</td>
+        <td>0,30 zł/kWh</td>
+        <td>PV startuje, ładuje baterię dalej</td>
+        <td>Słońce zastępuje prąd z sieci</td>
+      </tr>
+      <tr>
+        <td>10:00–15:00</td>
+        <td style="color:var(--green)">Często ujemna!</td>
+        <td>PV produkuje max, bateria pełna → nadwyżka do sieci</td>
+        <td><strong>Pstryk dopłaca</strong> za oddany prąd</td>
+      </tr>
+      <tr>
+        <td>17:00–21:00</td>
+        <td style="color:var(--red)"><strong>0,80–1,50 zł</strong></td>
+        <td>Dom żyje z baterii — zero poboru z sieci</td>
+        <td>Omija najdroższe godziny</td>
+      </tr>
+      <tr>
+        <td>21:00–02:00</td>
+        <td>0,40 zł/kWh</td>
+        <td>Małe zużycie z baterii, sieć jako backup</td>
+        <td>Płaci minimum</td>
+      </tr>
+    </table>
+    <div class="alert good" style="margin-top:10px"><strong>Wynik:</strong> Klient kupuje prąd po 0,05 zł i nigdy nie kupuje po 1,50 zł. To jest serce arbitrażu energetycznego.</div>
+
+    <!-- DLACZEGO BATERIA 2x PV -->
+    <div style="background:#e8f5e9;border-radius:10px;padding:14px;margin-top:12px;border-left:4px solid var(--green)">
+      <div style="font-weight:700;color:var(--green);margin-bottom:8px">Dlaczego bateria powinna być 2× większa od PV?</div>
+      <div style="font-size:13px;line-height:1.7">
+        PV 10 kWp produkuje latem <strong>~30–40 kWh dziennie</strong>.<br>
+        Dom zużywa ~10–15 kWh — nadwyżka 15–25 kWh trafia do baterii.<br>
+        <strong>Bateria 20 kWh</strong> mieści całą nadwyżkę dzienną.<br><br>
+        Nocą Pstryk daje tanią energię → bateria się <strong>doładowuje drugi raz</strong>.<br>
+        Mała bateria (5 kWh) wypełni się w 30 minut → resztę słońca marnujesz oddając do sieci za grosze.<br><br>
+        <strong>Zasada: 2 kWh baterii na każdy 1 kWp PV</strong><br>
+        PV 6 kWp → bateria 12 kWh | PV 10 kWp → bateria 20 kWh
+      </div>
+    </div>
+  </div>
+
+  <!-- CO KLIENT MUSI MIEĆ -->
+  <div class="card">
+    <div class="card-title gold">✅ Co klient musi mieć — checklista krok po kroku</div>
+
+    <div style="margin-bottom:10px">
+      <div style="background:var(--red);color:#fff;border-radius:8px;padding:10px 14px;font-weight:700;font-size:13px;margin-bottom:6px">① LICZNIK INTELIGENTNY (smart meter) — NAJWIĘKSZY BLOKER</div>
+      <div style="padding:10px 14px;background:var(--light);border-radius:8px;font-size:13px;line-height:1.6">
+        Bez niego Pstryk fizycznie nie może rozliczać klienta godzinowo. Zwykły licznik mierzy tylko sumaryczne zużycie — nie wie co się dzieje o 3 w nocy.<br>
+        <strong>Jak go dostać:</strong> Wniosek do OSD (Tauron/Enea/PGE/Energa) — bezpłatny, ale trwa 2 tygodnie do 3 miesięcy.<br>
+        <strong>Co zrobić na spotkaniu:</strong> Pomóż klientowi złożyć wniosek przez telefon lub stronę OSD — zanim wyjdziesz z domu.
+      </div>
+    </div>
+
+    <div style="margin-bottom:10px">
+      <div style="background:var(--blue);color:#fff;border-radius:8px;padding:10px 14px;font-weight:700;font-size:13px;margin-bottom:6px">② INTERNET W DOMU</div>
+      <div style="padding:10px 14px;background:var(--light);border-radius:8px;font-size:13px">Smart meter wysyła dane godzinowe przez sieć. Bez internetu brak odczytów w czasie rzeczywistym. Dziś prawie każdy dom ma — jeśli nie, sprawdź zasięg LTE jako alternatywę.</div>
+    </div>
+
+    <div style="margin-bottom:10px">
+      <div style="background:var(--blue);color:#fff;border-radius:8px;padding:10px 14px;font-weight:700;font-size:13px;margin-bottom:6px">③ INSTALACJA PV (zamawia u Ciebie)</div>
+      <div style="padding:10px 14px;background:var(--light);border-radius:8px;font-size:13px">Wymagana do statusu prosumenta i depozytu. Bez PV klient ma Pstryk ale bez depozytu — traci największą korzyść (depozyt bez wygasania, pokrywający dystrybucję).</div>
+    </div>
+
+    <div style="margin-bottom:10px">
+      <div style="background:var(--blue);color:#fff;border-radius:8px;padding:10px 14px;font-weight:700;font-size:13px;margin-bottom:6px">④ FALOWNIK HYBRYDOWY (zamawia u Ciebie)</div>
+      <div style="padding:10px 14px;background:var(--light);border-radius:8px;font-size:13px">Zwykły falownik sieciowy nie obsługuje baterii — potrzebny falownik hybrydowy z <strong>limitem eksportu</strong>. Limit eksportu = system nie wysyła do sieci więcej niż moc PV → bateria może być nawet równa mocy PV bez problemów z przyłączem.</div>
+    </div>
+
+    <div style="margin-bottom:10px">
+      <div style="background:var(--blue);color:#fff;border-radius:8px;padding:10px 14px;font-weight:700;font-size:13px;margin-bottom:6px">⑤ MAGAZYN ENERGII (zamawia u Ciebie)</div>
+      <div style="padding:10px 14px;background:var(--light);border-radius:8px;font-size:13px">Bez baterii Pstryk oszczędza ~20–23%. Z baterią oszczędza do 70% i klient może zarabiać na ujemnych cenach. Optymalny dobór: 2 kWh baterii na każdy 1 kWp PV.</div>
+    </div>
+
+    <div style="margin-bottom:10px">
+      <div style="background:#7b1fa2;color:#fff;border-radius:8px;padding:10px 14px;font-weight:700;font-size:13px;margin-bottom:6px">⑥ UMOWA Z PSTRYK (klient robi sam — Ty możesz pomóc)</div>
+      <div style="padding:10px 14px;background:var(--light);border-radius:8px;font-size:13px">Rejestracja online na pstryk.pl, 10 minut. Pstryk sam przeprowadza zmianę sprzedawcy — klient nie musi wypowiadać umowy z obecnym zakładem. Możesz pomóc klientowi przez telefon.</div>
+    </div>
+
+    <div>
+      <div style="background:#2e7d32;color:#fff;border-radius:8px;padding:10px 14px;font-weight:700;font-size:13px;margin-bottom:6px">⑦ OPCJONALNIE: Pstryk Connect + smart home</div>
+      <div style="padding:10px 14px;background:var(--light);border-radius:8px;font-size:13px">Automatycznie zarządza pompą ciepła i baterią wg cen godzinowych. Bez tego klient musi ręcznie patrzeć w aplikację — większość robi to przez tydzień a potem przestaje. Warto polecić szczególnie przy pompie ciepła.</div>
+    </div>
+  </div>
+
+  <!-- MOC PRZYŁĄCZENIOWA -->
+  <div class="card">
+    <div class="card-title gold">🔌 Zasada mocy — bateria a przyłącze (bez żargonu)</div>
+    <div class="alert info" style="margin-bottom:12px">Bateria ma dwa parametry: <strong>kWh</strong> = ile mieści (jak bak), <strong>kW</strong> = jak szybko ładuje/oddaje (jak rura). Bateria 10 kWh przy mocy 5 kW ładuje się przez 2 godziny.</div>
+    <table class="dot-table">
+      <tr><th>Sytuacja</th><th>Przykład</th><th>Co trzeba zrobić</th></tr>
+      <tr>
+        <td>Moc baterii ≤ moc PV</td>
+        <td>PV 10 kWp + bateria 10 kWh (5 kW)</td>
+        <td style="color:var(--green)"><strong>Nic — brak formalności</strong></td>
+      </tr>
+      <tr>
+        <td>Moc baterii > moc PV</td>
+        <td>PV 4 kWp + bateria 20 kWh (10 kW)</td>
+        <td style="color:var(--red)"><strong>Trzeba zwiększyć przyłącze LUB</strong> falownik z limitem eksportu</td>
+      </tr>
+      <tr>
+        <td>Falownik z limitem eksportu</td>
+        <td>Dowolna kombinacja PV + bateria</td>
+        <td style="color:var(--green)"><strong>Brak problemów</strong> — system nigdy nie wysyła więcej niż moc PV</td>
+      </tr>
+    </table>
+    <div class="alert good" style="margin-top:10px"><strong>Praktyczna zasada:</strong> Przy zestawie z baterią zawsze montuj falownik hybrydowy z limitem eksportu — eliminujesz problem niezależnie od wielkości baterii.</div>
+  </div>
+
+  <!-- CHRONOLOGIA DZIAŁAŃ -->
+  <div class="card">
+    <div class="card-title gold">📅 Kolejność działań — co kiedy</div>
+    <div style="position:relative;padding-left:28px">
+      <div style="position:absolute;left:11px;top:0;bottom:0;width:2px;background:var(--border)"></div>
+
+      <div style="position:relative;margin-bottom:18px">
+        <div style="position:absolute;left:-22px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--red);border:2px solid #fff;box-shadow:0 0 0 2px var(--red)"></div>
+        <div style="font-weight:700;color:var(--red);font-size:13px">DZIŚ NA SPOTKANIU</div>
+        <div style="font-size:13px;margin-top:4px;line-height:1.6">Złóż z klientem wniosek o <strong>licznik inteligentny</strong> do OSD (Tauron/Enea/PGE/Energa). Przez stronę OSD lub telefon — zajmuje 10 minut. To najdłuższy element całego procesu.</div>
+      </div>
+
+      <div style="position:relative;margin-bottom:18px">
+        <div style="position:absolute;left:-22px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid #fff;box-shadow:0 0 0 2px var(--blue)"></div>
+        <div style="font-weight:700;color:var(--blue);font-size:13px">TYDZIEŃ 1–2 — Zamówienie</div>
+        <div style="font-size:13px;margin-top:4px;line-height:1.6">Klient podpisuje umowę z Woltanic na <strong>PV + falownik hybrydowy + magazyn</strong>. Projekt instalacji, uzgodnienie terminu montażu.</div>
+      </div>
+
+      <div style="position:relative;margin-bottom:18px">
+        <div style="position:absolute;left:-22px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid #fff;box-shadow:0 0 0 2px var(--blue)"></div>
+        <div style="font-weight:700;color:var(--blue);font-size:13px">TYDZIEŃ 4–8 — Montaż Woltanic</div>
+        <div style="font-size:13px;margin-top:4px;line-height:1.6">Instalacja PV + baterii. Równolegle OSD wymienia licznik (te procesy idą równocześnie — nie tracisz czasu). Woltanic składa zgłoszenie prosumenckie do OSD.</div>
+      </div>
+
+      <div style="position:relative;margin-bottom:18px">
+        <div style="position:absolute;left:-22px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--gold);border:2px solid #fff;box-shadow:0 0 0 2px var(--gold)"></div>
+        <div style="font-weight:700;color:#b07800;font-size:13px">PO MONTAŻU — Pstryk online (10 minut)</div>
+        <div style="font-size:13px;margin-top:4px;line-height:1.6">Klient rejestruje się na pstryk.pl — podpisuje umowę przez Autenti. Pstryk sam kontaktuje się z OSD i przejmuje umowę. Klient nic więcej nie robi.</div>
+      </div>
+
+      <div style="position:relative">
+        <div style="position:absolute;left:-22px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid #fff;box-shadow:0 0 0 2px var(--green)"></div>
+        <div style="font-weight:700;color:var(--green);font-size:13px">GOTOWE — system pracuje automatycznie</div>
+        <div style="font-size:13px;margin-top:4px;line-height:1.6">Bateria ładuje się nocą za grosze, PV produkuje w dzień, klient nie płaci za prąd wieczorem. Aplikacja Pstryk pokazuje oszczędności w czasie rzeczywistym.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CZY MOŻNA ZARABIAĆ -->
+  <div class="card">
+    <div class="card-title gold">💰 Czy można na tym zarabiać?</div>
+    <div class="alert warn" style="margin-bottom:10px">Ważne rozróżnienie: klient nie może zostać "firmą energetyczną" bez koncesji URE. Ale ekonomicznie efekt jest podobny.</div>
+    <ul class="kv">
+      <li><span class="k">Co to jest arbitraż</span><span class="v">Ładujesz baterię gdy prąd kosztuje 0,05 zł. Używasz gdy kosztuje 1,20 zł. Różnica to Twój zarobek — klient zostawia w kieszeni to co zakład energetyczny chciał wziąć.</span></li>
+      <li><span class="k">Ujemne ceny</span><span class="v">Kilkadziesiąt razy w roku — Pstryk dosłownie płaci klientowi za zużycie. Bateria ładuje się za darmo i klient dostaje kredyt na kolejne rachunki.</span></li>
+      <li><span class="k">Prosument z depozytem</span><span class="v">Kiedy PV produkuje więcej niż klient zużywa — depozyt rośnie. U Pstryk nie wygasa i pokrywa też dystrybucję. Efekt: rachunek 0 zł przez wiele miesięcy.</span></li>
+      <li><span class="k">Realne liczby (2025)</span><span class="v">Oszczędności 20–23% vs taryfa stała bez baterii. Z baterią — do 70% według Pstryk.</span></li>
+      <li><span class="k">Prosument 3.0 (w legislacji)</span><span class="v">Planowana zmiana przepisów: sprzedaż nadwyżek PV po pełnych cenach rynkowych zamiast zaniżonego RCE. Gdy wejdzie — klient z dużym PV będzie realnie zarabiał.</span></li>
+    </ul>
+    <div class="alert good" style="margin-top:10px">
+      <strong>Argument dla klienta:</strong><br>
+      <em>„Nie może Pan wystawić faktury zakładowi energetycznemu — ale z dużą baterią i Pstryk Pana rachunek za prąd może wynosić zero, a depozyt rosnąć co miesiąc. To samo co zarabianie, tylko bez papierkologii."</em>
+    </div>
+  </div>
+
+  <!-- DLA KOGO NIE -->
+  <div class="card">
+    <div class="card-title" style="color:var(--red)">⚠️ Dla kogo Pstryk NIE jest dobrym wyborem</div>
+    <ul class="kv">
+      <li><span class="k">Brak internetu w domu</span><span class="v">Smart meter nie wyśle danych — brak rozliczenia dynamicznego</span></li>
+      <li><span class="k">Klient bez smart home / technofob</span><span class="v">Bez Pstryk Connect oszczędności są mniejsze — klient musi sam zarządzać urządzeniami</span></li>
+      <li><span class="k">Tylko kocioł pellet, brak PV</span><span class="v">Pstryk ma sens głównie z PV + baterią. Sam kocioł pellet nie korzysta z taryfowania dynamicznego</span></li>
+      <li><span class="k">OSD nie wymienił licznika</span><span class="v">W niektórych rejonach wymiana trwa miesiącami — Pstryk startuje dopiero po wymianie</span></li>
+    </ul>
+  </div>
+</div>
+
 <!-- ═══════ KALKULATOR ══════════════════════════════════════════ -->
 <div class="section" id="s-kalk">
   <div class="page-title">🧮 Kalkulatory</div>
@@ -1690,6 +1975,15 @@ const KB = [
   {src:'Zwroty', q:'Jak mówić o cenie?', a:'Najpierw: „Policzmy ile Pan teraz wydaje." Potem dotacja. Potem cena netto. Potem ROI. NIGDY cena na starcie.'},
   {src:'Zwroty', q:'Czego nie mówić — lista', a:'Nie: „to i tak niedrogie" / „wszyscy teraz robią" / „na pewno się opłaci" / „proszę się zastanowić i zadzwonić" / „nasza firma to najlepsza" / krytyka konkurencji z nazwy.'},
   {src:'Zwroty', q:'Jak odpowiedzieć na „muszę się zastanowić"?', a:'„Oczywiście. Co konkretnie chce Pan przemyśleć? Może rozwiążemy to teraz." Zawsze ustal KONKRETNY termin kiedy Ty zadzwonisz — nie czekaj na klienta.'},
+  // PSTRYK
+  {src:'Pstryk', q:'Co to jest Pstryk?', a:'Polski sprzedawca prądu z taryfą dynamiczną — cena zmienia się co godzinę wg giełdy. Średnia u klientów: 0,39 zł/kWh vs 0,50 zł u tradycyjnych. Bez kar umownych.'},
+  {src:'Pstryk', q:'Czy klient musi mieć smart meter?', a:'TAK — to największy bloker. Bez licznika inteligentnego Pstryk nie może rozliczać godzinowo. Wniosek do OSD od razu na spotkaniu.'},
+  {src:'Pstryk', q:'Co daje Pstryk prosumentowi?', a:'Depozyt prosumencki bez wygasania (konkurencja wygasza po 12 mies.), pokrywa też opłaty dystrybucyjne (nie tylko energię), Prosumer Roaming między nieruchomościami.'},
+  {src:'Pstryk', q:'Jakie urządzenia potrzebne do Pstryk?', a:'Smart meter (OSD), internet, PV + falownik hybrydowy + magazyn energii. Opcjonalnie Pstryk Connect (automatyka).'},
+  {src:'Pstryk', q:'Czy można zarabiać na ujemnych cenach?', a:'TAK. Gdy podaż energii za duża, cena spada poniżej zera — Pstryk płaci za zużycie. Bateria ładuje się wtedy za darmo + klient dostaje pieniądze.'},
+  {src:'Pstryk', q:'Reguła 2x bateria vs PV — dlaczego?', a:'Na każdy 1 kWp PV warto mieć 2 kWh baterii. PV 10 kWp → bateria 20 kWh. Bateria robi 2 cykle/dobę: ładuje się z PV w dzień + z sieci nocą gdy najtaniej.'},
+  {src:'Pstryk', q:'Moc baterii vs moc PV — zasada prawna', a:'Jeśli moc baterii (kW) ≤ moc PV (kWp) → brak formalności. Jeśli moc baterii > moc PV → potrzeba większego przyłącza LUB falownik z limitem eksportu.'},
+  {src:'Pstryk', q:'Kolejność działań przy kliencie z Pstryk', a:'1. Złóż wniosek o smart meter do OSD  2. Zamów PV+falownik hybrydowy+magazyn u Woltanic  3. Montaż 4-8 tyg.  4. Klient podpisuje umowę Pstryk online  5. Gotowe'},
 ];
 
 // ═══ SELEKTOR PRODUKTU ════════════════════════════════════════

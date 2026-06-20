@@ -155,6 +155,7 @@ ul.kv li .v{color:var(--text)}
   <div class="tab" onclick="showTab('kalk')" id="tab-kalk"><span class="t-icon">🧮</span>Kalkulator</div>
   <div class="tab" onclick="showTab('rachunek')" id="tab-rachunek"><span class="t-icon">📄</span>Rachunek</div>
   <div class="tab" onclick="showTab('pstryk')" id="tab-pstryk"><span class="t-icon">⚡</span>Pstryk</div>
+  <div class="tab" onclick="showTab('dobor')" id="tab-dobor"><span class="t-icon">📐</span>Dobór</div>
 </div>
 
 <!-- SEARCH RESULTS -->
@@ -1592,6 +1593,261 @@ ul.kv li .v{color:var(--text)}
   </div>
 </div>
 
+<!-- ═══════ DOBÓR ════════════════════════════════════════════════ -->
+<div class="section" id="s-dobor">
+  <div class="page-title">📐 Dobór instalacji</div>
+  <div class="page-sub">Jak liczyć, co zbierać od klienta i jak dobrać urządzenia</div>
+
+  <!-- PODSTAWY -->
+  <div class="card">
+    <div class="card-title gold">💡 kW vs kWh — raz a porządnie</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="background:#e3f2fd;border-radius:10px;padding:12px;border-left:4px solid var(--blue)">
+        <div style="font-weight:700;color:var(--blue);font-size:13px;margin-bottom:6px">kW = MOC = jak mocne urządzenie</div>
+        <div style="font-size:12px;line-height:1.6">Jak <strong>szerokość rury</strong> — ile wody może przepłynąć w tej chwili.<br><br>Czajnik: 2 kW<br>Pompa ciepła: 12 kW<br>Panel PV: 0,4 kW (400 Wp)</div>
+      </div>
+      <div style="background:#e8f5e9;border-radius:10px;padding:12px;border-left:4px solid var(--green)">
+        <div style="font-weight:700;color:var(--green);font-size:13px;margin-bottom:6px">kWh = ENERGIA = ile zużyto łącznie</div>
+        <div style="font-size:12px;line-height:1.6">Jak <strong>ilość wody w baku</strong> — suma przez czas.<br><br>Wzór: kW × godziny = kWh<br>Czajnik 2 kW × 0,5h = <strong>1 kWh</strong><br>Dom rocznie = ~4 000 kWh</div>
+      </div>
+    </div>
+    <table class="dot-table">
+      <tr><th>Urządzenie</th><th>Moc (kW)</th><th>Czas pracy</th><th>Zużycie (kWh)</th></tr>
+      <tr><td>Czajnik elektryczny</td><td>2 kW</td><td>30 min/dzień</td><td>~30 kWh/rok</td></tr>
+      <tr><td>Lodówka</td><td>0,15 kW</td><td>24h non-stop</td><td>~200 kWh/rok</td></tr>
+      <tr><td>Pralka</td><td>2 kW</td><td>1,5h / pranie</td><td>~150 kWh/rok (100 prań)</td></tr>
+      <tr><td>Telewizor 55"</td><td>0,12 kW</td><td>4h/dzień</td><td>~175 kWh/rok</td></tr>
+      <tr><td>Pompa ciepła 12 kW</td><td>12 kW</td><td>~4h/dzień zimą</td><td>~3 500 kWh/rok</td></tr>
+      <tr><td>Panel PV 400 Wp</td><td>0,4 kW</td><td>~4–5h słońca</td><td>~420 kWh/rok</td></tr>
+    </table>
+  </div>
+
+  <!-- TYPOWE ZUŻYCIE -->
+  <div class="card">
+    <div class="card-title gold">🏠 Typowe roczne zużycie prądu w Polsce</div>
+    <div class="alert info" style="margin-bottom:10px">Dane z faktury klienta są zawsze ważniejsze niż tabela poniżej — traktuj to jako punkt odniesienia gdy klient nie ma rachunku przy sobie.</div>
+    <table class="dot-table">
+      <tr><th>Dom / sytuacja</th><th>Osoby</th><th>Ogrzewanie</th><th>Roczne zużycie</th></tr>
+      <tr><td>Mieszkanie 50–70 m²</td><td>1–2</td><td>gaz / centralne</td><td style="color:var(--blue);font-weight:700">2 000–3 000 kWh</td></tr>
+      <tr><td>Dom 80–120 m²</td><td>2–3</td><td>gaz / węgiel</td><td style="color:var(--blue);font-weight:700">3 000–4 500 kWh</td></tr>
+      <tr><td>Dom 120–180 m²</td><td>3–5</td><td>gaz / węgiel</td><td style="color:var(--blue);font-weight:700">4 000–6 000 kWh</td></tr>
+      <tr><td>Dom 120–180 m² + pompa ciepła</td><td>3–5</td><td>pompa ciepła</td><td style="color:var(--red);font-weight:700">9 000–13 000 kWh</td></tr>
+      <tr><td>Dom + pompa + auto elektryczne</td><td>3–5</td><td>pompa + EV</td><td style="color:var(--red);font-weight:700">13 000–18 000 kWh</td></tr>
+    </table>
+    <div class="alert warn" style="margin-top:10px">Pompa ciepła <strong>zwiększa zużycie prądu o 3 000–6 000 kWh/rok</strong> — musisz to uwzględnić przy doborze PV. PV dobierane bez pompy będzie za małe.</div>
+  </div>
+
+  <!-- FAKTURA - CO ZBIERAĆ -->
+  <div class="card">
+    <div class="card-title gold">🧾 Co zbierać z faktury klienta — punkt po punkcie</div>
+    <div class="alert info" style="margin-bottom:10px">Poproś klienta o <strong>fakturę roczną lub 2 ostatnie faktury</strong>. Dane miesięczne pomnóż ×12. Najlepiej dane za miniony rok pełny.</div>
+    <div style="margin-bottom:8px">
+      <div style="background:var(--red);color:#fff;border-radius:6px;padding:8px 12px;font-weight:700;font-size:12px;margin-bottom:4px">① ROCZNE ZUŻYCIE ENERGII CZYNNEJ (kWh) — NAJWAŻNIEJSZE</div>
+      <div style="padding:8px 12px;background:var(--light);border-radius:6px;font-size:12px;line-height:1.6">Szukaj: <em>„energia czynna"</em>, <em>„zużycie energii"</em>, <em>„pobrana energia"</em>. Na fakturze Tauron/Enea — tabela z kolumnami kWh. <strong>Weź sumę za 12 miesięcy</strong> jeśli dostępna.<br>Potrzebujesz do: doboru PV, kalkulacji ROI, doboru baterii.</div>
+    </div>
+    <div style="margin-bottom:8px">
+      <div style="background:var(--blue);color:#fff;border-radius:6px;padding:8px 12px;font-weight:700;font-size:12px;margin-bottom:4px">② TARYFA (G11 / G12 / G12W)</div>
+      <div style="padding:8px 12px;background:var(--light);border-radius:6px;font-size:12px;line-height:1.6"><strong>G11</strong> = jedna cena całą dobę (90% domów). <strong>G12</strong> = tańsza noc 22:00–6:00. <strong>G12W</strong> = tańszy cały weekend.<br>Przy G12 pompa ciepła może grzać nocą taniej — dodatkowy argument. Pstryk zastępuje każdą taryfę.</div>
+    </div>
+    <div style="margin-bottom:8px">
+      <div style="background:var(--blue);color:#fff;border-radius:6px;padding:8px 12px;font-weight:700;font-size:12px;margin-bottom:4px">③ ŁĄCZNA CENA ZA kWh (zł)</div>
+      <div style="padding:8px 12px;background:var(--light);border-radius:6px;font-size:12px;line-height:1.6">Oblicz: kwota faktury ÷ zużycie kWh = cena/kWh. <strong>Uwzględnij wszystko</strong>: energię + dystrybucję zmienną + opłaty stałe rozłożone. Typowo: <strong>0,75–1,00 zł/kWh</strong> łącznie.</div>
+    </div>
+    <div style="margin-bottom:8px">
+      <div style="background:var(--blue);color:#fff;border-radius:6px;padding:8px 12px;font-weight:700;font-size:12px;margin-bottom:4px">④ MIESIĘCZNA KWOTA RACHUNKU (zł)</div>
+      <div style="padding:8px 12px;background:var(--light);border-radius:6px;font-size:12px">Potrzebna do argumentu finansowego: <em>„zamiana rachunku na ratę"</em>. Pomnóż ×12 żeby pokazać ile rocznie klient daje zakładowi.</div>
+    </div>
+    <div style="margin-bottom:8px">
+      <div style="background:#7b1fa2;color:#fff;border-radius:6px;padding:8px 12px;font-weight:700;font-size:12px;margin-bottom:4px">⑤ PRZYŁĄCZE: 1-FAZOWE czy 3-FAZOWE?</div>
+      <div style="padding:8px 12px;background:var(--light);border-radius:6px;font-size:12px;line-height:1.6">Na fakturze: <em>„układ pomiarowy"</em> lub <em>„moc umowna"</em>. Albo sprawdź fizycznie: skrzynka bezpiecznikowa — 1 bezpiecznik główny = 1-fazowe, 3 bezpieczniki = 3-fazowe.<br><strong>1-fazowe: max 3,68 kWp PV</strong> (prawo energetyczne, 16A × 230V).<br><strong>3-fazowe: do 15 kWp</strong> bez specjalnych zezwoleń (mikroinstalacja wg Ustawy o OZE art. 2 pkt 19).</div>
+    </div>
+    <div>
+      <div style="background:#2e7d32;color:#fff;border-radius:6px;padding:8px 12px;font-weight:700;font-size:12px;margin-bottom:4px">⑥ Z FAKTURY ZA OGRZEWANIE: ROCZNY KOSZT OPAŁU (zł)</div>
+      <div style="padding:8px 12px;background:var(--light);border-radius:6px;font-size:12px">Gaz: suma za rok z faktur gazowych. Węgiel: tony × cena/tona (zapytaj klienta). Olej: litry × cena. Pellet: tony × ~1 200 zł/t.<br>Potrzebne do kalkulacji oszczędności po wymianie ogrzewania.</div>
+    </div>
+  </div>
+
+  <!-- KALKULATOR DOBORU -->
+  <div class="card" style="border:2px solid var(--gold)">
+    <div class="card-title gold">🧮 Kalkulator doboru — krok po kroku</div>
+
+    <!-- KROK 1: CO INTERESUJE KLIENTA -->
+    <div style="background:#fff8e1;border-radius:10px;padding:14px;margin-bottom:14px;border:2px solid var(--gold)">
+      <div style="font-weight:700;font-size:13px;color:#b07800;margin-bottom:10px">① Co interesuje klienta? (zaznacz wszystko co chce)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <label style="display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600" id="lbPV">
+          <input type="checkbox" id="dPV" onchange="doborToggle()" style="width:18px;height:18px;accent-color:var(--gold)"> ☀️ Fotowoltaika
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600" id="lbMag">
+          <input type="checkbox" id="dMag" onchange="doborToggle()" style="width:18px;height:18px;accent-color:var(--gold)"> 🔋 Magazyn energii
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600" id="lbPompa">
+          <input type="checkbox" id="dPompa" onchange="doborToggle()" style="width:18px;height:18px;accent-color:var(--gold)"> 🌡️ Pompa ciepła
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600" id="lbPellet">
+          <input type="checkbox" id="dPellet" onchange="doborToggle()" style="width:18px;height:18px;accent-color:var(--gold)"> 🌿 Kocioł pellet
+        </label>
+      </div>
+    </div>
+
+    <!-- KROK 2: DANE Z FAKTURY ZA PRĄD -->
+    <div id="blokPrad" style="display:none;background:#e3f2fd;border-radius:10px;padding:14px;margin-bottom:14px;border:1.5px solid var(--blue)">
+      <div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:10px">② Dane z faktury za prąd</div>
+      <div style="background:#fff3cd;border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px;line-height:1.5">
+        📋 <strong>Skąd wziąć?</strong> Faktura za prąd (Tauron/Enea/PGE/Energa) → szukaj <em>„energia czynna kWh"</em> (suma roczna). Cenę oblicz: kwota brutto ÷ kWh. Przyłącze: sprawdź skrzynkę bezpiecznikową.
+      </div>
+      <ul class="kv">
+        <li>
+          <span class="k">Roczne zużycie prądu (kWh)<br><small style="font-weight:400;color:var(--gray)">z faktury, pozycja „energia czynna"</small></span>
+          <span class="v"><input type="number" id="dKwh" placeholder="np. 4000" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit"></span>
+        </li>
+        <li>
+          <span class="k">Miesięczny rachunek (zł)<br><small style="font-weight:400;color:var(--gray)">przeciętny, z faktury</small></span>
+          <span class="v"><input type="number" id="dMies" placeholder="np. 350" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit"></span>
+        </li>
+        <li>
+          <span class="k">Cena prądu (zł/kWh)<br><small style="font-weight:400;color:var(--gray)">kwota faktury ÷ kWh. Jeśli nie wiesz — wpisz 0,90</small></span>
+          <span class="v"><input type="number" id="dCena" value="0.90" step="0.01" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit"></span>
+        </li>
+        <li>
+          <span class="k">Przyłącze elektryczne<br><small style="font-weight:400;color:var(--gray)">1-fazowe: 1 bezpiecznik | 3-fazowe: 3 bezpieczniki</small></span>
+          <span class="v">
+            <select id="dPhase" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
+              <option value="1">1-fazowe (max 3,68 kWp PV)</option>
+              <option value="3" selected>3-fazowe (do 15 kWp PV)</option>
+            </select>
+          </span>
+        </li>
+        <li>
+          <span class="k">Ekspozycja dachu<br><small style="font-weight:400;color:var(--gray)">orientacja i kąt nachylenia</small></span>
+          <span class="v">
+            <select id="dDach" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
+              <option value="1050">Południe, kąt 30–45° (optymalne)</option>
+              <option value="950" selected>Południe/SE/SW, kąt 20–50°</option>
+              <option value="850">Wschód lub Zachód</option>
+              <option value="750">Płaski dach lub niekorzystna orientacja</option>
+            </select>
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- KROK 3: DANE O BUDYNKU (ogrzewanie) -->
+    <div id="blokBudynek" style="display:none;background:#e8f5e9;border-radius:10px;padding:14px;margin-bottom:14px;border:1.5px solid var(--green)">
+      <div style="font-weight:700;font-size:13px;color:var(--green);margin-bottom:10px">③ Dane o budynku i ogrzewaniu</div>
+      <div style="background:#fff3cd;border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px;line-height:1.5">
+        📋 <strong>Skąd wziąć?</strong> Zmierz powierzchnię lub zapytaj klienta (m²). Rok budowy → ocieplenie. Faktura za gaz/węgiel/pellet → roczny koszt ogrzewania.
+      </div>
+      <ul class="kv">
+        <li>
+          <span class="k">Powierzchnia ogrzewana (m²)</span>
+          <span class="v"><input type="number" id="dArea" placeholder="np. 150" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit"></span>
+        </li>
+        <li>
+          <span class="k">Ocieplenie ścian<br><small style="font-weight:400;color:var(--gray)">zapytaj: „kiedy budowany / czy ocieplany?"</small></span>
+          <span class="v">
+            <select id="dWsk" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
+              <option value="160">Brak ocieplenia (przed 1980, cegła/bloczek)</option>
+              <option value="125">Słabe (styropian poniżej 5 cm, lata 80–90)</option>
+              <option value="90" selected>Średnie (5–10 cm styropianu, lata 90–2010)</option>
+              <option value="60">Dobre (12–15 cm, po 2010)</option>
+              <option value="38">Bardzo dobre (po 2020, dom energooszczędny)</option>
+            </select>
+          </span>
+        </li>
+        <li>
+          <span class="k">Liczba kondygnacji</span>
+          <span class="v">
+            <select id="dFloors" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
+              <option value="1.0">Parterowy (1 kondygnacja)</option>
+              <option value="0.9" selected>1 piętro (2 kondygnacje)</option>
+              <option value="0.85">2 piętra (3 kondygnacje)</option>
+            </select>
+          </span>
+        </li>
+        <li>
+          <span class="k">Piwnica</span>
+          <span class="v">
+            <select id="dBasement" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
+              <option value="1.0" selected>Bez piwnicy lub ocieplona</option>
+              <option value="1.1">Piwnica nieocieplona</option>
+            </select>
+          </span>
+        </li>
+        <li>
+          <span class="k">Region Polski</span>
+          <span class="v">
+            <select id="dRegion" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
+              <option value="1.0" selected>Polska centralna i zachodnia (proj. −16°C)</option>
+              <option value="1.1">Polska wschodnia i północna (proj. −20°C)</option>
+              <option value="1.05">Polska południowa (proj. −18°C)</option>
+              <option value="1.2">Góry i Podkarpacie (proj. −22°C)</option>
+            </select>
+          </span>
+        </li>
+        <li>
+          <span class="k">Okna</span>
+          <span class="v">
+            <select id="dWindows" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
+              <option value="1.1">Stare drewniane lub jednoszybowe</option>
+              <option value="1.0" selected>Dwuszybowe (standard)</option>
+              <option value="0.95">Trzyszybowe / energooszczędne</option>
+            </select>
+          </span>
+        </li>
+        <li>
+          <span class="k">Instalacja grzewcza</span>
+          <span class="v">
+            <select id="dInst" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
+              <option value="podloga">Podłogówka (SCOP 4,5 — najlepsza)</option>
+              <option value="mieszana" selected>Mieszana podłogówka + grzejniki (SCOP 3,5)</option>
+              <option value="grzejniki">Tylko grzejniki (SCOP 3,0)</option>
+            </select>
+          </span>
+        </li>
+        <li>
+          <span class="k">Roczny koszt obecnego ogrzewania (zł)<br><small style="font-weight:400;color:var(--gray)">suma faktur za gaz/węgiel/olej za rok</small></span>
+          <span class="v"><input type="number" id="dOpal" placeholder="np. 7000" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit"></span>
+        </li>
+        <li>
+          <span class="k">Obecne paliwo</span>
+          <span class="v">
+            <select id="dPaliwo" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
+              <option value="0.35" selected>Węgiel (~0,35 zł/kWh)</option>
+              <option value="0.40">Gaz ziemny (~0,40 zł/kWh)</option>
+              <option value="0.50">Olej opałowy (~0,50 zł/kWh)</option>
+              <option value="0.32">Pellet (~0,32 zł/kWh)</option>
+              <option value="0.20">Drewno (~0,20 zł/kWh)</option>
+              <option value="0.85">Grzejniki elektryczne (~0,85 zł/kWh)</option>
+            </select>
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <button onclick="calcDobor()" id="btnDobor" style="display:none;width:100%;padding:14px;background:var(--blue);color:#fff;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;margin-bottom:4px">
+      Oblicz dobór i rekomendację →
+    </button>
+
+    <!-- WYNIKI -->
+    <div id="doborWynik" style="display:none;margin-top:14px"></div>
+  </div>
+
+  <!-- PODSTAWY PRAWNE -->
+  <div class="card">
+    <div class="card-title gold">⚖️ Podstawy prawne — co mówią przepisy</div>
+    <ul class="kv">
+      <li><span class="k">Max moc PV (1-fazowe)</span><span class="v"><strong>3,68 kWp</strong> — wynika z max prądu 16A × 230V. Prawo energetyczne, warunki przyłączenia OSD.</span></li>
+      <li><span class="k">Max moc PV (3-fazowe)</span><span class="v"><strong>do 50 kWp</strong> = mikroinstalacja. Ustawa o OZE z 20.02.2015 r., art. 2 pkt 19. Do 15 kWp bez problemów dla domu.</span></li>
+      <li><span class="k">Pozwolenie na budowę</span><span class="v">PV do 50 kWp — <strong>nie wymaga</strong> pozwolenia na budowę. Prawo budowlane (nowelizacja 2023). Wystarczy zgłoszenie lub brak zgłoszenia (do 6,5 m²).</span></li>
+      <li><span class="k">Bateria a przyłącze</span><span class="v">Moc baterii ≤ moc PV → <strong>brak zmian w przyłączu</strong>. Prawo energetyczne art. 8d ust. 12. Bateria większa → potrzeba falownika z limitem eksportu LUB rozbudowy przyłącza.</span></li>
+      <li><span class="k">Bateria — pozwolenie</span><span class="v">Magazyn do 20 kWh zintegrowany z PV — <strong>nie wymaga</strong> pozwolenia na budowę (Prawo budowlane, 2023).</span></li>
+      <li><span class="k">Dobór mocy grzewczej</span><span class="v">Wg normy <strong>EN 12831</strong> — europejski standard obliczania zapotrzebowania na moc grzewczą budynków. Stosowany przez audytorów i projektantów CO.</span></li>
+      <li><span class="k">Prefinansowanie CP</span><span class="v">Najwyższy próg Czystego Powietrza → możliwe prefinansowanie (klient dostaje kasę przed montażem). NFOŚiGW.</span></li>
+    </ul>
+  </div>
+</div>
+
 <!-- ═══════ KALKULATOR ══════════════════════════════════════════ -->
 <div class="section" id="s-kalk">
   <div class="page-title">🧮 Kalkulatory</div>
@@ -1985,6 +2241,222 @@ const KB = [
   {src:'Pstryk', q:'Moc baterii vs moc PV — zasada prawna', a:'Jeśli moc baterii (kW) ≤ moc PV (kWp) → brak formalności. Jeśli moc baterii > moc PV → potrzeba większego przyłącza LUB falownik z limitem eksportu.'},
   {src:'Pstryk', q:'Kolejność działań przy kliencie z Pstryk', a:'1. Złóż wniosek o smart meter do OSD  2. Zamów PV+falownik hybrydowy+magazyn u Woltanic  3. Montaż 4-8 tyg.  4. Klient podpisuje umowę Pstryk online  5. Gotowe'},
 ];
+
+// ═══ DOBÓR ════════════════════════════════════════════════════
+function doborToggle() {
+  const wPV     = document.getElementById('dPV').checked;
+  const wMag    = document.getElementById('dMag').checked;
+  const wPompa  = document.getElementById('dPompa').checked;
+  const wPellet = document.getElementById('dPellet').checked;
+  const needPrad    = wPV || wMag || wPompa || wPellet;
+  const needBudynek = wPompa || wPellet;
+  document.getElementById('blokPrad').style.display    = needPrad    ? 'block' : 'none';
+  document.getElementById('blokBudynek').style.display = needBudynek ? 'block' : 'none';
+  document.getElementById('btnDobor').style.display    = needPrad    ? 'block' : 'none';
+  document.getElementById('doborWynik').style.display  = 'none';
+  // podświetl wybrane
+  ['PV','Mag','Pompa','Pellet'].forEach(id => {
+    const lb = document.getElementById('lb'+id);
+    const cb = document.getElementById('d'+id);
+    if(lb) lb.style.borderColor = cb.checked ? 'var(--gold)' : 'var(--border)';
+    if(lb) lb.style.background  = cb.checked ? '#fff8e1'     : '#fff';
+  });
+}
+
+function calcDobor() {
+  const wPV     = document.getElementById('dPV').checked;
+  const wMag    = document.getElementById('dMag').checked;
+  const wPompa  = document.getElementById('dPompa').checked;
+  const wPellet = document.getElementById('dPellet').checked;
+
+  if(!wPV && !wMag && !wPompa && !wPellet) { alert('Zaznacz przynajmniej jeden produkt.'); return; }
+
+  // --- Dane z faktury ---
+  const roczneKwh = parseFloat(document.getElementById('dKwh').value)  || 0;
+  const miesKoszt = parseFloat(document.getElementById('dMies').value)  || 0;
+  const cenKwh    = parseFloat(document.getElementById('dCena').value)  || 0.90;
+  const phase     = document.getElementById('dPhase').value;
+  const roofY     = parseFloat(document.getElementById('dDach').value)  || 950;
+
+  // --- Dane budynku ---
+  const area      = parseFloat(document.getElementById('dArea').value)     || 0;
+  const wsk       = parseFloat(document.getElementById('dWsk').value)      || 90;
+  const floors    = parseFloat(document.getElementById('dFloors').value)   || 0.9;
+  const basement  = parseFloat(document.getElementById('dBasement').value) || 1.0;
+  const region    = parseFloat(document.getElementById('dRegion').value)   || 1.0;
+  const windows   = parseFloat(document.getElementById('dWindows').value)  || 1.0;
+  const instVal   = document.getElementById('dInst').value;
+  const opalKoszt = parseFloat(document.getElementById('dOpal').value)     || 0;
+  const paliwoC   = parseFloat(document.getElementById('dPaliwo').value)   || 0.35;
+
+  const scop = instVal === 'podloga' ? 4.5 : instVal === 'grzejniki' ? 3.0 : 3.5;
+
+  // --- Oblicz moc grzewczą (EN 12831) ---
+  let mocGrzW = 0, mocGrzFin = 0, pompaPrad = 0, rocznaEnergiaCieplna = 0;
+  const pompy  = [{moc:6,n:'GALMET 6 kW (1-faz.)'},{moc:8,n:'GALMET 8 kW (1-faz.)'},{moc:10,n:'GALMET 10 kW (1-faz.)'},{moc:12,n:'GALMET 12 kW (3-faz.)'},{moc:14,n:'GALMET 14 kW (3-faz.)'},{moc:18,n:'GALMET 18 kW Monoblok'}];
+  const kotly  = [{moc:12,n:'BIOPAL/FEROLI 12 kW'},{moc:15,n:'FEROLI 15 kW'},{moc:20,n:'FEROLI 20 kW'},{moc:25,n:'MOCEK 25 kW'},{moc:30,n:'MOCEK 30 kW'}];
+  let pompaMod = '', kociolMod = '';
+
+  if(wPompa || wPellet) {
+    if(area < 10) { alert('Podaj powierzchnię ogrzewaną (m²) w sekcji budynku.'); return; }
+    mocGrzW   = area * wsk / 1000 * floors * windows * basement * region;
+    mocGrzFin = Math.ceil(mocGrzW * 1.15 * 10) / 10;
+    rocznaEnergiaCieplna = mocGrzFin * 1300; // ~1300 godzin równoważnych/rok dla PL
+    pompaPrad = rocznaEnergiaCieplna / scop;
+    pompaMod  = (pompy.find(p => p.moc >= mocGrzFin) || pompy[pompy.length-1]).n;
+    kociolMod = (kotly.find(k => k.moc >= mocGrzFin) || kotly[kotly.length-1]).n;
+  }
+
+  // --- Całkowite zużycie prądu po zmianach ---
+  let totalKwh = roczneKwh;
+  if(wPompa) totalKwh += pompaPrad; // pompa dodaje zapotrzebowanie na prąd
+
+  // --- PV dobór ---
+  const phaseLimit = phase === '1' ? 3.68 : 15.0;
+  let kWpMin = 0, kWpOpt = 0, kWpFin = 0;
+  if(wPV || wMag) {
+    if(totalKwh < 100) { alert('Podaj roczne zużycie prądu z faktury (kWh).'); return; }
+    kWpMin = roczneKwh / roofY;                    // min: obecne zużycie
+    kWpOpt = totalKwh / roofY;                     // optymalny: z pompą ciepła
+    kWpFin = Math.min(Math.ceil(kWpOpt * 2) / 2, phaseLimit); // zaokrągl do 0,5
+    if(kWpFin < 1) kWpFin = 1;
+  }
+
+  // --- Magazyn dobór ---
+  let batKwh = 0, batMoc = 0;
+  if(wMag) {
+    const bazaKwp = (wPV ? kWpFin : kWpMin);
+    batKwh = Math.ceil(bazaKwp * 2);   // 2 kWh/kWp
+    batMoc = batKwh / 2;               // typowo moc = pojemność/2
+  }
+
+  // --- Oszczędności ---
+  const rocznyRachunek  = miesKoszt > 0 ? miesKoszt * 12 : roczneKwh * cenKwh;
+  const pvProd          = kWpFin * roofY;
+  const pvAutokon       = Math.min(totalKwh, pvProd);
+  const pvOszczRok1     = pvAutokon * cenKwh;
+  const pompOszcz       = wPompa && opalKoszt > 0 ? opalKoszt - (pompaPrad * cenKwh) : 0;
+  const pelletKoszt     = wPellet ? rocznaEnergiaCieplna / (0.92 * 4900) * 1200 : 0; // 4900 kWh/t, 1200 zł/t
+  const pelletOszcz     = wPellet && opalKoszt > 0 ? opalKoszt - pelletKoszt : 0;
+  const laczneOszcz     = pvOszczRok1 + (wPompa ? pompOszcz : 0) + (wPellet ? pelletOszcz : 0);
+
+  // --- Buduj wynik HTML ---
+  let html = '<div style="background:var(--light);border-radius:12px;padding:14px">';
+  html += '<div style="font-size:16px;font-weight:900;color:var(--blue);margin-bottom:14px;text-align:center">📋 Rekomendacja doboru</div>';
+
+  // Ostrzeżenie o fazie
+  if((wPV || wMag) && phase === '1' && kWpOpt > 3.68) {
+    html += '<div class="alert warn" style="margin-bottom:12px">⚠️ <strong>Uwaga!</strong> Optymalna moc to ' + kWpOpt.toFixed(1) + ' kWp, ale przy 1-fazowym przyłączu max to <strong>3,68 kWp</strong>. Aby zainstalować większy system — klient potrzebuje zmiany na 3-fazowe przyłącze. Warto to zaproponować (koszt zmiany: 800–2 000 zł u elektryka + wniosek do OSD).</div>';
+  }
+
+  // POMPA CIEPŁA
+  if(wPompa && area > 0) {
+    html += '<div style="background:#fff;border-radius:10px;padding:12px;margin-bottom:10px;border-left:4px solid var(--blue)">';
+    html += '<div style="font-weight:700;color:var(--blue);font-size:13px;margin-bottom:8px">🌡️ Pompa ciepła</div>';
+    html += '<ul class="kv">';
+    html += '<li><span class="k">Moc grzewcza (EN 12831)</span><span class="v">' + mocGrzW.toFixed(1) + ' kW bazowe → <strong>' + mocGrzFin.toFixed(1) + ' kW</strong> z 15% marginesem bezpieczeństwa</span></li>';
+    html += '<li><span class="k">✅ Rekomendowany model</span><span class="v" style="color:var(--green);font-weight:700;font-size:14px">' + pompaMod + '</span></li>';
+    html += '<li><span class="k">Instalacja grzewcza</span><span class="v">' + (instVal==='podloga'?'✅ Podłogówka — SCOP 4,5 (optymalnie)':instVal==='grzejniki'?'⚠️ Grzejniki — SCOP 3,0. Zapytaj o wymianę na niskotemperaturowe.':'Mieszana — SCOP 3,5') + '</span></li>';
+    html += '<li><span class="k">Roczne zużycie prądu przez pompę</span><span class="v"><strong>' + Math.round(pompaPrad).toLocaleString('pl') + ' kWh/rok</strong> (potrzeba cieplna ' + Math.round(rocznaEnergiaCieplna).toLocaleString('pl') + ' kWh ÷ SCOP ' + scop + ')</span></li>';
+    if(opalKoszt > 0) {
+      html += '<li><span class="k">Obecny koszt ogrzewania</span><span class="v" style="color:var(--red)">' + Math.round(opalKoszt).toLocaleString('pl') + ' zł/rok</span></li>';
+      html += '<li><span class="k">Koszt z pompą (prąd)</span><span class="v">' + Math.round(pompaPrad*cenKwh).toLocaleString('pl') + ' zł/rok</span></li>';
+      if(pompOszcz > 0) html += '<li><span class="k">💚 Oszczędność na ogrzewaniu</span><span class="v" style="color:var(--green);font-weight:700;font-size:14px">' + Math.round(pompOszcz).toLocaleString('pl') + ' zł/rok</span></li>';
+    }
+    html += '</ul></div>';
+  }
+
+  // KOCIOŁ PELLET
+  if(wPellet && area > 0) {
+    const pelletTon = rocznaEnergiaCieplna / (0.92 * 4900);
+    html += '<div style="background:#fff;border-radius:10px;padding:12px;margin-bottom:10px;border-left:4px solid var(--green)">';
+    html += '<div style="font-weight:700;color:var(--green);font-size:13px;margin-bottom:8px">🌿 Kocioł na pellet</div>';
+    html += '<ul class="kv">';
+    html += '<li><span class="k">Moc grzewcza (EN 12831)</span><span class="v"><strong>' + mocGrzFin.toFixed(1) + ' kW</strong> z marginesem</span></li>';
+    html += '<li><span class="k">✅ Rekomendowany model</span><span class="v" style="color:var(--green);font-weight:700;font-size:14px">' + kociolMod + '</span></li>';
+    html += '<li><span class="k">Zużycie pelletu rocznie</span><span class="v"><strong>' + pelletTon.toFixed(1) + ' ton/rok</strong> (pellet klasy A1, sprawność kotła 92%)</span></li>';
+    html += '<li><span class="k">Koszt pelletu rocznie</span><span class="v">' + Math.round(pelletKoszt).toLocaleString('pl') + ' zł/rok (przy 1 200 zł/tona)</span></li>';
+    if(opalKoszt > 0 && pelletOszcz !== 0) {
+      html += '<li><span class="k">Obecny koszt ogrzewania</span><span class="v" style="color:var(--red)">' + Math.round(opalKoszt).toLocaleString('pl') + ' zł/rok</span></li>';
+      html += '<li><span class="k">' + (pelletOszcz>0?'💚 Oszczędność':'Różnica kosztu') + '</span><span class="v" style="color:' + (pelletOszcz>0?'var(--green)':'var(--red)') + ';font-weight:700;font-size:14px">' + Math.round(Math.abs(pelletOszcz)).toLocaleString('pl') + ' zł/rok</span></li>';
+    }
+    html += '<li><span class="k">Wymagania montażowe</span><span class="v">Sprawny komin, wentylacja, osobne gniazdo 230V, zbiornik na pellet lub podajnik worków</span></li>';
+    html += '</ul></div>';
+  }
+
+  // FOTOWOLTAIKA
+  if(wPV && kWpFin > 0) {
+    const prodRok = kWpFin * roofY;
+    let nPaneli = Math.ceil(kWpFin / 0.42); // panel 420 Wp
+    let mDachu  = Math.ceil(nPaneli * 2.5); // ~2,5 m² / panel
+    // ROI 25 lat z inflacją 10%
+    let z25 = 0, ann = pvOszczRok1;
+    for(let i=0;i<25;i++){z25+=ann;ann*=1.10;}
+    let r25bez = 0, rAnn = (wPompa?totalKwh:roczneKwh)*cenKwh;
+    for(let i=0;i<25;i++){r25bez+=rAnn;rAnn*=1.10;}
+    html += '<div style="background:#fff;border-radius:10px;padding:12px;margin-bottom:10px;border-left:4px solid var(--gold)">';
+    html += '<div style="font-weight:700;color:#b07800;font-size:13px;margin-bottom:8px">☀️ Fotowoltaika</div>';
+    html += '<ul class="kv">';
+    if(wPompa) {
+      html += '<li><span class="k">Obecne zużycie</span><span class="v">' + Math.round(roczneKwh).toLocaleString('pl') + ' kWh/rok</span></li>';
+      html += '<li><span class="k">+ Pompa ciepła doda</span><span class="v">' + Math.round(pompaPrad).toLocaleString('pl') + ' kWh/rok</span></li>';
+      html += '<li><span class="k">Razem do pokrycia przez PV</span><span class="v" style="font-weight:700">' + Math.round(totalKwh).toLocaleString('pl') + ' kWh/rok</span></li>';
+    }
+    html += '<li><span class="k">✅ Rekomendowana moc PV</span><span class="v" style="color:var(--gold);font-weight:700;font-size:16px">' + kWpFin.toFixed(1) + ' kWp</span></li>';
+    if(kWpFin < kWpOpt - 0.1) html += '<li><span class="k">⚠️ Limit przyłącza</span><span class="v" style="color:var(--red)">Optymalnie byłoby ' + kWpOpt.toFixed(1) + ' kWp, ale ' + (phase==='1'?'1-fazowe przyłącze ogranicza do 3,68 kWp':'limit 15 kWp') + '</span></li>';
+    html += '<li><span class="k">Liczba paneli (420 Wp)</span><span class="v"><strong>' + nPaneli + ' paneli</strong> (~' + mDachu + ' m² dachu)</span></li>';
+    html += '<li><span class="k">Produkcja roczna PV</span><span class="v">' + Math.round(prodRok).toLocaleString('pl') + ' kWh/rok</span></li>';
+    html += '<li><span class="k">Oszczędność rok 1</span><span class="v"><strong>' + Math.round(pvOszczRok1).toLocaleString('pl') + ' zł/rok</strong> (' + Math.round(pvOszczRok1/12).toLocaleString('pl') + ' zł/mies.)</span></li>';
+    html += '<li><span class="k">Zysk przez 25 lat (inflacja 10%)</span><span class="v" style="color:var(--green);font-weight:700">' + Math.round(z25).toLocaleString('pl') + ' zł</span></li>';
+    html += '<li><span class="k">Bez PV zapłacisz zakładowi</span><span class="v" style="color:var(--red)">' + Math.round(r25bez).toLocaleString('pl') + ' zł przez 25 lat</span></li>';
+    html += '<li><span class="k">Przyłącze</span><span class="v">' + (phase==='1'?'1-fazowe (max 3,68 kWp)':'3-fazowe (do 15 kWp)') + ' · Podstawa: Ustawa o OZE art. 2 pkt 19</span></li>';
+    html += '</ul></div>';
+  }
+
+  // MAGAZYN
+  if(wMag && batKwh > 0) {
+    const bazaKwp = (wPV ? kWpFin : (roczneKwh / roofY));
+    const warnMoc = batMoc > (wPV ? kWpFin : bazaKwp);
+    html += '<div style="background:#fff;border-radius:10px;padding:12px;margin-bottom:10px;border-left:4px solid #7b1fa2">';
+    html += '<div style="font-weight:700;color:#7b1fa2;font-size:13px;margin-bottom:8px">🔋 Magazyn energii</div>';
+    html += '<ul class="kv">';
+    html += '<li><span class="k">✅ Rekomendowana pojemność</span><span class="v" style="color:#7b1fa2;font-weight:700;font-size:16px">' + batKwh + ' kWh</span></li>';
+    html += '<li><span class="k">Moc magazynu</span><span class="v">' + batMoc + ' kW (typowo pojemność ÷ 2)</span></li>';
+    html += '<li><span class="k">Podstawa: 2 kWh/kWp</span><span class="v">' + (wPV ? kWpFin.toFixed(1) : bazaKwp.toFixed(1)) + ' kWp × 2 = ' + batKwh + ' kWh → 2 cykle dziennie: PV w dzień + tani prąd w nocy</span></li>';
+    if(warnMoc) {
+      html += '<li><span class="k">⚠️ Moc baterii vs PV</span><span class="v" style="color:var(--red)">Moc baterii (' + batMoc + ' kW) przekracza moc PV (' + (wPV?kWpFin.toFixed(1):bazaKwp.toFixed(1)) + ' kWp) → wymagany <strong>falownik z limitem eksportu</strong>. Prawo energetyczne art. 8d ust. 12.</span></li>';
+    } else {
+      html += '<li><span class="k">✅ Moc baterii vs PV</span><span class="v" style="color:var(--green)">Moc baterii (' + batMoc + ' kW) ≤ moc PV (' + (wPV?kWpFin.toFixed(1):bazaKwp.toFixed(1)) + ' kWp) → brak dodatkowych formalności. Prawo energetyczne art. 8d ust. 12.</span></li>';
+    }
+    html += '<li><span class="k">Pozwolenie na budowę</span><span class="v">' + (batKwh<=20?'✅ Nie wymagane (do 20 kWh zintegrowany z PV). Prawo budowlane 2023.':'⚠️ Bateria >20 kWh — skonsultuj z OSD. Może być wymagane zgłoszenie.') + '</span></li>';
+    html += '</ul></div>';
+  }
+
+  // PODSUMOWANIE FINANSOWE
+  html += '<div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;margin-top:4px">';
+  html += '<div style="font-weight:700;font-size:13px;margin-bottom:10px;opacity:0.85">💰 Podsumowanie finansowe</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px">';
+  if(rocznyRachunek > 0 && (wPV || wMag)) {
+    html += '<div><div style="font-size:10px;opacity:0.7;margin-bottom:2px">Rachunek za prąd / rok</div><div style="font-size:18px;font-weight:900;color:#ff8888">' + Math.round(rocznyRachunek).toLocaleString('pl') + ' zł</div></div>';
+    html += '<div><div style="font-size:10px;opacity:0.7;margin-bottom:2px">Oszczędność z PV / rok</div><div style="font-size:18px;font-weight:900;color:#88ff88">' + Math.round(pvOszczRok1).toLocaleString('pl') + ' zł</div></div>';
+  }
+  if(wPompa && pompOszcz > 0) {
+    html += '<div><div style="font-size:10px;opacity:0.7;margin-bottom:2px">Oszczędność ogrzewanie / rok</div><div style="font-size:18px;font-weight:900;color:#88ff88">' + Math.round(pompOszcz).toLocaleString('pl') + ' zł</div></div>';
+  }
+  if(wPellet && pelletOszcz > 0) {
+    html += '<div><div style="font-size:10px;opacity:0.7;margin-bottom:2px">Oszczędność pellet / rok</div><div style="font-size:18px;font-weight:900;color:#88ff88">' + Math.round(pelletOszcz).toLocaleString('pl') + ' zł</div></div>';
+  }
+  if(laczneOszcz > 0) {
+    html += '<div><div style="font-size:10px;opacity:0.7;margin-bottom:2px">Łączna oszczędność / rok</div><div style="font-size:22px;font-weight:900;color:var(--gold)">' + Math.round(laczneOszcz).toLocaleString('pl') + ' zł</div></div>';
+  }
+  html += '</div></div>';
+
+  html += '</div>'; // koniec bloku wynikowego
+
+  document.getElementById('doborWynik').innerHTML = html;
+  document.getElementById('doborWynik').style.display = 'block';
+  document.getElementById('doborWynik').scrollIntoView({behavior:'smooth', block:'start'});
+}
 
 // ═══ SELEKTOR PRODUKTU ════════════════════════════════════════
 function filterKalk(type) {
